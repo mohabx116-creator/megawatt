@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Invoice Print Preview - MegaWatt ERP</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#f7f9fb",
+                        "tertiary-fixed": "#dde2f3",
+                        "tertiary-fixed-dim": "#c1c6d7",
+                        "on-primary-fixed-variant": "#1f477b",
+                        "on-tertiary-fixed-variant": "#414754",
+                        "surface-container-low": "#f2f4f6",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#a7c8ff",
+                        "secondary-fixed-dim": "#fbbc00",
+                        "on-secondary-fixed": "#261a00",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#ffdfa0",
+                        "surface-bright": "#f7f9fb",
+                        "primary": "#001e40",
+                        "on-surface-variant": "#43474f",
+                        "outline": "#737780",
+                        "on-primary": "#ffffff",
+                        "on-background": "#191c1e",
+                        "on-tertiary-fixed": "#161c27",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#6d5000",
+                        "on-primary-container": "#799dd6",
+                        "primary-fixed": "#d5e3ff",
+                        "inverse-on-surface": "#eff1f3",
+                        "tertiary-container": "#2d3340",
+                        "on-primary-fixed": "#001b3c",
+                        "surface-variant": "#e0e3e5",
+                        "outline-variant": "#c3c6d1",
+                        "surface-container-high": "#e6e8ea",
+                        "on-tertiary-container": "#959bab",
+                        "surface-container-highest": "#e0e3e5",
+                        "tertiary": "#181e2a",
+                        "surface-dim": "#d8dadc",
+                        "inverse-surface": "#2d3133",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#ffbf00",
+                        "primary-container": "#003366",
+                        "on-secondary-fixed-variant": "#5c4300",
+                        "surface-container": "#eceef0",
+                        "error-container": "#ffdad6",
+                        "surface-tint": "#3a5f94",
+                        "surface": "#f7f9fb",
+                        "on-surface": "#191c1e",
+                        "error": "#ba1a1a",
+                        "primary-fixed-dim": "#a7c8ff",
+                        "secondary": "#795900"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-max": "1440px",
+                        "unit": "4px",
+                        "gutter": "16px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "32px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "data-mono": ["JetBrains Mono"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "display-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-md": ["13px", {"lineHeight": "18px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "data-mono": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                        "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; }
+            .print-canvas { padding: 0 !important; background: white !important; }
+            .print-wrapper { box-shadow: none !important; border: none !important; }
+        }
+        .receipt-dotted {
+            border-top: 2px dotted #000;
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen overflow-x-hidden">
+<!-- Sidebar (Shared Component JSON Mapping) -->
+<aside class="fixed left-0 top-0 h-full w-[260px] bg-primary dark:bg-primary-container border-r border-outline-variant dark:border-outline flex flex-col h-screen overflow-y-auto px-unit z-50 no-print">
+<div class="py-6 px-4 flex flex-col gap-1">
+<div class="font-headline-lg text-headline-lg font-black text-on-primary dark:text-primary-fixed">MegaWatt ERP</div>
+<div class="font-label-md text-label-md text-on-primary-container">Industrial Supplies</div>
+</div>
+<nav class="flex-1 flex flex-col mt-4">
+<!-- Navigation Items -->
+<div class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:text-on-primary hover:bg-tertiary-container dark:hover:bg-tertiary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-md text-label-md">Sales</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 border-l-2 border-secondary-fixed text-on-primary font-bold bg-primary-container dark:bg-tertiary-container opacity-90 transition-all duration-150" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="font-label-md text-label-md">Purchasing</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:text-on-primary hover:bg-tertiary-container dark:hover:bg-tertiary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-md text-label-md">Inventory</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:text-on-primary hover:bg-tertiary-container dark:hover:bg-tertiary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">account_balance</span>
+<span class="font-label-md text-label-md">Finance</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:text-on-primary hover:bg-tertiary-container dark:hover:bg-tertiary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-label-md text-label-md">HR</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:text-on-primary hover:bg-tertiary-container dark:hover:bg-tertiary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+</div>
+<div class="mt-auto pb-6">
+<button class="mx-4 mb-6 bg-secondary-container text-on-secondary-container font-label-md text-label-md py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:opacity-90 transition-all">
+<span class="material-symbols-outlined">add_circle</span>
+                    Create New Order
+                </button>
+<div class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:text-on-primary hover:bg-tertiary-container transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:text-on-primary hover:bg-tertiary-container transition-colors" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="font-label-md text-label-md">Profile</span>
+</a>
+</div>
+</div>
+</nav>
+</aside>
+<!-- Header (Shared Component JSON Mapping) -->
+<header class="fixed top-0 right-0 h-16 bg-surface dark:bg-surface-container-low border-b border-outline-variant dark:border-outline flex items-center justify-between px-margin-desktop z-40 ml-[260px] w-[calc(100%-260px)] no-print">
+<div class="flex items-center gap-6">
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">Print Preview</h1>
+<div class="flex items-center bg-surface-container rounded-full px-4 py-1 gap-2">
+<span class="material-symbols-outlined text-outline">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-sm w-48" placeholder="Search orders..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex gap-4">
+<button class="text-primary font-bold border-b-2 border-secondary-fixed font-body-md h-16 flex items-center">Dashboard</button>
+<button class="text-on-surface-variant dark:text-on-surface hover:bg-surface-container-highest cursor-pointer font-body-md h-16 flex items-center px-2">Quick Actions</button>
+</div>
+<div class="flex items-center gap-2 border-l border-outline-variant pl-4">
+<span class="material-symbols-outlined text-outline hover:bg-surface-container-highest p-2 rounded-full cursor-pointer">notifications</span>
+<span class="material-symbols-outlined text-outline hover:bg-surface-container-highest p-2 rounded-full cursor-pointer">help_outline</span>
+<div class="flex items-center gap-3 ml-2 cursor-pointer hover:bg-surface-container-highest p-1 rounded-lg">
+<img alt="Profile" class="w-8 h-8 rounded-full border border-outline-variant" data-alt="A professional headshot of a middle-aged corporate executive with a clean-cut appearance. He is wearing a sharp charcoal business suit and a light blue shirt, looking confidently at the camera against a soft, blurred office background. The lighting is crisp and professional, highlighting a reliable and authoritative persona suitable for an ERP industrial supply context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9yIZukw3gupVmQriKwfthN_gjW7P2hC4UP6Bq2DT74Hx_-H2R8xLBu1-Rq5mbs5y4r9_w97Bn7-_O3K5VPr4GUrei4oC54z2FjRo2vr4Kcp7f3GoIHiFkMbOxYMBHrmFhtc-7Cmj7zA1Lq8BpPnDQzvr1MTixYbGR9oxQ_oG34oWzKV6iN2f-Fjy04srycUCbEKYWyslf6sgWNQcBzthtWGH9ZRJImzzvE_VpehZYKuyjuDkbFRocjXXUD1kjvmZM3jn_Y5sjQwA"/>
+<span class="font-label-md text-label-md text-primary">Admin</span>
+</div>
+<button class="bg-surface-container-high px-3 py-1 rounded text-body-sm font-bold text-primary ml-2">EN/AR</button>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-[260px] mt-16 p-margin-desktop print-canvas">
+<!-- Controls Bar -->
+<div class="flex items-center justify-between mb-8 no-print">
+<div class="flex flex-col">
+<h2 class="font-headline-lg text-headline-lg text-primary">Invoice #INV-2024-00892</h2>
+<p class="text-on-surface-variant font-body-md">Status: <span class="bg-green-100 text-green-800 px-2 py-0.5 rounded-full text-xs font-bold">READY TO PRINT</span></p>
+</div>
+<div class="flex gap-3">
+<button class="bg-primary text-white font-label-md text-label-md py-3 px-6 rounded-lg flex items-center gap-2 hover:bg-primary-container transition-colors shadow-sm" onclick="window.print()">
+<span class="material-symbols-outlined">print</span>
+                    Print All Layouts
+                </button>
+<button class="bg-white border border-outline-variant text-primary font-label-md text-label-md py-3 px-6 rounded-lg flex items-center gap-2 hover:bg-surface-container transition-colors shadow-sm">
+<span class="material-symbols-outlined">download</span>
+                    Export PDF
+                </button>
+<button class="bg-white border border-outline-variant text-primary font-label-md text-label-md py-3 px-6 rounded-lg flex items-center gap-2 hover:bg-surface-container transition-colors shadow-sm">
+<span class="material-symbols-outlined">mail</span>
+                    Email Customer
+                </button>
+</div>
+</div>
+<!-- Preview Selection (Tabs) -->
+<div class="flex gap-4 mb-6 no-print border-b border-outline-variant">
+<button class="px-6 py-3 border-b-2 border-primary font-bold text-primary flex items-center gap-2" id="tab-a4" onclick="switchView('a4')">
+<span class="material-symbols-outlined">description</span> A4 Professional Layout
+            </button>
+<button class="px-6 py-3 text-on-surface-variant hover:text-primary flex items-center gap-2" id="tab-thermal" onclick="switchView('thermal')">
+<span class="material-symbols-outlined">receipt_long</span> 80mm Thermal Receipt
+            </button>
+</div>
+<!-- Print Canvas Wrapper -->
+<div class="grid grid-cols-1 xl:grid-cols-[1fr_350px] gap-8">
+<!-- A4 Document Preview -->
+<div class="bg-white border border-outline-variant shadow-lg p-12 max-w-[800px] mx-auto print-wrapper min-h-[1100px]" id="view-a4">
+<!-- A4 Header -->
+<div class="flex justify-between items-start border-b-4 border-primary pb-6 mb-8">
+<div class="flex flex-col">
+<div class="text-3xl font-black text-primary tracking-tighter">MEGAWATT</div>
+<div class="text-xl font-bold text-primary flex justify-between">
+<span>INDUSTRIAL</span>
+<span class="font-sans" dir="rtl">الصناعية</span>
+</div>
+</div>
+<div class="text-right flex flex-col gap-1">
+<h3 class="text-2xl font-bold uppercase tracking-widest text-primary">Tax Invoice</h3>
+<div class="text-3xl font-sans font-bold" dir="rtl">فاتورة ضريبية</div>
+</div>
+</div>
+<!-- Info Grid -->
+<div class="grid grid-cols-2 gap-12 mb-8">
+<div class="space-y-4">
+<div>
+<p class="text-xs font-bold text-outline-variant uppercase mb-1">From / من</p>
+<p class="font-bold text-primary">MegaWatt Industrial Supplies LLC</p>
+<p class="text-body-sm">45th Industrial Avenue, Sector 12</p>
+<p class="text-body-sm">Riyadh, Saudi Arabia</p>
+<p class="text-body-sm font-data-mono">TRN: 310293847500003</p>
+</div>
+<div>
+<p class="text-xs font-bold text-outline-variant uppercase mb-1">To / إلى</p>
+<p class="font-bold text-primary">ElectroGrid Construction Partners</p>
+<p class="text-body-sm">PO Box 8912, Commercial District</p>
+<p class="text-body-sm">Jeddah, Saudi Arabia</p>
+<p class="text-body-sm font-data-mono">TRN: 300182736400003</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-4">
+<div class="text-right bg-surface-container-low p-4 rounded-lg w-full border border-outline-variant">
+<div class="grid grid-cols-2 gap-2 text-body-sm">
+<span class="text-outline">Invoice No / رقم الفاتورة:</span>
+<span class="font-bold font-data-mono">INV-2024-00892</span>
+<span class="text-outline">Date / التاريخ:</span>
+<span class="font-bold">24 OCT 2024</span>
+<span class="text-outline">Due Date / موعد الاستحقاق:</span>
+<span class="font-bold">08 NOV 2024</span>
+</div>
+</div>
+<div class="bg-white p-2 border border-black inline-block">
+<img alt="QR Code" class="w-24 h-24" data-alt="A high-contrast, black and white QR code generated for a professional industrial invoice. The QR code is perfectly squared and centered, framed by a thin black border, symbolizing modern digital verification and tracking in a corporate ERP system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwzMuCl7xCrfHbOYy0NFFPpE7Q9hP_0hAmQC_ML9_QRuVNjZMX62cbMLwq_Ae8TJ2DwCN2dojbrzJ3-shwnfhSuJC_D9p3yLPf3ZdPbqJ5ugDNrUZBDr7NOy0DV8XOjuzkBolpRj2ScXShDrkkZm6-ZaGkWwRM_27zhdvV_8Bb0HMMtruVzDqWOHnCkVR5M015s3FDz9J-SE4iCfovSIAwGsANkBiRIp3VYZB5oFZjDCwSlOUs979BTlXK889ytTTJzQBGfNV3vP4"/>
+</div>
+</div>
+</div>
+<!-- Items Table -->
+<table class="w-full mb-8 text-left border-collapse">
+<thead>
+<tr class="bg-primary text-white">
+<th class="py-3 px-4 font-label-md text-xs uppercase">Description / الوصف</th>
+<th class="py-3 px-4 font-label-md text-xs uppercase text-right">Qty</th>
+<th class="py-3 px-4 font-label-md text-xs uppercase text-right">Unit Price</th>
+<th class="py-3 px-4 font-label-md text-xs uppercase text-right">VAT (15%)</th>
+<th class="py-3 px-4 font-label-md text-xs uppercase text-right">Total</th>
+</tr>
+</thead>
+<tbody class="text-body-sm">
+<tr class="border-b border-outline-variant">
+<td class="py-4 px-4">
+<div class="font-bold">Heavy-Duty Circuit Breaker 400A</div>
+<div class="text-xs text-outline">Ref: MW-CB-400-HD | Industrial Grade</div>
+</td>
+<td class="py-4 px-4 text-right font-data-mono">04</td>
+<td class="py-4 px-4 text-right font-data-mono">1,250.00</td>
+<td class="py-4 px-4 text-right font-data-mono">750.00</td>
+<td class="py-4 px-4 text-right font-bold font-data-mono">5,750.00</td>
+</tr>
+<tr class="border-b border-outline-variant bg-surface-container-lowest">
+<td class="py-4 px-4">
+<div class="font-bold">High-Temp Silicon Insulator Kit</div>
+<div class="text-xs text-outline">Ref: MW-INS-990-S | Weatherproof</div>
+</td>
+<td class="py-4 px-4 text-right font-data-mono">12</td>
+<td class="py-4 px-4 text-right font-data-mono">85.00</td>
+<td class="py-4 px-4 text-right font-data-mono">153.00</td>
+<td class="py-4 px-4 text-right font-bold font-data-mono">1,173.00</td>
+</tr>
+<tr class="border-b border-outline-variant">
+<td class="py-4 px-4">
+<div class="font-bold">Braided Copper Grounding Wire (50m)</div>
+<div class="text-xs text-outline">Ref: MW-WIRE-CP-50 | Low Resistance</div>
+</td>
+<td class="py-4 px-4 text-right font-data-mono">02</td>
+<td class="py-4 px-4 text-right font-data-mono">450.00</td>
+<td class="py-4 px-4 text-right font-data-mono">135.00</td>
+<td class="py-4 px-4 text-right font-bold font-data-mono">1,035.00</td>
+</tr>
+</tbody>
+</table>
+<!-- Summary & Signatures -->
+<div class="grid grid-cols-[1fr_250px] gap-12">
+<div class="space-y-6">
+<div class="p-4 bg-surface-container-low rounded border border-dashed border-outline-variant">
+<p class="text-xs font-bold uppercase mb-2">Notes / ملاحظات</p>
+<p class="text-xs text-on-surface-variant leading-relaxed">
+                                Goods once sold cannot be returned unless manufacturing defect is found within 30 days. 
+                                Payments are to be made via bank transfer to MegaWatt IBAN: SA8900001234455667788.
+                                Warranty covers parts only, labor is excluded unless specified.
+                            </p>
+</div>
+<div class="flex gap-12 mt-12">
+<div class="flex-1 border-t border-black pt-2 text-center">
+<p class="text-[10px] font-bold uppercase">Issued By / صدر من قبل</p>
+<div class="h-12 flex items-center justify-center italic text-lg opacity-40">MegaWatt ERP System</div>
+</div>
+<div class="flex-1 border-t border-black pt-2 text-center">
+<p class="text-[10px] font-bold uppercase">Customer Sig / توقيع العميل</p>
+<div class="h-12"></div>
+</div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-body-sm">
+<span class="text-outline">Subtotal:</span>
+<span class="font-data-mono">7,020.00</span>
+</div>
+<div class="flex justify-between text-body-sm">
+<span class="text-outline">Total VAT (15%):</span>
+<span class="font-data-mono">1,038.00</span>
+</div>
+<div class="flex justify-between text-body-sm border-b border-outline-variant pb-2">
+<span class="text-outline">Discount:</span>
+<span class="text-error font-data-mono">(0.00)</span>
+</div>
+<div class="flex justify-between items-center bg-primary text-white p-3 mt-4">
+<span class="font-bold">Total / الإجمالي</span>
+<span class="text-xl font-black font-data-mono">8,058.00 SAR</span>
+</div>
+</div>
+</div>
+<!-- Footer Barcode -->
+<div class="mt-16 flex flex-col items-center">
+<div class="h-12 w-64 bg-white flex items-center justify-center overflow-hidden">
+<!-- Simulated Barcode -->
+<div class="flex items-end gap-[1px] h-full opacity-80">
+<div class="w-[2px] h-full bg-black"></div><div class="w-[1px] h-full bg-black"></div><div class="w-[4px] h-full bg-black"></div>
+<div class="w-[1px] h-full bg-black"></div><div class="w-[2px] h-full bg-black"></div><div class="w-[1px] h-full bg-black"></div>
+<div class="w-[3px] h-full bg-black"></div><div class="w-[1px] h-full bg-black"></div><div class="w-[2px] h-full bg-black"></div>
+<div class="w-[2px] h-full bg-black"></div><div class="w-[1px] h-full bg-black"></div><div class="w-[4px] h-full bg-black"></div>
+<div class="w-[1px] h-full bg-black"></div><div class="w-[2px] h-full bg-black"></div><div class="w-[1px] h-full bg-black"></div>
+<div class="w-[3px] h-full bg-black"></div><div class="w-[1px] h-full bg-black"></div><div class="w-[2px] h-full bg-black"></div>
+<div class="w-[2px] h-full bg-black"></div><div class="w-[1px] h-full bg-black"></div><div class="w-[4px] h-full bg-black"></div>
+<div class="w-[1px] h-full bg-black"></div><div class="w-[2px] h-full bg-black"></div><div class="w-[1px] h-full bg-black"></div>
+</div>
+</div>
+<p class="text-[10px] font-data-mono tracking-widest mt-1">INV2024008929910</p>
+<p class="text-[9px] text-outline mt-4 italic">Digitally generated by MegaWatt ERP Industrial Suite © 2024</p>
+</div>
+</div>
+<!-- Thermal Receipt Preview -->
+<div class="hidden bg-white border border-outline-variant shadow-lg p-6 w-[350px] mx-auto print-wrapper h-fit font-data-mono text-[13px] leading-tight" id="view-thermal">
+<div class="text-center mb-6">
+<p class="font-black text-xl tracking-tighter">MEGAWATT</p>
+<p class="text-[10px]">INDUSTRIAL SUPPLIES LLC</p>
+<p class="text-[10px]">RIYADH, SAUDI ARABIA</p>
+<p class="text-[10px]">VAT: 310293847500003</p>
+</div>
+<div class="receipt-dotted pt-2 mb-4">
+<div class="flex justify-between"><span>INV:</span> <span>#00892</span></div>
+<div class="flex justify-between"><span>DATE:</span> <span>24/10/24</span></div>
+<div class="flex justify-between"><span>USER:</span> <span>ADMIN-01</span></div>
+</div>
+<div class="receipt-dotted py-2 mb-4">
+<div class="flex justify-between font-bold border-b border-black pb-1 mb-1">
+<span class="w-[60%]">ITEM</span>
+<span class="w-[15%] text-right">QTY</span>
+<span class="w-[25%] text-right">PRC</span>
+</div>
+<div class="flex justify-between mb-1">
+<span class="w-[60%]">CIRCUIT BREAKER 400A</span>
+<span class="w-[15%] text-right">04</span>
+<span class="w-[25%] text-right">5000</span>
+</div>
+<div class="flex justify-between mb-1">
+<span class="w-[60%]">INSULATOR KIT HT</span>
+<span class="w-[15%] text-right">12</span>
+<span class="w-[25%] text-right">1020</span>
+</div>
+<div class="flex justify-between">
+<span class="w-[60%]">COPPER WIRE 50M</span>
+<span class="w-[15%] text-right">02</span>
+<span class="w-[25%] text-right">900</span>
+</div>
+</div>
+<div class="receipt-dotted py-2 mb-4 space-y-1">
+<div class="flex justify-between"><span>SUBTOTAL:</span> <span>6920.00</span></div>
+<div class="flex justify-between"><span>VAT (15%):</span> <span>1038.00</span></div>
+<div class="flex justify-between text-lg font-black border-t-2 border-black pt-2">
+<span>TOTAL:</span> <span>7958.00</span>
+</div>
+</div>
+<div class="text-center mt-6">
+<div class="flex justify-center mb-2">
+<img alt="Mini QR" class="w-16 h-16 grayscale brightness-0" data-alt="A small, high-density QR code optimized for thermal printing on a narrow receipt. The image is strictly black and white with no grayscales, ensuring maximum clarity for POS scanning devices in a fast-paced industrial warehouse or retail setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWri2BLMtUtu6r9t5fNRpj2XgaagX2PxGADH1Di6zpHyqI4PAbXhrYNO_WzDW8CNZo7-pDR2mqp48E3BTSOy8UUCV6EUpSybx5xO8R1UfCfP_Gp_dtaeg0g8maBck5f3l52gYdYaKUjA_aoQS5i3reCItasqG8KAtgN3pPWSqBg8fV63gpZCKpN3zQ6vJ3EYL3B9t7Dk3inrldvtNbqgPdFi6qFg0rsqUSfWJOwLgRZ_JDwtKbylrEW910XDZ0G1wFoQksQU8VZ5Q"/>
+</div>
+<p class="font-bold">THANK YOU</p>
+<p class="text-[10px]">VISIT US AGAIN</p>
+<p class="text-[8px] mt-4 opacity-50">#MW-892-20241024-XP</p>
+</div>
+</div>
+<!-- Right Column Stats & Settings -->
+<div class="flex flex-col gap-6 no-print">
+<div class="bg-white border border-outline-variant p-6 rounded-lg">
+<h4 class="font-label-md text-primary mb-4 border-b border-outline-variant pb-2">Print Settings</h4>
+<div class="space-y-4">
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="rounded text-primary focus:ring-primary h-5 w-5" type="checkbox"/>
+<span class="text-body-sm group-hover:text-primary">Include Company Logo</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="rounded text-primary focus:ring-primary h-5 w-5" type="checkbox"/>
+<span class="text-body-sm group-hover:text-primary">Show QR Code</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="rounded text-primary focus:ring-primary h-5 w-5" type="checkbox"/>
+<span class="text-body-sm group-hover:text-primary">Show Item Prices</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="rounded text-primary focus:ring-primary h-5 w-5" type="checkbox"/>
+<span class="text-body-sm group-hover:text-primary">Print Arabic Fields</span>
+</label>
+</div>
+<div class="mt-6 pt-4 border-t border-outline-variant">
+<p class="text-[10px] text-outline-variant font-bold uppercase mb-2">Primary Printer</p>
+<div class="flex items-center gap-3 p-2 bg-surface-container-low rounded">
+<span class="material-symbols-outlined text-primary">print</span>
+<div class="flex flex-col">
+<span class="text-xs font-bold">HQ-Office-P01</span>
+<span class="text-[9px] text-green-600 font-bold uppercase">Online</span>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white border border-outline-variant p-6 rounded-lg">
+<h4 class="font-label-md text-primary mb-4 border-b border-outline-variant pb-2">Order Summary</h4>
+<div class="space-y-3">
+<div class="flex justify-between text-body-sm">
+<span class="text-outline">Items:</span>
+<span class="font-bold">18 units</span>
+</div>
+<div class="flex justify-between text-body-sm">
+<span class="text-outline">Weight:</span>
+<span class="font-bold">42.5 KG</span>
+</div>
+<div class="flex justify-between text-body-sm">
+<span class="text-outline">Packages:</span>
+<span class="font-bold">02 Pallets</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        function switchView(type) {
+            const a4View = document.getElementById('view-a4');
+            const thermalView = document.getElementById('view-thermal');
+            const tabA4 = document.getElementById('tab-a4');
+            const tabThermal = document.getElementById('tab-thermal');
+
+            if (type === 'a4') {
+                a4View.classList.remove('hidden');
+                thermalView.classList.add('hidden');
+                tabA4.classList.add('border-primary', 'text-primary', 'font-bold');
+                tabA4.classList.remove('text-on-surface-variant');
+                tabThermal.classList.remove('border-primary', 'text-primary', 'font-bold');
+                tabThermal.classList.add('text-on-surface-variant');
+            } else {
+                a4View.classList.add('hidden');
+                thermalView.classList.remove('hidden');
+                tabThermal.classList.add('border-primary', 'text-primary', 'font-bold');
+                tabThermal.classList.remove('text-on-surface-variant');
+                tabA4.classList.remove('border-primary', 'text-primary', 'font-bold');
+                tabA4.classList.add('text-on-surface-variant');
+            }
+        }
+    </script>
+</body></html>

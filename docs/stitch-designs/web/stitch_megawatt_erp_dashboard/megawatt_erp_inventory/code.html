@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#f7f9fb",
+                        "tertiary-fixed": "#dde2f3",
+                        "tertiary-fixed-dim": "#c1c6d7",
+                        "on-primary-fixed-variant": "#1f477b",
+                        "on-tertiary-fixed-variant": "#414754",
+                        "surface-container-low": "#f2f4f6",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#a7c8ff",
+                        "secondary-fixed-dim": "#fbbc00",
+                        "on-secondary-fixed": "#261a00",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#ffdfa0",
+                        "surface-bright": "#f7f9fb",
+                        "primary": "#001e40",
+                        "on-surface-variant": "#43474f",
+                        "outline": "#737780",
+                        "on-primary": "#ffffff",
+                        "on-background": "#191c1e",
+                        "on-tertiary-fixed": "#161c27",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#6d5000",
+                        "on-primary-container": "#799dd6",
+                        "primary-fixed": "#d5e3ff",
+                        "inverse-on-surface": "#eff1f3",
+                        "tertiary-container": "#2d3340",
+                        "on-primary-fixed": "#001b3c",
+                        "surface-variant": "#e0e3e5",
+                        "outline-variant": "#c3c6d1",
+                        "surface-container-high": "#e6e8ea",
+                        "on-tertiary-container": "#959bab",
+                        "surface-container-highest": "#e0e3e5",
+                        "tertiary": "#181e2a",
+                        "surface-dim": "#d8dadc",
+                        "inverse-surface": "#2d3133",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#ffbf00",
+                        "primary-container": "#003366",
+                        "on-secondary-fixed-variant": "#5c4300",
+                        "surface-container": "#eceef0",
+                        "error-container": "#ffdad6",
+                        "surface-tint": "#3a5f94",
+                        "surface": "#f7f9fb",
+                        "on-surface": "#191c1e",
+                        "error": "#ba1a1a",
+                        "primary-fixed-dim": "#a7c8ff",
+                        "secondary": "#795900"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-max": "1440px",
+                        "unit": "4px",
+                        "gutter": "16px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "32px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "data-mono": ["JetBrains Mono"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "display-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-md": ["13px", {"lineHeight": "18px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "data-mono": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                        "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-screen w-[260px] bg-primary dark:bg-primary-container flex flex-col overflow-y-auto border-r border-outline-variant dark:border-outline z-50">
+<div class="p-6">
+<h1 class="font-headline-lg text-headline-lg font-black text-on-primary dark:text-primary-fixed">MegaWatt ERP</h1>
+<p class="font-label-md text-label-md text-on-primary-container opacity-70">Industrial Supplies</p>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:text-on-primary hover:bg-tertiary-container dark:hover:bg-tertiary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-label-md text-label-md">Sales</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:text-on-primary hover:bg-tertiary-container dark:hover:bg-tertiary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+<span class="font-label-md text-label-md">Purchasing</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 border-l-2 border-secondary-fixed text-on-primary font-bold bg-primary-container dark:bg-tertiary-container opacity-90 transition-all duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-label-md text-label-md">Inventory</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:text-on-primary hover:bg-tertiary-container dark:hover:bg-tertiary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="account_balance">account_balance</span>
+<span class="font-label-md text-label-md">Finance</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:text-on-primary hover:bg-tertiary-container dark:hover:bg-tertiary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="font-label-md text-label-md">HR</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:text-on-primary hover:bg-tertiary-container dark:hover:bg-tertiary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+</nav>
+<div class="mt-auto p-4 space-y-1">
+<button class="w-full mb-4 bg-secondary-container text-on-secondary-container font-bold py-3 px-4 rounded hover:brightness-110 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+<span class="font-label-md text-label-md">Create New Order</span>
+</button>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:text-on-primary hover:bg-tertiary-container dark:hover:bg-tertiary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:text-on-primary hover:bg-tertiary-container dark:hover:bg-tertiary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+<span class="font-label-md text-label-md">Profile</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-[260px] flex-1 flex flex-col min-h-screen w-[calc(100%-260px)]">
+<!-- TopAppBar -->
+<header class="sticky top-0 h-16 bg-surface dark:bg-surface-container-low flex items-center justify-between px-8 z-40 border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-8">
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md focus:ring-2 focus:ring-primary outline-none w-64 transition-all" placeholder="Search inventory, SKUs..." type="text"/>
+</div>
+<nav class="hidden lg:flex items-center gap-6">
+<a class="text-primary font-bold border-b-2 border-secondary-fixed py-5" href="#">Dashboard</a>
+<a class="text-on-surface-variant dark:text-on-surface hover:bg-surface-container-highest py-5 px-2" href="#">Quick Actions</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-1 font-label-md text-label-md text-primary">EN/AR</button>
+<div class="h-8 w-px bg-outline-variant"></div>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-highest p-2 rounded-full">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-highest p-2 rounded-full">help_outline</button>
+<div class="flex items-center gap-3 pl-4">
+<div class="text-right">
+<p class="font-label-md text-label-md text-primary">Admin</p>
+<p class="text-[10px] text-outline uppercase tracking-wider">Superuser</p>
+</div>
+<img alt="User Profile" class="w-10 h-10 rounded-full border-2 border-primary-fixed" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDONf3w4bBi483493fnQCW5vWzPtftBNTtMuvjvJ7WJGePNXv09fK1rjuF0DT77rpu-kbsw8m4G31gQZd6rsEaEXUPNskaC2rTdKYgpdIS37D8nTnnWHBA9Pfptz6LonCZK1JhZNOhuB4bdEq0u8csR0lHA4qD7fbEczeMyYKk7ei5WIUPs0_2W9QC22RbR98Ya9Mc4J3d1E6n1sOlDfxmGFuRyF82xhftZSb2-CA1LJG5UWWP_9NzPh-j9YUQ2x7THmtEBEzT0oYk"/>
+</div>
+</div>
+</header>
+<!-- Screen Content -->
+<div class="p-8 space-y-8 animate-in fade-in duration-500">
+<!-- Page Header & Global Controls -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary">Inventory Management</h2>
+<p class="text-on-surface-variant font-body-md">Real-time stock monitoring and warehouse operations.</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-6 py-2.5 bg-secondary-container text-on-secondary-container font-bold rounded-lg hover:brightness-110 transition-all border border-secondary">
+<span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+                        Stock Adjustment
+                    </button>
+<button class="flex items-center gap-2 px-6 py-2.5 bg-primary text-on-primary font-bold rounded-lg hover:opacity-90 transition-all">
+<span class="material-symbols-outlined" data-icon="move_down">move_down</span>
+                        Transfer
+                    </button>
+</div>
+</div>
+<!-- Dashboard Summary Grid (Bento Style) -->
+<div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-6">
+<div class="bg-surface-container-lowest p-6 border border-outline-variant rounded-xl flex flex-col justify-between">
+<div>
+<p class="text-outline font-label-md uppercase tracking-widest text-[11px]">Total SKUs</p>
+<h3 class="font-display-lg text-display-lg text-primary mt-1">1,284</h3>
+</div>
+<div class="mt-4 flex items-center text-green-600 text-body-sm font-bold">
+<span class="material-symbols-outlined text-[16px] mr-1">trending_up</span>
+                        +12% vs last month
+                    </div>
+</div>
+<div class="bg-surface-container-lowest p-6 border border-outline-variant rounded-xl flex flex-col justify-between relative overflow-hidden">
+<div class="absolute top-0 right-0 p-2">
+<span class="material-symbols-outlined text-error opacity-20 text-4xl" data-icon="warning">warning</span>
+</div>
+<div>
+<p class="text-outline font-label-md uppercase tracking-widest text-[11px]">Low Stock Alerts</p>
+<h3 class="font-display-lg text-display-lg text-error mt-1">18</h3>
+</div>
+<div class="mt-4 text-error font-bold text-body-sm flex items-center">
+                        Action Required Immediately
+                    </div>
+</div>
+<div class="bg-surface-container-lowest p-6 border border-outline-variant rounded-xl flex flex-col justify-between">
+<div>
+<p class="text-outline font-label-md uppercase tracking-widest text-[11px]">Inventory Value</p>
+<h3 class="font-display-lg text-display-lg text-primary mt-1">$4.2M</h3>
+</div>
+<div class="mt-4 text-on-surface-variant font-body-sm">
+                        Calculated at current COGS
+                    </div>
+</div>
+<div class="bg-surface-container-lowest p-6 border border-outline-variant rounded-xl flex flex-col justify-between bg-primary-container/5 border-primary-container">
+<div>
+<p class="text-on-primary-container font-label-md uppercase tracking-widest text-[11px]">Warehouse Utilization</p>
+<h3 class="font-display-lg text-display-lg text-on-primary-container mt-1">84%</h3>
+</div>
+<div class="mt-4 w-full bg-outline-variant h-1.5 rounded-full overflow-hidden">
+<div class="bg-on-primary-container h-full w-[84%]"></div>
+</div>
+</div>
+</div>
+<!-- Filter Bar -->
+<div class="bg-surface-container-lowest p-4 border border-outline-variant rounded-xl flex flex-wrap items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="text-label-md font-bold text-primary px-2">Warehouse:</span>
+<select class="bg-surface border border-outline-variant rounded px-4 py-2 font-body-md outline-none focus:ring-2 focus:ring-primary cursor-pointer">
+<option>All Warehouses</option>
+<option>Central Distribution (DXB)</option>
+<option>Eastern Hub (DMM)</option>
+<option>Northern Storage (RUH)</option>
+</select>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-label-md font-bold text-primary px-2">Category:</span>
+<select class="bg-surface border border-outline-variant rounded px-4 py-2 font-body-md outline-none focus:ring-2 focus:ring-primary cursor-pointer">
+<option>All Categories</option>
+<option>Switchgear</option>
+<option>Cabling</option>
+<option>Circuit Breakers</option>
+<option>Transformers</option>
+</select>
+</div>
+<div class="ml-auto flex gap-2">
+<button class="p-2 border border-outline-variant rounded hover:bg-surface-container-high material-symbols-outlined">filter_list</button>
+<button class="p-2 border border-outline-variant rounded hover:bg-surface-container-high material-symbols-outlined">download</button>
+</div>
+</div>
+<!-- Main Inventory Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Stock Balance Table -->
+<div class="lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm">
+<div class="px-6 py-4 bg-primary text-on-primary flex justify-between items-center">
+<h4 class="font-headline-md text-headline-md">Stock Balance</h4>
+<span class="text-body-sm font-label-md bg-on-primary/10 px-3 py-1 rounded">Last update: 2 mins ago</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-primary/5 text-on-surface-variant font-label-md border-b border-outline-variant">
+<th class="px-6 py-4">SKU</th>
+<th class="px-6 py-4">Name</th>
+<th class="px-6 py-4">Warehouse</th>
+<th class="px-6 py-4 text-right">Current Stock</th>
+<th class="px-6 py-4 text-right">Committed</th>
+<th class="px-6 py-4 text-right">Available</th>
+<th class="px-6 py-4">Unit</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-4 font-data-mono text-primary font-bold">MW-SW-400A</td>
+<td class="px-6 py-4">Industrial Switchgear 400A</td>
+<td class="px-6 py-4">DXB-Main</td>
+<td class="px-6 py-4 text-right">42</td>
+<td class="px-6 py-4 text-right text-on-surface-variant">12</td>
+<td class="px-6 py-4 text-right font-bold text-primary">30</td>
+<td class="px-6 py-4 text-outline">Units</td>
+</tr>
+<tr class="bg-red-50/50 hover:bg-red-50 transition-colors">
+<td class="px-6 py-4 font-data-mono text-primary font-bold">MW-CAB-XLPE-50</td>
+<td class="px-6 py-4 flex items-center gap-2">
+                                        XLPE Power Cable 50mm
+                                        <span class="material-symbols-outlined text-error text-sm animate-pulse" data-icon="warning" style="font-variation-settings: 'FILL' 1;">warning</span>
+</td>
+<td class="px-6 py-4">RUH-North</td>
+<td class="px-6 py-4 text-right text-error font-bold">120</td>
+<td class="px-6 py-4 text-right text-on-surface-variant">250</td>
+<td class="px-6 py-4 text-right font-bold text-error">-130</td>
+<td class="px-6 py-4 text-outline">Meters</td>
+</tr>
+<tr class="hover:bg-primary/5 transition-colors">
+<td class="px-6 py-4 font-data-mono text-primary font-bold">MW-TR-500KVA</td>
+<td class="px-6 py-4">Power Transformer 500kVA</td>
+<td class="px-6 py-4">DMM-East</td>
+<td class="px-6 py-4 text-right">8</td>
+<td class="px-6 py-4 text-right text-on-surface-variant">0</td>
+<td class="px-6 py-4 text-right font-bold text-primary">8</td>
+<td class="px-6 py-4 text-outline">Units</td>
+</tr>
+<tr class="bg-red-50/50 hover:bg-red-50 transition-colors">
+<td class="px-6 py-4 font-data-mono text-primary font-bold">MW-BR-16A-1P</td>
+<td class="px-6 py-4 flex items-center gap-2">
+                                        Miniature Breaker 16A 1P
+                                        <span class="material-symbols-outlined text-error text-sm" data-icon="error">error</span>
+</td>
+<td class="px-6 py-4">DXB-Main</td>
+<td class="px-6 py-4 text-right text-error font-bold">45</td>
+<td class="px-6 py-4 text-right text-on-surface-variant">40</td>
+<td class="px-6 py-4 text-right font-bold text-error">5</td>
+<td class="px-6 py-4 text-outline">Units</td>
+</tr>
+<tr class="hover:bg-primary/5 transition-colors">
+<td class="px-6 py-4 font-data-mono text-primary font-bold">MW-CON-M12</td>
+<td class="px-6 py-4">Copper Connector M12</td>
+<td class="px-6 py-4">DXB-Main</td>
+<td class="px-6 py-4 text-right">2,400</td>
+<td class="px-6 py-4 text-right text-on-surface-variant">150</td>
+<td class="px-6 py-4 text-right font-bold text-primary">2,250</td>
+<td class="px-6 py-4 text-outline">Pieces</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Stock Movements Timeline -->
+<div class="lg:col-span-4 flex flex-col gap-8">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden flex-1 shadow-sm">
+<div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center">
+<h4 class="font-label-md text-label-md text-primary uppercase tracking-widest">Recent Movements</h4>
+<button class="text-primary text-body-sm font-bold hover:underline">View All</button>
+</div>
+<div class="p-6">
+<div class="relative space-y-8 before:absolute before:left-3.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-outline-variant">
+<!-- Movement Item -->
+<div class="relative pl-10">
+<div class="absolute left-0 top-1 w-7 h-7 bg-green-100 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
+<span class="material-symbols-outlined text-green-600 text-sm" data-icon="add">add</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-primary">Incoming Shipment</p>
+<p class="text-body-sm text-on-surface-variant">PO #8421 - 500x Circuit Breakers</p>
+<span class="text-[10px] font-bold text-outline uppercase">Today, 10:45 AM</span>
+</div>
+</div>
+<!-- Movement Item -->
+<div class="relative pl-10">
+<div class="absolute left-0 top-1 w-7 h-7 bg-primary-container/20 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="sync_alt">sync_alt</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-primary">Stock Transfer</p>
+<p class="text-body-sm text-on-surface-variant">DXB → RUH Hub - MW-SW-400A</p>
+<span class="text-[10px] font-bold text-outline uppercase">Today, 09:12 AM</span>
+</div>
+</div>
+<!-- Movement Item -->
+<div class="relative pl-10">
+<div class="absolute left-0 top-1 w-7 h-7 bg-red-100 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
+<span class="material-symbols-outlined text-red-600 text-sm" data-icon="remove">remove</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-primary">Outgoing - Sales Order</p>
+<p class="text-body-sm text-on-surface-variant">SO #9910 - Customer: Aramco</p>
+<span class="text-[10px] font-bold text-outline uppercase">Yesterday, 04:30 PM</span>
+</div>
+</div>
+<!-- Movement Item -->
+<div class="relative pl-10">
+<div class="absolute left-0 top-1 w-7 h-7 bg-secondary-container/20 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="warning">warning</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-primary">Inventory Adjustment</p>
+<p class="text-body-sm text-on-surface-variant">Manual Correction - Damage Loss</p>
+<span class="text-[10px] font-bold text-outline uppercase">Yesterday, 11:20 AM</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Visual Warehouse Map (Placeholder for context) -->
+<div class="bg-primary p-6 border border-outline-variant rounded-xl text-on-primary">
+<div class="flex justify-between items-center mb-4">
+<h4 class="font-label-md text-label-md uppercase tracking-widest opacity-80">Quick Asset Locator</h4>
+<span class="material-symbols-outlined opacity-50">map</span>
+</div>
+<div class="h-40 w-full bg-primary-container/30 rounded-lg flex items-center justify-center overflow-hidden relative">
+<img class="w-full h-full object-cover opacity-40 mix-blend-overlay" data-alt="A high-density industrial warehouse floor plan view from above. The scene is rendered in a technical architectural style with glowing blue grid lines and highlighted storage zones. The aesthetic is clean, professional, and data-centric, using a dark navy and electric blue palette to convey precision and technological sophistication in a modern ERP interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfeq68ZoWGTgwI2fMrawoAennvFUm4Or4PZ88hnrej2_TuiR1UXnWyMblSorE55kBHsNLqwW87uIZpParEUX5Gl3W0pct49GakIu6bwdGwtJewvP1RauTKeTMu7UB8Bi6ZqXwo9gA6LK9D7kKwsE-Xg3y1AA3_q8GHHi7jjRUWb9nO1sJuuuNbTyPDir8R5kZqaxxyf74r-5epJhGzQQalXe1TFloob-JS0h_bkyYzxqWIHP2CikPdHT8jXA5y2knpQPS9vgLb7PA"/>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter">View Floor Plan</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer / System Stats -->
+<footer class="mt-auto border-t border-outline-variant bg-surface-container p-6">
+<div class="flex justify-between items-center text-on-surface-variant">
+<div class="flex gap-8">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-green-500"></div>
+<span class="font-body-sm">ERP Sync Status: Active</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">database</span>
+<span class="font-body-sm">Database: SQL-Industrial-v4</span>
+</div>
+</div>
+<div class="font-body-sm">
+                    © 2024 MegaWatt ERP Industrial Solutions. All Rights Reserved.
+                </div>
+</div>
+</footer>
+</main>
+<script>
+        // Simple micro-interactions for demo
+        document.querySelectorAll('tr').forEach(row => {
+            row.addEventListener('click', () => {
+                console.log('Item selected for detail view');
+            });
+        });
+
+        // Toggle active states for navigation for demo feel
+        const navLinks = document.querySelectorAll('nav a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                navLinks.forEach(l => {
+                    l.classList.remove('border-l-2', 'border-secondary-fixed', 'text-on-primary', 'font-bold', 'bg-primary-container');
+                    l.classList.add('text-on-primary-container', 'dark:text-on-tertiary-container');
+                });
+                link.classList.add('border-l-2', 'border-secondary-fixed', 'text-on-primary', 'font-bold', 'bg-primary-container');
+                link.classList.remove('text-on-primary-container', 'dark:text-on-tertiary-container');
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+<html dir="ltr" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#f7f9fb",
+                        "tertiary-fixed": "#dde2f3",
+                        "tertiary-fixed-dim": "#c1c6d7",
+                        "on-primary-fixed-variant": "#1f477b",
+                        "on-tertiary-fixed-variant": "#414754",
+                        "surface-container-low": "#f2f4f6",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#a7c8ff",
+                        "secondary-fixed-dim": "#fbbc00",
+                        "on-secondary-fixed": "#261a00",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#ffdfa0",
+                        "surface-bright": "#f7f9fb",
+                        "primary": "#001e40",
+                        "on-surface-variant": "#43474f",
+                        "outline": "#737780",
+                        "on-primary": "#ffffff",
+                        "on-background": "#191c1e",
+                        "on-tertiary-fixed": "#161c27",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#6d5000",
+                        "on-primary-container": "#799dd6",
+                        "primary-fixed": "#d5e3ff",
+                        "inverse-on-surface": "#eff1f3",
+                        "tertiary-container": "#2d3340",
+                        "on-primary-fixed": "#001b3c",
+                        "surface-variant": "#e0e3e5",
+                        "outline-variant": "#c3c6d1",
+                        "surface-container-high": "#e6e8ea",
+                        "on-tertiary-container": "#959bab",
+                        "surface-container-highest": "#e0e3e5",
+                        "tertiary": "#181e2a",
+                        "surface-dim": "#d8dadc",
+                        "inverse-surface": "#2d3133",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#ffbf00",
+                        "primary-container": "#003366",
+                        "on-secondary-fixed-variant": "#5c4300",
+                        "surface-container": "#eceef0",
+                        "error-container": "#ffdad6",
+                        "surface-tint": "#3a5f94",
+                        "surface": "#f7f9fb",
+                        "on-surface": "#191c1e",
+                        "error": "#ba1a1a",
+                        "primary-fixed-dim": "#a7c8ff",
+                        "secondary": "#795900"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-max": "1440px",
+                        "unit": "4px",
+                        "gutter": "16px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "32px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "data-mono": ["JetBrains Mono"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "display-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-md": ["13px", {"lineHeight": "18px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "data-mono": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                        "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .industrial-grid {
+            background-color: #f7f9fb;
+            background-image: radial-gradient(#d5e3ff 0.5px, transparent 0.5px), radial-gradient(#d5e3ff 0.5px, #f7f9fb 0.5px);
+            background-size: 24px 24px;
+            background-position: 0 0, 12px 12px;
+        }
+        .login-card-shadow {
+            box-shadow: 0 4px 12px rgba(0, 51, 102, 0.05), 0 1px 2px rgba(0, 0, 0, 0.08);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background industrial-grid min-h-screen flex items-center justify-center font-body-md">
+<!-- Language Switcher Header -->
+<header class="fixed top-0 left-0 w-full p-margin-desktop flex justify-between items-center z-50">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="bolt" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="font-headline-md text-headline-md font-bold text-primary tracking-tight">MegaWatt ERP</span>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface hover:bg-surface-container-high border border-outline-variant transition-all duration-200 group">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="language">language</span>
+<span class="font-label-md text-label-md text-primary group-hover:text-primary">EN / AR</span>
+</button>
+</header>
+<main class="relative z-10 w-full max-w-[480px] px-margin-mobile">
+<!-- Main Login Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg login-card-shadow p-8 md:p-12 overflow-hidden relative">
+<!-- Subtle accent bar -->
+<div class="absolute top-0 left-0 w-full h-1 bg-secondary-container"></div>
+<div class="text-center mb-10">
+<div class="inline-flex items-center justify-center w-16 h-16 bg-primary-container rounded-lg mb-6">
+<span class="material-symbols-outlined text-on-primary-container text-[32px]" data-icon="factory">factory</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-primary mb-2">MegaWatt / ميجا وات</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Secure Industrial Access Portal</p>
+</div>
+<form class="space-y-6" onsubmit="event.preventDefault();">
+<!-- Email Field -->
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider block" for="email">Corporate Email</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]" data-icon="mail">mail</span>
+<input class="w-full pl-10 pr-4 py-3 bg-white border border-outline-variant rounded focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md" id="email" placeholder="name@megawatt.com" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="space-y-2">
+<div class="flex justify-between">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider block" for="password">Access Key</label>
+<a class="font-label-md text-label-md text-primary-container hover:underline" href="#">Forgot?</a>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]" data-icon="key">key</span>
+<input class="w-full pl-10 pr-10 py-3 bg-white border border-outline-variant rounded focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md" id="password" placeholder="••••••••" type="password"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-primary" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="visibility">visibility</span>
+</button>
+</div>
+</div>
+<div class="flex items-center gap-2 py-2">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary" id="remember" type="checkbox"/>
+<label class="font-body-sm text-body-sm text-on-surface-variant" for="remember">Keep station logged in for 8 hours</label>
+</div>
+<button class="w-full bg-primary text-on-primary py-4 rounded font-label-md text-label-md uppercase tracking-widest hover:bg-primary-container transition-colors duration-200 flex items-center justify-center gap-2" type="submit">
+                    Establish Connection
+                    <span class="material-symbols-outlined text-[18px]" data-icon="login">login</span>
+</button>
+</form>
+<div class="relative my-10">
+<div class="absolute inset-0 flex items-center"><div class="w-full border-t border-outline-variant"></div></div>
+<div class="relative flex justify-center text-xs uppercase"><span class="bg-surface-container-lowest px-4 text-outline font-label-md tracking-widest">Demo Sandbox</span></div>
+</div>
+<!-- Demo Login Grid -->
+<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+<button class="flex flex-col items-center justify-center p-3 rounded-lg border border-outline-variant bg-surface hover:bg-tertiary-fixed-dim hover:border-primary transition-all duration-200 group" onclick="fillLogin('admin')">
+<span class="material-symbols-outlined text-[20px] text-primary mb-1" data-icon="shield_person">shield_person</span>
+<span class="font-label-md text-body-sm text-on-surface">Admin</span>
+</button>
+<button class="flex flex-col items-center justify-center p-3 rounded-lg border border-outline-variant bg-surface hover:bg-tertiary-fixed-dim hover:border-primary transition-all duration-200 group" onclick="fillLogin('manager')">
+<span class="material-symbols-outlined text-[20px] text-primary mb-1" data-icon="manage_accounts">manage_accounts</span>
+<span class="font-label-md text-body-sm text-on-surface">Manager</span>
+</button>
+<button class="flex flex-col items-center justify-center p-3 rounded-lg border border-outline-variant bg-surface hover:bg-tertiary-fixed-dim hover:border-primary transition-all duration-200 group" onclick="fillLogin('accountant')">
+<span class="material-symbols-outlined text-[20px] text-primary mb-1" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span class="font-label-md text-body-sm text-on-surface">Finance</span>
+</button>
+<button class="flex flex-col items-center justify-center p-3 rounded-lg border border-outline-variant bg-surface hover:bg-tertiary-fixed-dim hover:border-primary transition-all duration-200 group" onclick="fillLogin('sales')">
+<span class="material-symbols-outlined text-[20px] text-primary mb-1" data-icon="shopping_cart">shopping_cart</span>
+<span class="font-label-md text-body-sm text-on-surface">Sales</span>
+</button>
+<button class="flex flex-col items-center justify-center p-3 rounded-lg border border-outline-variant bg-surface hover:bg-tertiary-fixed-dim hover:border-primary transition-all duration-200 group md:col-span-2" onclick="fillLogin('warehouse')">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-primary" data-icon="inventory_2">inventory_2</span>
+<span class="font-label-md text-body-sm text-on-surface">Warehouse Keeper</span>
+</div>
+</button>
+</div>
+</div>
+<!-- System Status Footer -->
+<div class="mt-8 flex flex-col md:flex-row justify-between items-center px-4 opacity-70">
+<div class="flex items-center gap-2 mb-4 md:mb-0">
+<div class="w-2 h-2 rounded-full bg-[#10b981] animate-pulse"></div>
+<span class="font-label-md text-body-sm text-primary uppercase tracking-tighter">Systems: Operational v4.2.1</span>
+</div>
+<div class="flex items-center gap-6">
+<a class="font-label-md text-body-sm text-on-surface-variant hover:text-primary" href="#">System Manual</a>
+<a class="font-label-md text-body-sm text-on-surface-variant hover:text-primary" href="#">Compliance</a>
+<a class="font-label-md text-body-sm text-on-surface-variant hover:text-primary" href="#">Support</a>
+</div>
+</div>
+</main>
+<!-- Visual Background Element: Industrial Blueprint Style -->
+<div class="fixed bottom-0 right-0 w-[600px] h-[600px] pointer-events-none opacity-5 -z-10 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Detailed technical blueprint drawing of an industrial electrical transformer and power grid system. The style is professional and precise, using fine technical lines in a cool navy blue tone on a clean white background. The composition is structured and architectural, reflecting reliability and engineering excellence in a modern ERP environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDz9c1Hc6mEQCjvPn7oUwEo7-nMFplgeZT_dKhh6qcXnzusbifbl1_A2HkwUrHIyvNobkzxh2IC_axlHpWRWpBxojnARFzaJaTZCZrg-wSt-xbGwRRgSEko2knwp7pdgYw_VB280HDnMSmj6D5j7O2XpJtrKxVNiy2Am0qFORy-KfxsGFODOuakQ0TgpZHUYm86bA2V1QncPmd2vT_mry3DZe7vBmVGYlsUUtjoflz43Z6q_Rrp0D4Wa_I79k1dUfhg7IXHSbau-Gg"/>
+</div>
+<script>
+        function fillLogin(role) {
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            
+            const credentials = {
+                admin: 'admin@megawatt.com',
+                manager: 'manager@megawatt.com',
+                accountant: 'finance@megawatt.com',
+                sales: 'sales@megawatt.com',
+                warehouse: 'warehouse@megawatt.com'
+            };
+
+            emailInput.value = credentials[role];
+            passwordInput.value = 'password123';
+            
+            // Visual feedback
+            const button = event.currentTarget;
+            button.classList.add('scale-95');
+            setTimeout(() => {
+                button.classList.remove('scale-95');
+                emailInput.focus();
+            }, 100);
+        }
+
+        // Simple Fade in effect on load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.5s ease-in-out';
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 50);
+        });
+    </script>
+</body></html>

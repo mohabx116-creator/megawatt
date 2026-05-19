@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MegaWatt ERP - Industrial Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "background": "#f7f9fb",
+                      "tertiary-fixed": "#dde2f3",
+                      "tertiary-fixed-dim": "#c1c6d7",
+                      "on-primary-fixed-variant": "#1f477b",
+                      "on-tertiary-fixed-variant": "#414754",
+                      "surface-container-low": "#f2f4f6",
+                      "on-secondary": "#ffffff",
+                      "inverse-primary": "#a7c8ff",
+                      "secondary-fixed-dim": "#fbbc00",
+                      "on-secondary-fixed": "#261a00",
+                      "on-error": "#ffffff",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-fixed": "#ffdfa0",
+                      "surface-bright": "#f7f9fb",
+                      "primary": "#001e40",
+                      "on-surface-variant": "#43474f",
+                      "outline": "#737780",
+                      "on-primary": "#ffffff",
+                      "on-background": "#191c1e",
+                      "on-tertiary-fixed": "#161c27",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary-container": "#6d5000",
+                      "on-primary-container": "#799dd6",
+                      "primary-fixed": "#d5e3ff",
+                      "inverse-on-surface": "#eff1f3",
+                      "tertiary-container": "#2d3340",
+                      "on-primary-fixed": "#001b3c",
+                      "surface-variant": "#e0e3e5",
+                      "outline-variant": "#c3c6d1",
+                      "surface-container-high": "#e6e8ea",
+                      "on-tertiary-container": "#959bab",
+                      "surface-container-highest": "#e0e3e5",
+                      "tertiary": "#181e2a",
+                      "surface-dim": "#d8dadc",
+                      "inverse-surface": "#2d3133",
+                      "on-error-container": "#93000a",
+                      "secondary-container": "#ffbf00",
+                      "primary-container": "#003366",
+                      "on-secondary-fixed-variant": "#5c4300",
+                      "surface-container": "#eceef0",
+                      "error-container": "#ffdad6",
+                      "surface-tint": "#3a5f94",
+                      "surface": "#f7f9fb",
+                      "on-surface": "#191c1e",
+                      "error": "#ba1a1a",
+                      "primary-fixed-dim": "#a7c8ff",
+                      "secondary": "#795900"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "container-max": "1440px",
+                      "unit": "4px",
+                      "gutter": "16px",
+                      "margin-mobile": "16px",
+                      "margin-desktop": "32px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Inter"],
+                      "body-md": ["Inter"],
+                      "display-lg": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "data-mono": ["jetbrainsMono"],
+                      "body-sm": ["Inter"],
+                      "body-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "display-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "label-md": ["13px", {"lineHeight": "18px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "data-mono": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                      "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #c3c6d1; border-radius: 2px; }
+    </style>
+</head>
+<body class="bg-background text-on-background">
+<!-- Shell Layout -->
+<div class="flex h-screen overflow-hidden">
+<!-- SideNavBar (JSON Derived) -->
+<aside class="fixed left-0 top-0 h-full w-[260px] bg-primary dark:bg-primary-container flex flex-col border-r border-outline-variant dark:border-outline z-50">
+<div class="p-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-secondary-container flex items-center justify-center rounded">
+<span class="material-symbols-outlined text-on-secondary-container" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<div>
+<h1 class="font-headline-lg text-headline-lg font-black text-on-primary dark:text-primary-fixed leading-tight">MegaWatt ERP</h1>
+<p class="text-on-primary-container text-xs opacity-70">Industrial Supplies</p>
+</div>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto px-4 py-2 custom-scrollbar">
+<nav class="space-y-1">
+<!-- Dashboard Active -->
+<a class="flex items-center gap-3 px-4 py-3 border-l-2 border-secondary-fixed text-on-primary font-bold bg-primary-container dark:bg-tertiary-container transition-all duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<!-- Sales -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:bg-tertiary-container hover:text-on-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-md text-label-md">Sales</span>
+</a>
+<!-- Purchasing -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:bg-tertiary-container hover:text-on-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="font-label-md text-label-md">Purchasing</span>
+</a>
+<!-- Inventory -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:bg-tertiary-container hover:text-on-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-md text-label-md">Inventory</span>
+</a>
+<!-- Finance -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:bg-tertiary-container hover:text-on-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">account_balance</span>
+<span class="font-label-md text-label-md">Finance</span>
+</a>
+<!-- HR -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:bg-tertiary-container hover:text-on-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-label-md text-label-md">HR</span>
+</a>
+<!-- Reports -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:bg-tertiary-container hover:text-on-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+</nav>
+<div class="mt-8">
+<button class="w-full py-3 px-4 bg-secondary-container text-on-secondary-container font-bold rounded flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="font-label-md text-label-md">Create New Order</span>
+</button>
+</div>
+</div>
+<div class="p-4 border-t border-outline-variant dark:border-outline bg-primary dark:bg-primary-container">
+<a class="flex items-center gap-3 px-4 py-2 text-on-primary-container hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-primary-container hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="font-label-md text-label-md">Profile</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-[260px] flex flex-col h-screen overflow-hidden">
+<!-- TopAppBar (JSON Derived) -->
+<header class="sticky top-0 w-full h-16 bg-surface dark:bg-surface-container-low border-b border-outline-variant dark:border-outline flex items-center justify-between px-margin-desktop z-40">
+<div class="flex items-center gap-8">
+<div class="relative w-80">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full bg-surface-container-highest border-none rounded-full pl-10 pr-4 py-2 text-body-md focus:ring-2 focus:ring-primary" placeholder="Search orders, SKU, or invoices..." type="text"/>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-primary font-bold border-b-2 border-secondary-fixed py-5 font-label-md" href="#">Dashboard</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-md" href="#">Quick Actions</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 text-primary font-bold px-3 py-1 bg-surface-container rounded-full cursor-pointer hover:bg-surface-container-highest transition-colors">
+<span class="text-label-md">EN/AR</span>
+</div>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-highest rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-highest rounded-full transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-8 w-px bg-outline-variant mx-1"></div>
+<div class="flex items-center gap-3">
+<div class="text-right">
+<p class="font-label-md text-on-surface">M. Ibrahim</p>
+<span class="text-[10px] uppercase tracking-wider bg-primary-container text-on-primary-container px-2 py-0.5 rounded font-bold">Admin</span>
+</div>
+<img alt="Admin Profile" class="w-10 h-10 rounded-full object-cover border border-outline-variant" data-alt="A professional headshot of a middle-aged Egyptian executive in a modern office environment. He is wearing a crisp white shirt and a navy blazer, projecting authority and reliability. The lighting is soft and corporate, emphasizing a clean and professional aesthetic with a blurred tech-office background that uses cool blue and gray tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOpU72vrhDsYdJxTsnJzkf1VZSRtrdEY1GJ5loK9_Q1CtqviZot36uYCEZhM_RaX22LWjWdnELSvdONRN09IIzlLM45Bm_vIHjZxaShh3FAqMZaQOulNR18i60PBhw539EImnpmhshP6efSOfQqvk_pP9Lc-6nRKTtnLUsRVz6HZclTEaw2P7xw4cg9ncOk1z9CsKC330Wqh4FV51yUt2HMXQfDxwMCOC3eBdEuQGQmZ7K8jinT3HfPN8u3rC_yGxUaHqcl3IBmWc"/>
+</div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="flex-1 overflow-y-auto p-8 bg-background custom-scrollbar">
+<!-- KPI Section (Grid) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
+<!-- Monthly Sales -->
+<div class="bg-surface p-5 border border-outline-variant rounded-lg hover:border-primary transition-colors cursor-default group">
+<div class="flex items-center justify-between mb-3">
+<span class="text-label-md text-on-surface-variant uppercase tracking-tighter">Monthly Sales</span>
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">trending_up</span>
+</div>
+<div class="font-display-lg text-display-lg text-primary">1.2M</div>
+<div class="flex items-center gap-1 mt-1">
+<span class="text-body-sm text-green-600 font-bold">+12%</span>
+<span class="text-body-sm text-outline">vs last month</span>
+</div>
+</div>
+<!-- Net Profit -->
+<div class="bg-surface p-5 border border-outline-variant rounded-lg hover:border-secondary transition-colors cursor-default">
+<div class="flex items-center justify-between mb-3">
+<span class="text-label-md text-on-surface-variant uppercase tracking-tighter">Net Profit</span>
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">payments</span>
+</div>
+<div class="font-display-lg text-display-lg text-on-surface">450k</div>
+<div class="text-body-sm text-outline mt-1">EGP Currency</div>
+</div>
+<!-- Monthly Expenses -->
+<div class="bg-surface p-5 border border-outline-variant rounded-lg">
+<div class="flex items-center justify-between mb-3">
+<span class="text-label-md text-on-surface-variant uppercase tracking-tighter">Expenses</span>
+<span class="material-symbols-outlined text-outline">account_balance_wallet</span>
+</div>
+<div class="font-display-lg text-display-lg text-on-surface">300k</div>
+<div class="flex items-center gap-1 mt-1">
+<span class="text-body-sm text-error font-bold">+4%</span>
+<span class="text-body-sm text-outline">Inc. Logistics</span>
+</div>
+</div>
+<!-- Unpaid Invoices -->
+<div class="bg-surface p-5 border border-outline-variant rounded-lg">
+<div class="flex items-center justify-between mb-3">
+<span class="text-label-md text-on-surface-variant uppercase tracking-tighter">Unpaid Inv.</span>
+<span class="material-symbols-outlined text-error">pending_actions</span>
+</div>
+<div class="font-display-lg text-display-lg text-error">12</div>
+<div class="text-body-sm text-outline mt-1">Requiring Follow-up</div>
+</div>
+<!-- Low Stock Items -->
+<div class="bg-secondary-fixed p-5 border border-outline-variant rounded-lg">
+<div class="flex items-center justify-between mb-3">
+<span class="text-label-md text-on-secondary-fixed uppercase tracking-tighter">Low Stock</span>
+<span class="material-symbols-outlined text-on-secondary-fixed">warning</span>
+</div>
+<div class="font-display-lg text-display-lg text-on-secondary-fixed">05</div>
+<div class="text-body-sm text-on-secondary-fixed-variant mt-1">Alert Triggered</div>
+</div>
+<!-- Debt Customers -->
+<div class="bg-surface p-5 border border-outline-variant rounded-lg">
+<div class="flex items-center justify-between mb-3">
+<span class="text-label-md text-on-surface-variant uppercase tracking-tighter">Debt Cust.</span>
+<span class="material-symbols-outlined text-outline">person_off</span>
+</div>
+<div class="font-display-lg text-display-lg text-on-surface">08</div>
+<div class="text-body-sm text-outline mt-1">Active Receivables</div>
+</div>
+</div>
+<!-- Bento Grid for Charts & Tables -->
+<div class="grid grid-cols-12 gap-6 items-start">
+<!-- Main Chart: Sales vs Expenses -->
+<div class="col-span-12 lg:col-span-8 bg-surface p-6 border border-outline-variant rounded-lg">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h3 class="font-headline-md text-headline-md text-primary">Operational Performance</h3>
+<p class="text-body-sm text-outline">Sales Revenue vs Fixed Expenses (2024 YTD)</p>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 bg-primary rounded-full"></div>
+<span class="text-label-md">Sales</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 bg-secondary-container rounded-full"></div>
+<span class="text-label-md">Expenses</span>
+</div>
+</div>
+</div>
+<!-- Fake CSS Chart -->
+<div class="h-64 flex items-end gap-4 px-2">
+<div class="flex-1 flex flex-col gap-1 items-center">
+<div class="w-full bg-secondary-container rounded-t" style="height: 30%"></div>
+<div class="w-full bg-primary rounded-t" style="height: 70%"></div>
+<span class="text-[10px] text-outline mt-2 uppercase">Jan</span>
+</div>
+<div class="flex-1 flex flex-col gap-1 items-center">
+<div class="w-full bg-secondary-container rounded-t" style="height: 35%"></div>
+<div class="w-full bg-primary rounded-t" style="height: 80%"></div>
+<span class="text-[10px] text-outline mt-2 uppercase">Feb</span>
+</div>
+<div class="flex-1 flex flex-col gap-1 items-center">
+<div class="w-full bg-secondary-container rounded-t" style="height: 25%"></div>
+<div class="w-full bg-primary rounded-t" style="height: 65%"></div>
+<span class="text-[10px] text-outline mt-2 uppercase">Mar</span>
+</div>
+<div class="flex-1 flex flex-col gap-1 items-center">
+<div class="w-full bg-secondary-container rounded-t" style="height: 40%"></div>
+<div class="w-full bg-primary rounded-t" style="height: 90%"></div>
+<span class="text-[10px] text-outline mt-2 uppercase">Apr</span>
+</div>
+<div class="flex-1 flex flex-col gap-1 items-center">
+<div class="w-full bg-secondary-container rounded-t" style="height: 30%"></div>
+<div class="w-full bg-primary rounded-t" style="height: 75%"></div>
+<span class="text-[10px] text-outline mt-2 uppercase">May</span>
+</div>
+<div class="flex-1 flex flex-col gap-1 items-center">
+<div class="w-full bg-secondary-container rounded-t" style="height: 35%"></div>
+<div class="w-full bg-primary rounded-t" style="height: 85%"></div>
+<span class="text-[10px] text-outline mt-2 uppercase">Jun</span>
+</div>
+</div>
+</div>
+<!-- Pie Chart: Top Selling Products -->
+<div class="col-span-12 lg:col-span-4 bg-surface p-6 border border-outline-variant rounded-lg h-full">
+<h3 class="font-headline-md text-headline-md text-primary mb-1">Top Inventory</h3>
+<p class="text-body-sm text-outline mb-6">By Sales Volume</p>
+<div class="space-y-6">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-xs">42%</div>
+<span class="text-body-md font-medium">Copper Cables 2.5mm</span>
+</div>
+<span class="text-data-mono text-outline">4.2k Units</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="bg-primary h-full" style="width: 42%"></div>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-secondary-container flex items-center justify-center text-on-secondary-container font-bold text-xs">28%</div>
+<span class="text-body-md font-medium">ABB Circuit Breakers</span>
+</div>
+<span class="text-data-mono text-outline">2.8k Units</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="bg-secondary h-full" style="width: 28%"></div>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed font-bold text-xs">15%</div>
+<span class="text-body-md font-medium">Ind. Sockets 32A</span>
+</div>
+<span class="text-data-mono text-outline">1.5k Units</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="bg-tertiary-fixed-dim h-full" style="width: 15%"></div>
+</div>
+</div>
+<button class="w-full mt-8 py-2 border border-outline-variant text-label-md uppercase tracking-widest hover:bg-surface-container-low transition-colors">View All Inventory</button>
+</div>
+<!-- Latest Sales Invoices Table -->
+<div class="col-span-12 lg:col-span-8 bg-surface border border-outline-variant rounded-lg overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant flex items-center justify-between bg-surface-container-lowest">
+<h3 class="font-headline-sm text-headline-sm text-primary">Latest Sales Invoices</h3>
+<button class="text-primary text-label-md font-bold hover:underline">Download Report</button>
+</div>
+<table class="w-full text-left">
+<thead class="bg-primary text-on-primary">
+<tr>
+<th class="px-6 py-3 font-label-md">Invoice ID</th>
+<th class="px-6 py-3 font-label-md">Customer</th>
+<th class="px-6 py-3 font-label-md">Amount</th>
+<th class="px-6 py-3 font-label-md">Status</th>
+<th class="px-6 py-3 font-label-md">Date</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-background transition-colors">
+<td class="px-6 py-4 font-data-mono">#INV-8821</td>
+<td class="px-6 py-4 text-body-md">Cairo Electrical Contracting</td>
+<td class="px-6 py-4 font-bold text-primary">EGP 12,500</td>
+<td class="px-6 py-4">
+<span class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-[10px] font-bold uppercase">Paid</span>
+</td>
+<td class="px-6 py-4 text-body-sm text-outline">Oct 12, 2023</td>
+</tr>
+<tr class="bg-surface-container-lowest hover:bg-background transition-colors">
+<td class="px-6 py-4 font-data-mono">#INV-8822</td>
+<td class="px-6 py-4 text-body-md">El Sewedy Distribution</td>
+<td class="px-6 py-4 font-bold text-primary">EGP 45,000</td>
+<td class="px-6 py-4">
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded text-[10px] font-bold uppercase">Pending</span>
+</td>
+<td class="px-6 py-4 text-body-sm text-outline">Oct 14, 2023</td>
+</tr>
+<tr class="hover:bg-background transition-colors">
+<td class="px-6 py-4 font-data-mono">#INV-8823</td>
+<td class="px-6 py-4 text-body-md">Delta Power Solutions</td>
+<td class="px-6 py-4 font-bold text-primary">EGP 8,200</td>
+<td class="px-6 py-4">
+<span class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-[10px] font-bold uppercase">Paid</span>
+</td>
+<td class="px-6 py-4 text-body-sm text-outline">Oct 14, 2023</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Low Stock Alerts Panel -->
+<div class="col-span-12 lg:col-span-4 space-y-6">
+<div class="bg-surface border border-outline-variant rounded-lg overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant bg-error-container text-on-error-container flex items-center gap-2">
+<span class="material-symbols-outlined text-error">report_problem</span>
+<h3 class="font-label-md uppercase tracking-wider">Critical Stock Alerts</h3>
+</div>
+<div class="p-6 space-y-4">
+<div class="flex items-start gap-4 p-3 bg-surface-container rounded border-l-4 border-error">
+<div class="flex-1">
+<p class="text-body-md font-bold text-on-surface">Copper Cable - 2.5mm</p>
+<p class="text-body-sm text-outline">Current Stock: <span class="text-error font-bold">50m remaining</span></p>
+<p class="text-[10px] text-outline mt-1 uppercase">Safety Stock Level: 500m</p>
+</div>
+<button class="p-2 bg-primary text-on-primary rounded">
+<span class="material-symbols-outlined text-sm">shopping_cart_checkout</span>
+</button>
+</div>
+<div class="flex items-start gap-4 p-3 bg-surface-container rounded border-l-4 border-secondary">
+<div class="flex-1">
+<p class="text-body-md font-bold text-on-surface">3-Phase Industrial Sockets</p>
+<p class="text-body-sm text-outline">Current Stock: <span class="text-secondary font-bold">12 units</span></p>
+<p class="text-[10px] text-outline mt-1 uppercase">Safety Stock Level: 25 units</p>
+</div>
+<button class="p-2 bg-primary text-on-primary rounded">
+<span class="material-symbols-outlined text-sm">shopping_cart_checkout</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Fake Notification Panel -->
+<div class="bg-surface border border-outline-variant rounded-lg shadow-sm">
+<div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center">
+<h3 class="font-label-md text-primary uppercase tracking-widest">Recent Activity</h3>
+<span class="w-2 h-2 bg-secondary-container rounded-full animate-pulse"></span>
+</div>
+<div class="divide-y divide-outline-variant">
+<div class="p-4 flex gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-sm text-primary">local_shipping</span>
+</div>
+<div>
+<p class="text-body-sm text-on-surface"><span class="font-bold">Shipment #229</span> dispatched to Alexandria Branch.</p>
+<span class="text-[10px] text-outline uppercase">14 mins ago</span>
+</div>
+</div>
+<div class="p-4 flex gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-sm text-secondary">inventory</span>
+</div>
+<div>
+<p class="text-body-sm text-on-surface"><span class="font-bold">Warehouse B</span> inventory audit completed.</p>
+<span class="text-[10px] text-outline uppercase">2 hours ago</span>
+</div>
+</div>
+<div class="p-4 flex gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-sm text-error">priority_high</span>
+</div>
+<div>
+<p class="text-body-sm text-on-surface"><span class="font-bold">Debt Alert</span>: Delta Power exceeded credit limit.</p>
+<span class="text-[10px] text-outline uppercase">5 hours ago</span>
+</div>
+</div>
+</div>
+<button class="w-full p-3 text-center text-body-sm text-primary hover:bg-surface-container transition-colors font-medium border-t border-outline-variant">
+                                View System Logs
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Micro-interactions Script -->
+<script>
+        // Simple hover effect and simulation for the industrial dashboard
+        document.querySelectorAll('aside nav a').forEach(link => {
+            link.addEventListener('mouseenter', () => {
+                if (!link.classList.contains('bg-primary-container')) {
+                    link.style.paddingLeft = '1.25rem';
+                }
+            });
+            link.addEventListener('mouseleave', () => {
+                if (!link.classList.contains('bg-primary-container')) {
+                    link.style.paddingLeft = '1rem';
+                }
+            });
+        });
+
+        // Search Bar Focus Effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-2', 'ring-primary');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-2', 'ring-primary');
+        });
+    </script>
+</body></html>

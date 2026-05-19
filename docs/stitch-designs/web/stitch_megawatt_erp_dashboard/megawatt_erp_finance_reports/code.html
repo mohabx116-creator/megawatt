@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MegaWatt ERP - Finance &amp; Reports</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "background": "#f7f9fb",
+                      "tertiary-fixed": "#dde2f3",
+                      "tertiary-fixed-dim": "#c1c6d7",
+                      "on-primary-fixed-variant": "#1f477b",
+                      "on-tertiary-fixed-variant": "#414754",
+                      "surface-container-low": "#f2f4f6",
+                      "on-secondary": "#ffffff",
+                      "inverse-primary": "#a7c8ff",
+                      "secondary-fixed-dim": "#fbbc00",
+                      "on-secondary-fixed": "#261a00",
+                      "on-error": "#ffffff",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-fixed": "#ffdfa0",
+                      "surface-bright": "#f7f9fb",
+                      "primary": "#001e40",
+                      "on-surface-variant": "#43474f",
+                      "outline": "#737780",
+                      "on-primary": "#ffffff",
+                      "on-background": "#191c1e",
+                      "on-tertiary-fixed": "#161c27",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary-container": "#6d5000",
+                      "on-primary-container": "#799dd6",
+                      "primary-fixed": "#d5e3ff",
+                      "inverse-on-surface": "#eff1f3",
+                      "tertiary-container": "#2d3340",
+                      "on-primary-fixed": "#001b3c",
+                      "surface-variant": "#e0e3e5",
+                      "outline-variant": "#c3c6d1",
+                      "surface-container-high": "#e6e8ea",
+                      "on-tertiary-container": "#959bab",
+                      "surface-container-highest": "#e0e3e5",
+                      "tertiary": "#181e2a",
+                      "surface-dim": "#d8dadc",
+                      "inverse-surface": "#2d3133",
+                      "on-error-container": "#93000a",
+                      "secondary-container": "#ffbf00",
+                      "primary-container": "#003366",
+                      "on-secondary-fixed-variant": "#5c4300",
+                      "surface-container": "#eceef0",
+                      "error-container": "#ffdad6",
+                      "surface-tint": "#3a5f94",
+                      "surface": "#f7f9fb",
+                      "on-surface": "#191c1e",
+                      "error": "#ba1a1a",
+                      "primary-fixed-dim": "#a7c8ff",
+                      "secondary": "#795900"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "container-max": "1440px",
+                      "unit": "4px",
+                      "gutter": "16px",
+                      "margin-mobile": "16px",
+                      "margin-desktop": "32px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Inter"],
+                      "body-md": ["Inter"],
+                      "display-lg": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "data-mono": ["JetBrains Mono"],
+                      "body-sm": ["Inter"],
+                      "body-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "display-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "label-md": ["13px", {"lineHeight": "18px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "data-mono": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                      "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #c3c6d1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #737780; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-full w-[260px] bg-primary flex flex-col h-screen overflow-y-auto border-r border-outline-variant z-50">
+<!-- Brand Header -->
+<div class="p-6 flex items-center gap-3">
+<div class="w-10 h-10 bg-secondary-container rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-fixed text-2xl" data-icon="bolt">bolt</span>
+</div>
+<div>
+<h1 class="font-headline-lg text-headline-lg font-black text-on-primary leading-none">MegaWatt</h1>
+<p class="text-[10px] uppercase tracking-widest text-on-primary-container font-bold">Industrial ERP</p>
+</div>
+</div>
+<!-- Primary Navigation -->
+<nav class="flex-1 px-4 mt-4 space-y-1">
+<div class="px-2 py-2 mb-2">
+<button class="w-full bg-secondary-container text-on-secondary-fixed py-2.5 rounded-lg font-label-md flex items-center justify-center gap-2 hover:opacity-90 transition-all">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+                    Create New Order
+                </button>
+</div>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-on-primary-container hover:bg-tertiary-container transition-colors font-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span> Sales
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-on-primary-container hover:bg-tertiary-container transition-colors font-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span> Purchasing
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-on-primary-container hover:bg-tertiary-container transition-colors font-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span> Inventory
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded border-l-2 border-secondary-fixed text-on-primary font-bold bg-primary-container" href="#">
+<span class="material-symbols-outlined" data-icon="account_balance">account_balance</span> Finance
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-on-primary-container hover:bg-tertiary-container transition-colors font-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span> HR
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-on-primary-container hover:bg-tertiary-container transition-colors font-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span> Reports
+            </a>
+<!-- Reports Sidebar Sub-section -->
+<div class="pt-6 pb-2">
+<span class="px-3 text-[10px] font-bold text-on-primary-container uppercase tracking-widest opacity-50">Detailed Reports</span>
+</div>
+<a class="flex items-center gap-3 px-3 py-2 rounded text-on-primary-container hover:bg-tertiary-container transition-colors font-label-md text-sm" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="receipt_long">receipt_long</span> Sales Reports
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded text-on-primary-container hover:bg-tertiary-container transition-colors font-label-md text-sm" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="inventory">inventory</span> Inventory Reports
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded text-on-primary-container hover:bg-tertiary-container transition-colors font-label-md text-sm" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="money_off">money_off</span> Debts
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded text-on-primary-container hover:bg-tertiary-container transition-colors font-label-md text-sm" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="account_balance_wallet">account_balance_wallet</span> Expenses
+            </a>
+</nav>
+<!-- Footer Nav -->
+<div class="p-4 mt-auto border-t border-outline-variant/20">
+<a class="flex items-center gap-3 px-3 py-2 rounded text-on-primary-container hover:bg-tertiary-container transition-colors font-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span> Settings
+            </a>
+<div class="flex items-center gap-3 px-3 py-4 mt-2">
+<img alt="Admin Avatar" class="w-8 h-8 rounded-full border-2 border-secondary-fixed-dim" data-alt="A professional headshot of a middle-aged male administrator wearing a crisp white shirt against a clean, neutral background. The lighting is bright and industrial, reflecting a modern corporate environment. The image uses a sharp focus on the face to convey reliability and professional competence in a high-density ERP system context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVzqWJX2GuJSGjszPcILluL5Mv6E-0C7rdIZJSmoPiaLEpO1OcLi47hck8yFDTDzDkH9qTvDCOR287S6NEADeTsnqiS8g43i20s07Xsrfbm4JenjMwyo5XphS7Op4ZeeTLF4L8QIWKL7jai9LIPzy9oWF4X2MzNSkTbi2mt0vLOkqh6x7ydmrbOk_IVsduCjnuLN1I-NT7-GjotlwqMF7zg86NHp39eFI7TlOZUVAbxyyhRLbwmqOy7GG80wq1LSh-OJyGoILgtws"/>
+<div class="overflow-hidden">
+<p class="font-label-md text-on-primary truncate">Ahmed Mansour</p>
+<p class="text-[10px] text-on-primary-container truncate">Financial Manager</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-[260px] min-h-screen">
+<!-- TopAppBar -->
+<header class="sticky top-0 h-16 bg-surface border-b border-outline-variant flex items-center justify-between px-margin-desktop z-40">
+<div class="flex items-center gap-8">
+<h2 class="font-headline-sm text-headline-sm font-bold text-primary">Financial Overview</h2>
+<div class="relative hidden md:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-1.5 w-64 text-body-sm focus:ring-2 focus:ring-primary" placeholder="Search transactions, accounts..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1 bg-surface-container-high px-3 py-1.5 rounded-full text-body-sm font-bold">
+<span class="text-primary">EN</span>
+<span class="text-outline">/</span>
+<span class="text-outline hover:text-primary cursor-pointer">AR</span>
+</div>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-highest rounded-full relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-highest rounded-full">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+</div>
+</header>
+<!-- Page Content -->
+<div class="p-margin-desktop">
+<!-- Action Bar -->
+<div class="flex items-center justify-between mb-8">
+<div class="flex items-center gap-4">
+<div class="flex flex-col">
+<span class="text-xs font-bold text-outline uppercase tracking-tighter">Reporting Period</span>
+<span class="font-label-md text-primary flex items-center gap-1 cursor-pointer">
+                            October 2023 <span class="material-symbols-outlined text-sm" data-icon="calendar_today">calendar_today</span>
+</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex items-center gap-2 px-4 py-2 border border-outline-variant rounded-lg font-label-md text-on-surface hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="print">print</span> Print
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 border border-outline-variant rounded-lg font-label-md text-on-surface hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="description">description</span> Export to PDF
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-lg font-label-md hover:opacity-90 transition-all">
+<span class="material-symbols-outlined text-lg" data-icon="download">download</span> Excel Sheet
+                    </button>
+</div>
+</div>
+<!-- Top: Cashboxes & Banks -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-8">
+<!-- CIB Bank Card -->
+<div class="bg-white p-5 border border-outline-variant rounded-xl shadow-sm hover:border-primary-container transition-colors group">
+<div class="flex justify-between items-start mb-4">
+<div class="w-10 h-10 bg-[#004a99] rounded flex items-center justify-center text-white font-bold text-xs">CIB</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary" data-icon="more_vert">more_vert</span>
+</div>
+<p class="text-xs font-bold text-outline uppercase">Commercial International Bank</p>
+<h3 class="text-2xl font-data-mono font-bold text-primary mt-1">2,450,120.<span class="text-sm">50</span></h3>
+<div class="flex items-center gap-1 mt-3 text-[10px] font-bold text-secondary">
+<span class="material-symbols-outlined text-xs" data-icon="account_balance">account_balance</span> MAIN CORPORATE ACCOUNT
+                    </div>
+<p class="text-[10px] text-outline mt-1">Currency: EGP</p>
+</div>
+<!-- AAIB Bank Card -->
+<div class="bg-white p-5 border border-outline-variant rounded-xl shadow-sm hover:border-primary-container transition-colors group">
+<div class="flex justify-between items-start mb-4">
+<div class="w-10 h-10 bg-[#ed1c24] rounded flex items-center justify-center text-white font-bold text-xs">AAIB</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary" data-icon="more_vert">more_vert</span>
+</div>
+<p class="text-xs font-bold text-outline uppercase">Arab African Int Bank</p>
+<h3 class="text-2xl font-data-mono font-bold text-primary mt-1">840,000.<span class="text-sm">00</span></h3>
+<div class="flex items-center gap-1 mt-3 text-[10px] font-bold text-secondary">
+<span class="material-symbols-outlined text-xs" data-icon="credit_card">credit_card</span> PAYROLL &amp; OPS
+                    </div>
+<p class="text-[10px] text-outline mt-1">Currency: EGP</p>
+</div>
+<!-- Main Cashbox -->
+<div class="bg-white p-5 border border-outline-variant rounded-xl shadow-sm hover:border-primary-container transition-colors group">
+<div class="flex justify-between items-start mb-4">
+<div class="w-10 h-10 bg-primary-container rounded flex items-center justify-center text-white">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary" data-icon="more_vert">more_vert</span>
+</div>
+<p class="text-xs font-bold text-outline uppercase">Headquarters Cashbox</p>
+<h3 class="text-2xl font-data-mono font-bold text-primary mt-1">12,500.<span class="text-sm">00</span></h3>
+<div class="flex items-center gap-1 mt-3 text-[10px] font-bold text-error">
+<span class="material-symbols-outlined text-xs" data-icon="warning">warning</span> LOW BALANCE ALERT
+                    </div>
+<p class="text-[10px] text-outline mt-1">Currency: EGP</p>
+</div>
+<!-- Pending Deposits -->
+<div class="bg-surface-container-high p-5 border border-outline-variant border-dashed rounded-xl group">
+<div class="flex justify-between items-start mb-4">
+<div class="w-10 h-10 bg-outline rounded flex items-center justify-center text-white">
+<span class="material-symbols-outlined" data-icon="hourglass_empty">hourglass_empty</span>
+</div>
+</div>
+<p class="text-xs font-bold text-outline uppercase">Pending Clearances</p>
+<h3 class="text-2xl font-data-mono font-bold text-outline mt-1">158,300.<span class="text-sm">25</span></h3>
+<div class="flex items-center gap-1 mt-3 text-[10px] font-bold text-outline">
+<span class="material-symbols-outlined text-xs" data-icon="schedule">schedule</span> 4 CHEQUES IN TRANSIT
+                    </div>
+<p class="text-[10px] text-outline mt-1">Currency: EGP</p>
+</div>
+</section>
+<!-- Middle: Profit & Loss Summary -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-gutter mb-8">
+<div class="lg:col-span-2 bg-white border border-outline-variant rounded-xl p-6">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h4 class="font-headline-md text-primary">Profit &amp; Loss Performance</h4>
+<p class="text-body-sm text-outline">Monthly Revenue vs. Cost of Goods Sold</p>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 bg-primary rounded-full"></span>
+<span class="text-[10px] font-bold text-outline uppercase">Revenue</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 bg-secondary-container rounded-full"></span>
+<span class="text-[10px] font-bold text-outline uppercase">COGS</span>
+</div>
+</div>
+</div>
+<!-- Simulated Chart Visualization -->
+<div class="h-64 flex items-end justify-between gap-4 px-2 relative">
+<!-- Grid Lines -->
+<div class="absolute inset-0 flex flex-col justify-between opacity-10 pointer-events-none">
+<div class="border-t border-black w-full"></div>
+<div class="border-t border-black w-full"></div>
+<div class="border-t border-black w-full"></div>
+<div class="border-t border-black w-full"></div>
+</div>
+<!-- Bar Groups -->
+<div class="flex-1 flex items-end gap-1 group relative">
+<div class="flex-1 bg-primary h-[60%] rounded-t-sm transition-all hover:opacity-80"></div>
+<div class="flex-1 bg-secondary-container h-[40%] rounded-t-sm transition-all hover:opacity-80"></div>
+<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-outline">JUL</span>
+</div>
+<div class="flex-1 flex items-end gap-1 group relative">
+<div class="flex-1 bg-primary h-[75%] rounded-t-sm transition-all hover:opacity-80"></div>
+<div class="flex-1 bg-secondary-container h-[45%] rounded-t-sm transition-all hover:opacity-80"></div>
+<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-outline">AUG</span>
+</div>
+<div class="flex-1 flex items-end gap-1 group relative">
+<div class="flex-1 bg-primary h-[85%] rounded-t-sm transition-all hover:opacity-80"></div>
+<div class="flex-1 bg-secondary-container h-[50%] rounded-t-sm transition-all hover:opacity-80"></div>
+<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-outline">SEP</span>
+</div>
+<div class="flex-1 flex items-end gap-1 group relative">
+<div class="flex-1 bg-primary h-[95%] rounded-t-sm transition-all hover:opacity-80"></div>
+<div class="flex-1 bg-secondary-container h-[55%] rounded-t-sm transition-all hover:opacity-80"></div>
+<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-outline">OCT</span>
+</div>
+<div class="flex-1 flex items-end gap-1 group relative">
+<div class="flex-1 bg-primary h-[80%] rounded-t-sm transition-all hover:opacity-80"></div>
+<div class="flex-1 bg-secondary-container h-[48%] rounded-t-sm transition-all hover:opacity-80"></div>
+<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-outline">NOV</span>
+</div>
+<div class="flex-1 flex items-end gap-1 group relative">
+<div class="flex-1 bg-primary h-[100%] rounded-t-sm transition-all hover:opacity-80"></div>
+<div class="flex-1 bg-secondary-container h-[60%] rounded-t-sm transition-all hover:opacity-80"></div>
+<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-outline">DEC</span>
+</div>
+</div>
+</div>
+<div class="bg-primary text-on-primary rounded-xl p-6 flex flex-col justify-between overflow-hidden relative">
+<!-- Decor Pattern -->
+<div class="absolute -right-12 -top-12 w-48 h-48 bg-white opacity-5 rounded-full"></div>
+<div>
+<h4 class="font-headline-md opacity-70">Current Net Profit</h4>
+<div class="mt-4">
+<h2 class="text-4xl font-display-lg">EGP 1,280,000</h2>
+<div class="flex items-center gap-2 text-secondary-fixed mt-2">
+<span class="material-symbols-outlined text-sm" data-icon="trending_up">trending_up</span>
+<span class="text-sm font-bold">+12.4% vs last month</span>
+</div>
+</div>
+</div>
+<div class="mt-8 space-y-4">
+<div class="flex justify-between items-center text-sm border-b border-white/10 pb-2">
+<span class="opacity-70">Total Revenue</span>
+<span class="font-data-mono">4,120,000</span>
+</div>
+<div class="flex justify-between items-center text-sm border-b border-white/10 pb-2">
+<span class="opacity-70">Direct Expenses</span>
+<span class="font-data-mono text-error-container">2,840,000</span>
+</div>
+<div class="flex justify-between items-center text-sm border-b border-white/10 pb-2">
+<span class="opacity-70">Tax Est. (22.5%)</span>
+<span class="font-data-mono opacity-50">288,000</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Bottom: Recent Journal Entries -->
+<section class="bg-white border border-outline-variant rounded-xl overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant flex items-center justify-between">
+<h4 class="font-headline-md text-primary">Recent Journal Entries</h4>
+<div class="flex gap-2">
+<button class="p-2 hover:bg-surface-container-high rounded-lg"><span class="material-symbols-outlined text-outline" data-icon="filter_list">filter_list</span></button>
+<button class="p-2 hover:bg-surface-container-high rounded-lg"><span class="material-symbols-outlined text-outline" data-icon="refresh">refresh</span></button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-primary text-white sticky top-0">
+<tr>
+<th class="px-6 py-3 font-label-md uppercase text-[10px] tracking-wider">Date</th>
+<th class="px-6 py-3 font-label-md uppercase text-[10px] tracking-wider">Reference</th>
+<th class="px-6 py-3 font-label-md uppercase text-[10px] tracking-wider">Account</th>
+<th class="px-6 py-3 font-label-md uppercase text-[10px] tracking-wider">Partner/Entity</th>
+<th class="px-6 py-3 font-label-md uppercase text-[10px] tracking-wider text-right">Debit</th>
+<th class="px-6 py-3 font-label-md uppercase text-[10px] tracking-wider text-right">Credit</th>
+<th class="px-6 py-3 font-label-md uppercase text-[10px] tracking-wider text-center">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-background transition-colors">
+<td class="px-6 py-4 font-data-mono text-xs">2023-10-24</td>
+<td class="px-6 py-4 font-label-md text-primary">JE/2023/1042</td>
+<td class="px-6 py-4">
+<p class="text-sm font-bold">1101 - CIB Main</p>
+<p class="text-[10px] text-outline">Industrial Equipment Sale</p>
+</td>
+<td class="px-6 py-4 text-sm">Delta Steel Ltd.</td>
+<td class="px-6 py-4 font-data-mono text-right font-bold text-primary">450,000.00</td>
+<td class="px-6 py-4 font-data-mono text-right text-outline">0.00</td>
+<td class="px-6 py-4 text-center">
+<span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-black uppercase">Posted</span>
+</td>
+</tr>
+<tr class="bg-surface-container-low/30 hover:bg-background transition-colors">
+<td class="px-6 py-4 font-data-mono text-xs">2023-10-23</td>
+<td class="px-6 py-4 font-label-md text-primary">JE/2023/1041</td>
+<td class="px-6 py-4">
+<p class="text-sm font-bold">5204 - Electricity</p>
+<p class="text-[10px] text-outline">Factory Utilities</p>
+</td>
+<td class="px-6 py-4 text-sm">North Cairo Elec.</td>
+<td class="px-6 py-4 font-data-mono text-right text-outline">0.00</td>
+<td class="px-6 py-4 font-data-mono text-right font-bold text-error">12,450.00</td>
+<td class="px-6 py-4 text-center">
+<span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-black uppercase">Posted</span>
+</td>
+</tr>
+<tr class="hover:bg-background transition-colors">
+<td class="px-6 py-4 font-data-mono text-xs">2023-10-23</td>
+<td class="px-6 py-4 font-label-md text-primary">JE/2023/1040</td>
+<td class="px-6 py-4">
+<p class="text-sm font-bold">2101 - Accounts Payable</p>
+<p class="text-[10px] text-outline">Supplier Invoice P-0091</p>
+</td>
+<td class="px-6 py-4 text-sm">Global Transformers Co.</td>
+<td class="px-6 py-4 font-data-mono text-right text-outline">0.00</td>
+<td class="px-6 py-4 font-data-mono text-right font-bold text-error">125,000.00</td>
+<td class="px-6 py-4 text-center">
+<span class="px-2 py-1 bg-secondary-container/20 text-secondary rounded-full text-[10px] font-black uppercase">Draft</span>
+</td>
+</tr>
+<tr class="bg-surface-container-low/30 hover:bg-background transition-colors">
+<td class="px-6 py-4 font-data-mono text-xs">2023-10-22</td>
+<td class="px-6 py-4 font-label-md text-primary">JE/2023/1039</td>
+<td class="px-6 py-4">
+<p class="text-sm font-bold">1102 - AAIB Payroll</p>
+<p class="text-[10px] text-outline">Office Supplies Reimb.</p>
+</td>
+<td class="px-6 py-4 text-sm">Internal - Petty Cash</td>
+<td class="px-6 py-4 font-data-mono text-right text-outline">0.00</td>
+<td class="px-6 py-4 font-data-mono text-right font-bold text-error">3,200.00</td>
+<td class="px-6 py-4 text-center">
+<span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-black uppercase">Posted</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-6 py-4 bg-surface-container-lowest border-t border-outline-variant flex items-center justify-between">
+<p class="text-xs text-outline font-bold uppercase tracking-widest">Showing 4 of 1,280 entries</p>
+<div class="flex gap-1">
+<button class="px-3 py-1 border border-outline-variant rounded hover:bg-surface-container-high transition-colors text-xs font-bold">Prev</button>
+<button class="px-3 py-1 bg-primary text-white rounded text-xs font-bold">1</button>
+<button class="px-3 py-1 border border-outline-variant rounded hover:bg-surface-container-high transition-colors text-xs font-bold">2</button>
+<button class="px-3 py-1 border border-outline-variant rounded hover:bg-surface-container-high transition-colors text-xs font-bold">3</button>
+<button class="px-3 py-1 border border-outline-variant rounded hover:bg-surface-container-high transition-colors text-xs font-bold">Next</button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Floating Action Button (FAB) contextually hidden for reports, but present for ERP utility if needed elsewhere -->
+<!-- Suppressed based on "Suppressed on Settings, Profile, Details, and Transactional screens" rule - keeping focus on data -->
+<script>
+        // Simple Interaction logic
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('MegaWatt ERP Finance Module Loaded');
+            
+            // Highlight table rows on hover effect refinement
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                row.addEventListener('mouseenter', () => {
+                    row.style.boxShadow = 'inset 4px 0 0 0 #ffbf00';
+                });
+                row.addEventListener('mouseleave', () => {
+                    row.style.boxShadow = 'none';
+                });
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MegaWatt ERP - Mobile Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline-variant": "#c3c6d1",
+                    "tertiary-fixed": "#d2e4ff",
+                    "on-secondary-container": "#6d5000",
+                    "on-error": "#ffffff",
+                    "surface-bright": "#f7f9fc",
+                    "tertiary-fixed-dim": "#b1c8e9",
+                    "on-primary-container": "#799dd6",
+                    "on-tertiary-fixed-variant": "#324863",
+                    "on-secondary-fixed": "#261a00",
+                    "surface-container-high": "#e6e8eb",
+                    "surface-container": "#eceef1",
+                    "on-primary": "#ffffff",
+                    "primary-container": "#003366",
+                    "on-tertiary-fixed": "#021c36",
+                    "primary-fixed-dim": "#a7c8ff",
+                    "secondary-fixed-dim": "#fbbc00",
+                    "secondary-fixed": "#ffdfa0",
+                    "on-primary-fixed": "#001b3c",
+                    "on-surface": "#191c1e",
+                    "inverse-primary": "#a7c8ff",
+                    "on-error-container": "#93000a",
+                    "tertiary": "#041f38",
+                    "secondary": "#795900",
+                    "tertiary-container": "#1d344e",
+                    "surface-dim": "#d8dadd",
+                    "on-secondary-fixed-variant": "#5c4300",
+                    "surface-variant": "#e0e3e6",
+                    "surface-tint": "#3a5f94",
+                    "error-container": "#ffdad6",
+                    "primary-fixed": "#d5e3ff",
+                    "outline": "#737780",
+                    "on-tertiary": "#ffffff",
+                    "background": "#f7f9fc",
+                    "inverse-surface": "#2d3133",
+                    "surface-container-lowest": "#ffffff",
+                    "on-surface-variant": "#43474f",
+                    "on-secondary": "#ffffff",
+                    "primary": "#001e40",
+                    "on-tertiary-container": "#869dbc",
+                    "error": "#ba1a1a",
+                    "inverse-on-surface": "#eff1f4",
+                    "on-background": "#191c1e",
+                    "surface": "#f7f9fc",
+                    "secondary-container": "#ffbf00",
+                    "surface-container-highest": "#e0e3e6",
+                    "surface-container-low": "#f2f4f7",
+                    "on-primary-fixed-variant": "#1f477b"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "md": "16px",
+                    "sm": "8px",
+                    "gutter": "16px",
+                    "lg": "24px",
+                    "base": "4px",
+                    "margin-mobile": "16px",
+                    "xs": "4px",
+                    "xl": "32px"
+            },
+            "fontFamily": {
+                    "display-lg": ["Be Vietnam Pro"],
+                    "headline-md": ["Be Vietnam Pro"],
+                    "body-lg": ["Be Vietnam Pro"],
+                    "label-bold": ["Be Vietnam Pro"],
+                    "body-md": ["Be Vietnam Pro"],
+                    "label-sm": ["Be Vietnam Pro"],
+                    "headline-sm": ["Be Vietnam Pro"],
+                    "headline-lg-mobile": ["Be Vietnam Pro"]
+            },
+            "fontSize": {
+                    "display-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-bold": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "500"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["26px", {"lineHeight": "32px", "fontWeight": "700"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; background-color: #F5F7FA; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .scroll-hide::-webkit-scrollbar { display: none; }
+        .scroll-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="sticky top-0 w-full z-50 flex justify-between items-center px-margin-mobile h-16 bg-surface border-b border-outline-variant">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">MegaWatt ERP</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="relative text-on-surface-variant hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="text-label-bold font-label-bold text-primary uppercase border border-outline px-2 py-1 rounded">EN</button>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-high border border-outline-variant">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A professional headshot of a middle-aged factory manager with short hair and a clean-shaven face. He is wearing a dark navy industrial polo shirt with a small corporate logo. The lighting is soft and even, suggesting a professional office environment. The overall aesthetic is clean, corporate, and trustworthy, aligning with the MegaWatt ERP brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDc-1duv3nobfKuo0DEVY4Pmj_-1TGFJ_L0mKo_mbuq1jKJzkxYQzFowanW6KHuDKztGN9mew46LQC36C3yh8IsliKiMrnedzmnENwlc_nxtwZzJJRNpI80dGTcxUg35vgQ94nDhgbhYzcsQ_raCb7s8vtn9TXqqCq3BqMB8RwxsaXUgTNUm7d0r35MNMg4mHHbkz3dv79BRUinoWcuzfnXEy6AD1YWazSGATYym11mQ4kPyT6vVrK39EqpM8c3MsLXPAHq2salEgDt"/>
+</div>
+</div>
+</header>
+<main class="px-margin-mobile pt-md space-y-lg">
+<!-- KPI Grid -->
+<section class="grid grid-cols-2 gap-md">
+<!-- Today Sales -->
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl">
+<p class="font-label-bold text-label-bold text-on-surface-variant mb-xs">Today Sales</p>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">$4,820</h3>
+<div class="mt-sm inline-flex items-center gap-1 text-[11px] font-semibold text-secondary px-2 py-0.5 bg-secondary/10 rounded-full">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> +12%
+                </div>
+</div>
+<!-- Monthly Sales -->
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl">
+<p class="font-label-bold text-label-bold text-on-surface-variant mb-xs">Monthly Sales</p>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">$124.5k</h3>
+<div class="mt-sm inline-flex items-center gap-1 text-[11px] font-semibold text-secondary px-2 py-0.5 bg-secondary/10 rounded-full">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> +5.2%
+                </div>
+</div>
+<!-- Net Profit -->
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl">
+<p class="font-label-bold text-label-bold text-on-surface-variant mb-xs">Net Profit</p>
+<h3 class="font-headline-sm text-headline-sm text-secondary">$32,150</h3>
+<span class="text-label-sm text-on-surface-variant mt-sm block">Target: $30k</span>
+</div>
+<!-- Unpaid Invoices -->
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl">
+<p class="font-label-bold text-label-bold text-on-surface-variant mb-xs">Unpaid</p>
+<h3 class="font-headline-sm text-headline-sm text-error">14</h3>
+<div class="mt-sm inline-flex items-center gap-1 text-[11px] font-semibold text-error px-2 py-0.5 bg-error/10 rounded-full">
+                    High Risk
+                </div>
+</div>
+<!-- Low Stock -->
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl">
+<p class="font-label-bold text-label-bold text-on-surface-variant mb-xs">Low Stock</p>
+<h3 class="font-headline-sm text-headline-sm text-on-secondary-container">28 items</h3>
+<div class="mt-sm inline-flex items-center gap-1 text-[11px] font-semibold text-on-secondary-container px-2 py-0.5 bg-secondary-container/20 rounded-full">
+                    Critical
+                </div>
+</div>
+<!-- Customer Debts -->
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl">
+<p class="font-label-bold text-label-bold text-on-surface-variant mb-xs">Debts</p>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">$8,400</h3>
+<span class="text-label-sm text-on-surface-variant mt-sm block">9 Overdue</span>
+</div>
+</section>
+<!-- Mini Chart Section -->
+<section class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl">
+<div class="flex justify-between items-center mb-md">
+<h2 class="font-headline-sm text-headline-sm text-primary">Sales Trend</h2>
+<span class="material-symbols-outlined text-outline">more_vert</span>
+</div>
+<div class="h-32 w-full flex items-end gap-1 px-2">
+<!-- Mock Chart Bars for Visual Polish -->
+<div class="flex-1 bg-primary/10 h-[40%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/20 h-[60%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/10 h-[45%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/30 h-[70%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/50 h-[85%] rounded-t-sm"></div>
+<div class="flex-1 bg-secondary-container h-[100%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary h-[90%] rounded-t-sm"></div>
+</div>
+<div class="flex justify-between mt-sm text-label-sm font-label-sm text-on-surface-variant">
+<span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+</div>
+</section>
+<!-- Quick Actions -->
+<section>
+<h2 class="font-headline-sm text-headline-sm text-primary mb-md">Quick Actions</h2>
+<div class="flex overflow-x-auto gap-md scroll-hide pb-2">
+<button class="flex-shrink-0 flex flex-col items-center gap-sm group">
+<div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-lg active:scale-95 transition-transform">
+<span class="material-symbols-outlined">receipt_long</span>
+</div>
+<span class="font-label-bold text-label-bold text-on-surface">Invoice</span>
+</button>
+<button class="flex-shrink-0 flex flex-col items-center gap-sm group">
+<div class="w-16 h-16 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container shadow-lg active:scale-95 transition-transform">
+<span class="material-symbols-outlined">person_add</span>
+</div>
+<span class="font-label-bold text-label-bold text-on-surface">Customer</span>
+</button>
+<button class="flex-shrink-0 flex flex-col items-center gap-sm group">
+<div class="w-16 h-16 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed shadow-lg active:scale-95 transition-transform">
+<span class="material-symbols-outlined">inventory</span>
+</div>
+<span class="font-label-bold text-label-bold text-on-surface">Product</span>
+</button>
+<button class="flex-shrink-0 flex flex-col items-center gap-sm group">
+<div class="w-16 h-16 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center text-primary shadow active:scale-95 transition-transform">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<span class="font-label-bold text-label-bold text-on-surface">Expense</span>
+</button>
+</div>
+</section>
+<!-- Recent Activity -->
+<section>
+<div class="flex justify-between items-center mb-md">
+<h2 class="font-headline-sm text-headline-sm text-primary">Recent Activity</h2>
+<button class="text-label-bold font-label-bold text-primary">View All</button>
+</div>
+<div class="space-y-sm">
+<!-- Activity Item 1 -->
+<div class="flex items-center gap-md p-md bg-surface-container-lowest border border-outline-variant rounded-xl">
+<div class="w-10 h-10 rounded-lg bg-secondary/10 text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div class="flex-1">
+<p class="font-body-md text-body-md text-on-surface">Invoice <span class="font-bold">#1024</span> Created</p>
+<p class="text-label-sm font-label-sm text-on-surface-variant">2 mins ago • $1,250.00</p>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+<!-- Activity Item 2 -->
+<div class="flex items-center gap-md p-md bg-surface-container-lowest border border-outline-variant rounded-xl">
+<div class="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined">person</span>
+</div>
+<div class="flex-1">
+<p class="font-body-md text-body-md text-on-surface">New Customer: <span class="font-bold">Alpha Electrics</span></p>
+<p class="text-label-sm font-label-sm text-on-surface-variant">45 mins ago</p>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+<!-- Activity Item 3 -->
+<div class="flex items-center gap-md p-md bg-surface-container-lowest border border-outline-variant rounded-xl">
+<div class="w-10 h-10 rounded-lg bg-error/10 text-error flex items-center justify-center">
+<span class="material-symbols-outlined">warning</span>
+</div>
+<div class="flex-1">
+<p class="font-body-md text-body-md text-on-surface">Stock Alert: <span class="font-bold">Copper Wire 2.5mm</span></p>
+<p class="text-label-sm font-label-sm text-on-surface-variant">1 hour ago • Below 50 units</p>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-margin-mobile py-sm bg-surface border-t border-outline-variant shadow-lg">
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors px-2 py-1 rounded-full" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-sm text-label-sm">Sales</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors px-2 py-1 rounded-full" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-sm text-label-sm">Inventory</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors px-2 py-1 rounded-full" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-sm text-label-sm">Finance</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors px-2 py-1 rounded-full" href="#">
+<span class="material-symbols-outlined">menu</span>
+<span class="font-label-sm text-label-sm">More</span>
+</a>
+</nav>
+<!-- Contextual FAB (Hidden as per task requirements for Home Dashboard) -->
+<script>
+        // Simple Interaction logic
+        document.querySelectorAll('button, a').forEach(el => {
+            el.addEventListener('click', (e) => {
+                // Haptic feedback simulation
+                el.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    el.style.transform = 'scale(1)';
+                }, 100);
+            });
+        });
+    </script>
+</body></html>

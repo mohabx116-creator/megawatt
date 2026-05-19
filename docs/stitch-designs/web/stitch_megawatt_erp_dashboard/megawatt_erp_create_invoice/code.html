@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sales Invoice Builder | MegaWatt ERP</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .invoice-card { border: 1px solid #e2e8f0; transition: border-color 0.2s ease; }
+        .invoice-card:focus-within { border-color: #003366; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#f7f9fb",
+                        "tertiary-fixed": "#dde2f3",
+                        "tertiary-fixed-dim": "#c1c6d7",
+                        "on-primary-fixed-variant": "#1f477b",
+                        "on-tertiary-fixed-variant": "#414754",
+                        "surface-container-low": "#f2f4f6",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#a7c8ff",
+                        "secondary-fixed-dim": "#fbbc00",
+                        "on-secondary-fixed": "#261a00",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#ffdfa0",
+                        "surface-bright": "#f7f9fb",
+                        "primary": "#001e40",
+                        "on-surface-variant": "#43474f",
+                        "outline": "#737780",
+                        "on-primary": "#ffffff",
+                        "on-background": "#191c1e",
+                        "on-tertiary-fixed": "#161c27",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#6d5000",
+                        "on-primary-container": "#799dd6",
+                        "primary-fixed": "#d5e3ff",
+                        "inverse-on-surface": "#eff1f3",
+                        "tertiary-container": "#2d3340",
+                        "on-primary-fixed": "#001b3c",
+                        "surface-variant": "#e0e3e5",
+                        "outline-variant": "#c3c6d1",
+                        "surface-container-high": "#e6e8ea",
+                        "on-tertiary-container": "#959bab",
+                        "surface-container-highest": "#e0e3e5",
+                        "tertiary": "#181e2a",
+                        "surface-dim": "#d8dadc",
+                        "inverse-surface": "#2d3133",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#ffbf00",
+                        "primary-container": "#003366",
+                        "on-secondary-fixed-variant": "#5c4300",
+                        "surface-container": "#eceef0",
+                        "error-container": "#ffdad6",
+                        "surface-tint": "#3a5f94",
+                        "surface": "#f7f9fb",
+                        "on-surface": "#191c1e",
+                        "error": "#ba1a1a",
+                        "primary-fixed-dim": "#a7c8ff",
+                        "secondary": "#795900"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-max": "1440px",
+                        "unit": "4px",
+                        "gutter": "16px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "32px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "data-mono": ["jetbrainsMono"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "display-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-md": ["13px", {"lineHeight": "18px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "data-mono": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                        "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background font-body-md text-on-background flex overflow-hidden">
+<!-- Left Sidebar (SideNavBar) -->
+<aside class="fixed left-0 top-0 h-full w-[260px] bg-primary dark:bg-primary-container flex flex-col h-screen overflow-y-auto px-unit border-r border-outline-variant dark:border-outline z-50">
+<div class="py-8 px-4 flex items-center gap-3">
+<div class="w-10 h-10 bg-secondary-container flex items-center justify-center rounded">
+<span class="material-symbols-outlined text-on-secondary-fixed">bolt</span>
+</div>
+<div>
+<h1 class="font-headline-lg text-headline-lg font-black text-on-primary dark:text-primary-fixed leading-none">MegaWatt ERP</h1>
+<p class="font-label-md text-label-md text-on-primary-container opacity-80 uppercase tracking-widest mt-1">Industrial Supplies</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1 px-2">
+<a class="flex items-center gap-3 px-4 py-3 border-l-2 border-secondary-fixed text-on-primary font-bold bg-primary-container dark:bg-tertiary-container opacity-90 transition-all duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-label-md text-label-md">Sales</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:text-on-primary hover:bg-tertiary-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+<span class="font-label-md text-label-md">Purchasing</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:text-on-primary hover:bg-tertiary-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-label-md text-label-md">Inventory</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:text-on-primary hover:bg-tertiary-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="account_balance">account_balance</span>
+<span class="font-label-md text-label-md">Finance</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:text-on-primary hover:bg-tertiary-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="font-label-md text-label-md">HR</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:text-on-primary hover:bg-tertiary-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+</nav>
+<div class="px-4 mb-4">
+<button class="w-full bg-secondary-container hover:bg-secondary text-on-secondary-fixed-variant font-bold py-3 rounded flex items-center justify-center gap-2 transition-all">
+<span class="material-symbols-outlined">add_circle</span>
+<span>Create New Order</span>
+</button>
+</div>
+<div class="border-t border-outline-variant dark:border-outline pt-4 pb-8 space-y-1 px-2">
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:text-on-primary hover:bg-tertiary-container" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container dark:text-on-tertiary-container hover:text-on-primary hover:bg-tertiary-container" href="#">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+<span class="font-label-md text-label-md">Profile</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-[260px] flex-1 flex flex-col h-screen overflow-hidden">
+<!-- TopAppBar -->
+<header class="sticky top-0 w-full h-16 bg-surface dark:bg-surface-container-low flex items-center justify-between px-margin-desktop border-b border-outline-variant dark:border-outline z-40">
+<div class="flex items-center gap-6">
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline">search</span>
+<input class="bg-surface-container-lowest border-none ring-1 ring-outline-variant focus:ring-2 focus:ring-primary h-9 pl-10 pr-4 w-64 rounded-lg text-body-sm transition-all" placeholder="Global search..." type="text"/>
+</div>
+<div class="hidden md:flex gap-4">
+<a class="text-on-surface-variant dark:text-on-surface font-label-md text-label-md hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-primary font-bold border-b-2 border-secondary-fixed font-label-md text-label-md" href="#">Quick Actions</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex gap-2 mr-4">
+<span class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-surface-container-highest rounded-full cursor-pointer" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-surface-container-highest rounded-full cursor-pointer" data-icon="help_outline">help_outline</span>
+</div>
+<div class="flex items-center gap-3 border-l border-outline-variant pl-4">
+<div class="text-right">
+<p class="text-label-md font-bold text-primary">Admin</p>
+<p class="text-body-sm text-on-surface-variant">EN/AR</p>
+</div>
+<img class="w-10 h-10 rounded-full border-2 border-primary-fixed object-cover" data-alt="Close-up professional portrait of a senior warehouse manager wearing a subtle branded uniform in a modern industrial office. The lighting is crisp and cool, reflecting a high-efficiency enterprise environment with neutral gray and electric blue accents in the blurred background. The mood is authoritative yet accessible." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDESb5Y_PW9PGbmagVSavqyO4LTn3fCth8VlKzOpjHs5-kc_axGyutrocFNw-7xLyGdfyowLX-PmDc59RT5WAis8H-CMqQlI9SW03O0xZ0cz_y90s3-320TQ7RZ5Gn7O1JYscukYDCQMZKuJR_F0C18T4Y-PGS3fDRfC4VyIQfeTRa5baNJHJGx4ukmoxDVkr0ovmxCBPs1RWk-A5ajT61Fo0LFpB8qUrHVBdTDn6wNTUR-nFhNgEhAeEbi7SrVBYl_xH6c4VIGVPo"/>
+</div>
+</div>
+</header>
+<!-- Builder Workspace -->
+<div class="flex-1 overflow-y-auto bg-background p-margin-desktop">
+<div class="max-w-[1200px] mx-auto flex flex-col gap-gutter">
+<!-- Page Title Area -->
+<div class="flex justify-between items-end pb-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary tracking-tight">Sales Invoice Builder</h2>
+<p class="text-on-surface-variant font-body-md">Create and manage industrial sales orders for wholesale clients.</p>
+</div>
+<div class="flex gap-3">
+<button class="bg-white border border-outline-variant text-primary font-bold px-6 py-2 rounded-lg hover:bg-surface-container-low transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">save</span>
+                            Save Draft
+                        </button>
+<button class="bg-primary text-white font-bold px-8 py-2 rounded-lg hover:opacity-90 shadow-sm transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">send</span>
+                            Submit Invoice
+                        </button>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Left Section: Main Form & Items -->
+<div class="lg:col-span-8 space-y-gutter">
+<!-- Header Details Card -->
+<div class="bg-white p-6 rounded-xl invoice-card shadow-sm grid grid-cols-2 gap-6">
+<div class="col-span-2 flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-secondary">info</span>
+<span class="font-label-md text-label-md text-secondary uppercase tracking-widest">General Information</span>
+</div>
+<div class="space-y-1">
+<label class="text-body-sm font-bold text-on-surface-variant">Customer Selector</label>
+<div class="relative">
+<select class="w-full bg-surface-container-low border-none ring-1 ring-outline-variant focus:ring-2 focus:ring-primary rounded-lg text-body-md p-3 appearance-none">
+<option>Cairo Electrical Contracting</option>
+<option>Delta Industrial Systems</option>
+<option>Alexandria Power Solutions</option>
+</select>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 material-symbols-outlined pointer-events-none text-outline">arrow_drop_down</span>
+</div>
+</div>
+<div class="space-y-1">
+<label class="text-body-sm font-bold text-on-surface-variant">Warehouse Selector</label>
+<div class="relative">
+<select class="w-full bg-surface-container-low border-none ring-1 ring-outline-variant focus:ring-2 focus:ring-primary rounded-lg text-body-md p-3 appearance-none">
+<option>Main Warehouse</option>
+<option>Zone B (Logistics Hub)</option>
+<option>North Branch Storage</option>
+</select>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 material-symbols-outlined pointer-events-none text-outline">warehouse</span>
+</div>
+</div>
+<div class="space-y-1">
+<label class="text-body-sm font-bold text-on-surface-variant">Invoice Date</label>
+<input class="w-full bg-surface-container-low border-none ring-1 ring-outline-variant focus:ring-2 focus:ring-primary rounded-lg text-body-md p-3" type="date" value="2024-05-20"/>
+</div>
+<div class="space-y-1">
+<label class="text-body-sm font-bold text-on-surface-variant">Invoice #</label>
+<input class="w-full bg-surface-container-lowest border-none ring-1 ring-outline-variant bg-gray-50 rounded-lg text-body-md p-3 font-data-mono text-primary cursor-not-allowed" readonly="" type="text" value="INV-2024-001"/>
+</div>
+</div>
+<!-- Items Table Card -->
+<div class="bg-white rounded-xl invoice-card shadow-sm overflow-hidden flex flex-col">
+<div class="p-6 border-b border-outline-variant flex justify-between items-center bg-surface-container-lowest">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">list_alt</span>
+<h3 class="font-headline-md text-headline-md text-primary">Line Items</h3>
+</div>
+<button class="text-primary font-bold text-label-md flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined">add</span>
+                                    Add New Item
+                                </button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-primary text-white text-label-md font-bold uppercase tracking-widest">
+<tr>
+<th class="px-6 py-3 min-w-[240px]">Product / Service</th>
+<th class="px-4 py-3">Unit</th>
+<th class="px-4 py-3">Qty</th>
+<th class="px-4 py-3">Price</th>
+<th class="px-4 py-3">Disc (%)</th>
+<th class="px-4 py-3">Tax</th>
+<th class="px-6 py-3 text-right">Total</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="bg-white hover:bg-surface-container-low transition-colors">
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="font-bold text-primary">Schneider Circuit Breaker 63A</span>
+<span class="text-body-sm text-on-surface-variant">SKU: SCH-CB-063-4P</span>
+</div>
+</td>
+<td class="px-4 py-4 text-body-sm">Pcs</td>
+<td class="px-4 py-4">
+<input class="w-16 bg-transparent border-none focus:ring-1 focus:ring-primary text-body-md text-center" type="number" value="12"/>
+</td>
+<td class="px-4 py-4 font-data-mono">1,250.00</td>
+<td class="px-4 py-4">0%</td>
+<td class="px-4 py-4 text-on-surface-variant">14%</td>
+<td class="px-6 py-4 text-right font-bold text-primary font-data-mono">17,100.00</td>
+</tr>
+<tr class="bg-surface-container-lowest hover:bg-surface-container-low transition-colors">
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="font-bold text-primary">Copper Cable 16mm (Per Meter)</span>
+<span class="text-body-sm text-on-surface-variant">SKU: CAB-CU-16-BLK</span>
+</div>
+</td>
+<td class="px-4 py-4 text-body-sm">Mtrs</td>
+<td class="px-4 py-4">
+<input class="w-16 bg-transparent border-none focus:ring-1 focus:ring-primary text-body-md text-center" type="number" value="100"/>
+</td>
+<td class="px-4 py-4 font-data-mono">245.00</td>
+<td class="px-4 py-4">5%</td>
+<td class="px-4 py-4 text-on-surface-variant">14%</td>
+<td class="px-6 py-4 text-right font-bold text-primary font-data-mono">26,532.50</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-6 bg-surface-container-lowest border-t border-outline-variant">
+<div class="flex items-center gap-4">
+<div class="flex-1 relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline">search</span>
+<input class="w-full bg-white border-none ring-1 ring-outline-variant focus:ring-2 focus:ring-primary rounded-lg text-body-md pl-10 p-3 italic" placeholder="Search and add product by SKU or Name..." type="text"/>
+</div>
+<button class="bg-tertiary text-white px-6 py-3 rounded-lg font-bold hover:bg-on-primary-fixed-variant transition-colors">Add</button>
+</div>
+</div>
+</div>
+<!-- Payment Details Card -->
+<div class="bg-white p-6 rounded-xl invoice-card shadow-sm flex flex-col gap-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">payments</span>
+<span class="font-label-md text-label-md text-secondary uppercase tracking-widest">Payment &amp; Terms</span>
+</div>
+<div class="grid grid-cols-2 gap-6">
+<div class="space-y-3">
+<p class="text-body-sm font-bold text-on-surface-variant">Payment Type</p>
+<div class="flex gap-4">
+<label class="flex items-center gap-2 cursor-pointer group">
+<input checked="" class="text-primary focus:ring-primary" name="paymentType" type="radio"/>
+<span class="text-body-md group-hover:text-primary transition-colors">Cash</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer group">
+<input class="text-primary focus:ring-primary" name="paymentType" type="radio"/>
+<span class="text-body-md group-hover:text-primary transition-colors">Credit</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer group">
+<input class="text-primary focus:ring-primary" name="paymentType" type="radio"/>
+<span class="text-body-md group-hover:text-primary transition-colors">Partial</span>
+</label>
+</div>
+</div>
+<div class="space-y-1">
+<label class="text-body-sm font-bold text-on-surface-variant">Payment Method</label>
+<select class="w-full bg-surface-container-low border-none ring-1 ring-outline-variant focus:ring-2 focus:ring-primary rounded-lg text-body-md p-3">
+<option>Bank Transfer</option>
+<option>Instapay</option>
+<option>Visa / POS</option>
+<option>Cash on Delivery</option>
+</select>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Section: Summary Sidebar -->
+<div class="lg:col-span-4 space-y-gutter">
+<div class="bg-primary text-white p-6 rounded-xl shadow-xl sticky top-20 flex flex-col gap-6">
+<h3 class="font-headline-md text-headline-md border-b border-primary-container pb-4">Invoice Summary</h3>
+<div class="space-y-3">
+<div class="flex justify-between items-center text-on-primary-container">
+<span class="text-body-md">Subtotal</span>
+<span class="font-data-mono text-body-lg">39,500.00</span>
+</div>
+<div class="flex justify-between items-center text-on-primary-container">
+<span class="text-body-md">Total Discount</span>
+<span class="font-data-mono text-body-lg">- 1,225.00</span>
+</div>
+<div class="flex justify-between items-center text-on-primary-container">
+<span class="text-body-md">Total Tax (VAT 14%)</span>
+<span class="font-data-mono text-body-lg">5,358.50</span>
+</div>
+</div>
+<div class="pt-4 border-t border-primary-container flex justify-between items-end">
+<div>
+<p class="text-label-md uppercase opacity-60">Grand Total</p>
+<p class="text-secondary-fixed font-display-lg text-display-lg leading-tight">43,633.50</p>
+</div>
+<span class="text-label-md font-bold mb-2">EGP</span>
+</div>
+<div class="bg-primary-container/50 p-4 rounded-lg space-y-4">
+<div class="space-y-1">
+<label class="text-body-sm font-bold text-on-primary-container">Paid Amount</label>
+<input class="w-full bg-primary border-none ring-1 ring-secondary-fixed focus:ring-2 focus:ring-secondary-fixed rounded text-on-primary font-data-mono text-lg p-2 text-right" type="text" value="43,633.50"/>
+</div>
+<div class="flex justify-between items-center pt-2 border-t border-primary/20">
+<span class="text-body-sm opacity-80">Remaining Balance</span>
+<span class="font-bold text-secondary-fixed">0.00 EGP</span>
+</div>
+</div>
+<button class="w-full bg-secondary text-primary font-black py-4 rounded-lg flex items-center justify-center gap-2 hover:bg-secondary-fixed transition-all group">
+<span class="material-symbols-outlined transition-transform group-hover:scale-110">print</span>
+                                PRINT &amp; FINALIZE
+                            </button>
+</div>
+<!-- Quick Context Card -->
+<div class="bg-white p-6 rounded-xl invoice-card shadow-sm space-y-4">
+<h4 class="font-label-md text-label-md uppercase text-on-surface-variant">Client Ledger Balance</h4>
+<div class="flex items-center justify-between">
+<span class="text-body-md">Current Debt:</span>
+<span class="font-bold text-error">12,400.00 EGP</span>
+</div>
+<div class="w-full bg-surface-container-low h-2 rounded-full overflow-hidden">
+<div class="bg-error w-3/4 h-full"></div>
+</div>
+<p class="text-body-sm text-on-surface-variant italic leading-snug">Note: Client has exceeded their credit limit. Requires manager approval for credit sales.</p>
+</div>
+</div>
+</div>
+<!-- Audit Timeline Bottom -->
+<div class="mt-8 border-t border-outline-variant pt-6 flex items-center justify-between text-on-surface-variant">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-green-500"></div>
+<span class="text-body-sm"><span class="font-bold">Created by</span> Ahmed (Store Manager)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span class="text-body-sm italic">Today, 10:45 AM</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-secondary-fixed"></div>
+<span class="text-body-sm"><span class="font-bold">Status:</span> Awaiting Submission</span>
+</div>
+</div>
+<div class="flex gap-4">
+<span class="text-body-sm opacity-40 font-data-mono">UUID: 8921-XCA-001</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Micro-interactions for input focus effects
+        const inputs = document.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.parentElement.classList.add('border-primary');
+            });
+            input.addEventListener('blur', () => {
+                input.parentElement.parentElement.classList.remove('border-primary');
+            });
+        });
+
+        // Atmospheric effect for Grand Total
+        const totalValue = document.querySelector('.text-secondary-fixed.text-display-lg');
+        setInterval(() => {
+            totalValue.classList.toggle('opacity-95');
+        }, 2000);
+    </script>
+</body></html>
