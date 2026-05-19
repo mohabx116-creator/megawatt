@@ -130,7 +130,7 @@ const getFallbackInvoice = (): PrintableInvoice => {
   };
 };
 
-const formatPaymentTerms = (value: string) => (value === 'cash' ? 'نقدًا' : `${value} يومًا`);
+const formatPaymentTerms = (value: string) => (value === 'cash' ? 'Cash' : `${value} Days`);
 
 export const PrintPreviewPage = () => {
   const theme = useTheme();
@@ -207,21 +207,21 @@ export const PrintPreviewPage = () => {
 
       <Box>
         <Box className="no-print">
-          <ErpPageHeader title="معاينة الطباعة" subtitle="مراجعة وطباعة فاتورة مبيعات Megawatt" />
+          <ErpPageHeader title="Print Preview" subtitle="Review and print Megawatt sales invoice" />
 
           <MainCard border elevation={0} contentSX={{ p: 2, '&:last-child': { pb: 2 } }} sx={{ mb: 2 }}>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} justifyContent="space-between">
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
                 <Button variant="contained" startIcon={<PrintOutlinedIcon />} onClick={() => window.print()}>
-                  طباعة
+                  Print
                 </Button>
                 <Button variant="outlined" startIcon={<ArrowBackOutlinedIcon />} onClick={() => navigate('/erp/create-invoice')}>
-                  الرجوع لإنشاء فاتورة
+                  Back to Create Invoice
                 </Button>
               </Stack>
               {storedInvoice && (
                 <Button color="error" variant="outlined" startIcon={<DeleteOutlineOutlinedIcon />} onClick={clearGeneratedInvoice}>
-                  مسح الفاتورة الحالية
+                  Clear Generated Invoice
                 </Button>
               )}
             </Stack>
@@ -245,18 +245,18 @@ export const PrintPreviewPage = () => {
               <Grid size={{ xs: 12, md: 7 }}>
                 <Typography variant="h2">Megawatt</Typography>
                 <Typography variant="body2" color="text.secondary">
-                  أدوات كهربائية ومستلزمات مصانع
+                  Industrial Electrical Tools & Factory Supplies
                 </Typography>
                 <Stack spacing={0.5} sx={{ mt: 2 }}>
-                  <Typography variant="body2">القاهرة، مصر</Typography>
-                  <Typography variant="body2">الهاتف: +20 2 0000 0000</Typography>
-                  <Typography variant="body2">التسجيل الضريبي: EG-000-000-000</Typography>
+                  <Typography variant="body2">Cairo, Egypt</Typography>
+                  <Typography variant="body2">Phone: +20 2 0000 0000</Typography>
+                  <Typography variant="body2">Tax Registration: EG-000-000-000</Typography>
                 </Stack>
               </Grid>
               <Grid size={{ xs: 12, md: 5 }}>
                 <Stack spacing={1} alignItems={{ xs: 'flex-start', md: 'flex-end' }}>
                   <Typography variant="h1" sx={{ color: theme.palette.primary.main }}>
-                    فاتورة ضريبية
+                    TAX INVOICE
                   </Typography>
                   <Chip label={formatLabel(invoice.paymentStatus)} variant="outlined" color={invoice.paymentStatus === 'paid' ? 'success' : invoice.paymentStatus === 'unpaid' ? 'error' : 'warning'} />
                 </Stack>
@@ -267,31 +267,31 @@ export const PrintPreviewPage = () => {
               <Grid size={{ xs: 12, md: 6 }}>
                 <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}` }}>
                   <Typography variant="h4" sx={{ mb: 1 }}>
-                    بيانات العميل
+                    Customer Details
                   </Typography>
                   <Typography variant="body1" sx={{ fontWeight: 700 }}>
                     {invoice.customer.companyName}
                   </Typography>
                   <Typography variant="body2">{invoice.customer.name}</Typography>
-                  {invoice.customer.phone && <Typography variant="body2">الهاتف: {invoice.customer.phone}</Typography>}
+                  {invoice.customer.phone && <Typography variant="body2">Phone: {invoice.customer.phone}</Typography>}
                   {(invoice.customer.address || invoice.customer.city) && (
                     <Typography variant="body2">
                       {[invoice.customer.address, invoice.customer.city].filter(Boolean).join(', ')}
                     </Typography>
                   )}
                   {invoice.customer.taxRegistrationNumber && (
-                    <Typography variant="body2">التسجيل الضريبي: {invoice.customer.taxRegistrationNumber}</Typography>
+                    <Typography variant="body2">Tax Registration: {invoice.customer.taxRegistrationNumber}</Typography>
                   )}
                 </Box>
               </Grid>
               <Grid size={{ xs: 12, md: 6 }}>
                 <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}`, backgroundColor: alpha(theme.palette.primary.main, 0.03) }}>
                   {[
-                    ['رقم الفاتورة', invoice.invoiceNumber],
-                    ['تاريخ الفاتورة', formatDate(invoice.invoiceDate)],
-                    ['تاريخ الاستحقاق', formatDate(invoice.dueDate)],
-                    ['شروط السداد', formatPaymentTerms(invoice.paymentTerms)],
-                    ['حالة السداد', formatLabel(invoice.paymentStatus)]
+                    ['Invoice Number', invoice.invoiceNumber],
+                    ['Invoice Date', formatDate(invoice.invoiceDate)],
+                    ['Due Date', formatDate(invoice.dueDate)],
+                    ['Payment Terms', formatPaymentTerms(invoice.paymentTerms)],
+                    ['Payment Status', formatLabel(invoice.paymentStatus)]
                   ].map(([label, value]) => (
                     <Stack key={label} direction="row" justifyContent="space-between" spacing={2} sx={{ py: 0.5 }}>
                       <Typography variant="body2" color="text.secondary">
@@ -310,14 +310,14 @@ export const PrintPreviewPage = () => {
               <Table size="small" aria-label="print invoice line items">
                 <TableHead>
                   <TableRow sx={{ backgroundColor: alpha(theme.palette.primary.main, 0.07) }}>
-                    <TableCell>كود المنتج</TableCell>
-                    <TableCell>المنتج</TableCell>
-                    <TableCell>الوحدة</TableCell>
-                    <TableCell align="right">الكمية</TableCell>
-                    <TableCell align="right">سعر الوحدة</TableCell>
-                    <TableCell align="right">الخصم</TableCell>
-                    <TableCell align="right">الضريبة</TableCell>
-                    <TableCell align="right">إجمالي البند</TableCell>
+                    <TableCell>SKU</TableCell>
+                    <TableCell>Product</TableCell>
+                    <TableCell>Unit</TableCell>
+                    <TableCell align="right">Quantity</TableCell>
+                    <TableCell align="right">Unit Price</TableCell>
+                    <TableCell align="right">Discount</TableCell>
+                    <TableCell align="right">VAT</TableCell>
+                    <TableCell align="right">Line Total</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -345,12 +345,12 @@ export const PrintPreviewPage = () => {
               <Grid size={{ xs: 12, md: 5 }}>
                 <Stack spacing={1.25} sx={{ p: 2, border: `1px solid ${theme.palette.divider}` }}>
                   {[
-                    ['الإجمالي قبل الضريبة', invoice.totals.subtotal],
-                    ['الخصومات', -totalDiscounts],
-                    ['ضريبة القيمة المضافة', invoice.totals.vatAmount],
-                    ['الإجمالي النهائي', invoice.totals.grandTotal],
-                    ['المبلغ المدفوع', invoice.totals.paidAmount],
-                    ['المبلغ المتبقي', invoice.totals.balanceDue]
+                    ['Subtotal before VAT', invoice.totals.subtotal],
+                    ['Discounts', -totalDiscounts],
+                    ['VAT amount', invoice.totals.vatAmount],
+                    ['Grand total', invoice.totals.grandTotal],
+                    ['Paid amount', invoice.totals.paidAmount],
+                    ['Balance due', invoice.totals.balanceDue]
                   ].map(([label, value]) => (
                     <Stack
                       key={label}
@@ -372,19 +372,19 @@ export const PrintPreviewPage = () => {
             <Grid container spacing={3} sx={{ pt: 2 }}>
               <Grid size={{ xs: 12, md: 7 }}>
                 <Typography variant="h4" sx={{ mb: 1 }}>
-                  ملاحظات
+                  Notes
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {invoice.notes ?? 'تخضع البضاعة المباعة لشروط الضمان والاسترجاع المعتمدة لدى Megawatt. يرجى ذكر رقم الفاتورة عند السداد.'}
+                  {invoice.notes ?? 'Sold goods are subject to Megawatt warranty and return policies. Please reference the invoice number when making payment.'}
                 </Typography>
                 <Typography variant="body2" sx={{ mt: 2 }}>
-                  شكرًا لاختياركم Megawatt.
+                  Thank you for choosing Megawatt.
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, md: 5 }}>
                 <Box sx={{ pt: 6, borderBottom: `1px solid ${theme.palette.text.primary}` }} />
                 <Typography variant="body2" align="center" sx={{ mt: 1 }}>
-                  التوقيع المعتمد
+                  Authorized Signature
                 </Typography>
               </Grid>
             </Grid>

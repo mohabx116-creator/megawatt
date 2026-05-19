@@ -1,13 +1,18 @@
-import { useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import Divider from '@mui/material/Divider';
 import InputAdornment from '@mui/material/InputAdornment';
 import List from '@mui/material/List';
@@ -22,19 +27,35 @@ import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
-// third party
-import { FormattedMessage } from 'react-intl';
-
 // project imports
-import UpgradePlanCard from './UpgradePlanCard';
 import MainCard from 'ui-component/cards/MainCard';
 import Transitions from 'ui-component/extended/Transitions';
 import useAuth from 'hooks/useAuth';
+import useConfig from 'hooks/useConfig';
 
 // assets
-import User1 from 'assets/images/users/user-round.svg';
+import adminAvatar from 'assets/images/megawatt-admin.jpg';
 import { IconLogout, IconSearch, IconSettings, IconUser } from '@tabler/icons-react';
-import useConfig from 'hooks/useConfig';
+
+const dndStorageKey = 'megawatt:profile:dnd';
+const notificationsStorageKey = 'megawatt:profile:notifications';
+
+type ProfileDialog = 'account' | 'social' | null;
+
+type ProfileOption = {
+  label: string;
+  icon: ReactNode;
+  onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
+};
+
+const getStoredBoolean = (key: string, fallback: boolean) => {
+  if (typeof window === 'undefined') return fallback;
+
+  const storedValue = window.localStorage.getItem(key);
+  if (storedValue === 'true') return true;
+  if (storedValue === 'false') return false;
+  return fallback;
+};
 
 // ==============================|| PROFILE MENU ||============================== //
 
@@ -45,10 +66,12 @@ export default function ProfileSection() {
   } = useConfig();
   const navigate = useNavigate();
 
-  const [sdm, setSdm] = useState(true);
+  const [sdm, setSdm] = useState(() => getStoredBoolean(dndStorageKey, false));
   const [value, setValue] = useState('');
-  const [notification, setNotification] = useState(false);
+  const [notification, setNotification] = useState(() => getStoredBoolean(notificationsStorageKey, false));
+  const [notificationMessage, setNotificationMessage] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [activeDialog, setActiveDialog] = useState<ProfileDialog>(null);
   const { logout, user } = useAuth();
   const [open, setOpen] = useState(false);
 
@@ -59,18 +82,53 @@ export default function ProfileSection() {
   const handleLogout = async () => {
     try {
       await logout();
+      setOpen(false);
+      navigate('/login', { replace: true });
     } catch (err) {
       console.error(err);
     }
   };
 
-  const handleListItemClick = (event: React.MouseEvent<HTMLDivElement>, index: number, route: string = '') => {
+  const openProfileDialog = (event: React.MouseEvent<HTMLDivElement>, index: number, dialog: Exclude<ProfileDialog, null>) => {
     setSelectedIndex(index);
     handleClose(event);
+    setActiveDialog(dialog);
+  };
 
-    if (route && route !== '') {
-      navigate(route);
+  const handleDndChange = (checked: boolean) => {
+    setSdm(checked);
+    localStorage.setItem(dndStorageKey, String(checked));
+  };
+
+  const handleNotificationChange = async (checked: boolean) => {
+    setNotification(checked);
+    localStorage.setItem(notificationsStorageKey, String(checked));
+
+    if (!checked) {
+      setNotificationMessage('Demo notifications are disabled.');
+      return;
     }
+
+    if (!('Notification' in window)) {
+      setNotificationMessage('Browser notifications are not available in this browser.');
+      return;
+    }
+
+    if (Notification.permission === 'default') {
+      const permission = await Notification.requestPermission();
+      setNotificationMessage(
+        permission === 'granted'
+          ? 'Browser notification permission granted for this demo.'
+          : 'Browser notification permission was not granted. Demo preference was saved.'
+      );
+      return;
+    }
+
+    setNotificationMessage(
+      Notification.permission === 'granted'
+        ? 'Browser notifications are enabled for this demo.'
+        : 'Browser notification permission is denied. Demo preference was saved.'
+    );
   };
 
   const handleToggle = () => {
@@ -84,6 +142,30 @@ export default function ProfileSection() {
 
     setOpen(false);
   };
+
+  const profileOptions: ProfileOption[] = [
+    {
+      label: 'Account Settings',
+      icon: <IconSettings stroke={1.5} size="20px" />,
+      onClick: (event) => openProfileDialog(event, 0, 'account')
+    },
+    {
+      label: 'Social Profile',
+      icon: <IconUser stroke={1.5} size="20px" />,
+      onClick: (event) => openProfileDialog(event, 1, 'social')
+    },
+    {
+      label: 'Logout',
+      icon: <IconLogout stroke={1.5} size="20px" />,
+      onClick: () => {
+        setSelectedIndex(2);
+        handleLogout();
+      }
+    }
+  ];
+
+  const normalizedSearch = value.trim().toLowerCase();
+  const visibleOptions = profileOptions.filter((option) => !normalizedSearch || option.label.toLowerCase().includes(normalizedSearch));
 
   const prevOpen = useRef(open);
   useEffect(() => {
@@ -101,8 +183,8 @@ export default function ProfileSection() {
         sx={{ ml: 2, height: '48px', alignItems: 'center', borderRadius: '27px' }}
         icon={
           <Avatar
-            src={User1}
-            alt="user-images"
+            src={adminAvatar}
+            alt="Megawatt admin"
             sx={{ typography: 'mediumAvatar', margin: '8px 0 8px 8px !important', cursor: 'pointer' }}
             ref={anchorRef}
             aria-controls={open ? 'menu-list-grow' : undefined}
@@ -141,20 +223,34 @@ export default function ProfileSection() {
                 {open && (
                   <MainCard border={false} elevation={16} content={false} boxShadow shadow={theme.shadows[16]}>
                     <Box sx={{ p: 2, pb: 0 }}>
-                      <Stack>
-                        <Stack direction="row" sx={{ alignItems: 'center', gap: 0.5 }}>
-                          <Typography variant="h4">Good Morning,</Typography>
-                          <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
-                            {user?.name}
+                      <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
+                        <Avatar
+                          src={adminAvatar}
+                          alt={user?.name ?? 'Demo User'}
+                          sx={{
+                            width: 48,
+                            height: 48,
+                            border: `2px solid ${theme.palette.background.paper}`,
+                            boxShadow: `0 0 0 1px ${theme.palette.divider}`
+                          }}
+                        />
+                        <Stack sx={{ minWidth: 0 }}>
+                          <Stack direction="row" sx={{ alignItems: 'center', gap: 0.5, flexWrap: 'wrap' }}>
+                            <Typography variant="h4">Good Morning,</Typography>
+                            <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
+                              {user?.name ?? 'Demo User'}
+                            </Typography>
+                          </Stack>
+                          <Typography variant="subtitle2" color="text.secondary">
+                            Project Admin
                           </Typography>
                         </Stack>
-                        <Typography variant="subtitle2">Project Admin</Typography>
                       </Stack>
                       <OutlinedInput
                         sx={{ width: '100%', pr: 1, pl: 2, my: 2 }}
                         id="input-search-profile"
                         value={value}
-                        onChange={(e) => setValue(e.target.value)}
+                        onChange={(event) => setValue(event.target.value)}
                         placeholder="Search profile options"
                         startAdornment={
                           <InputAdornment position="start">
@@ -162,7 +258,7 @@ export default function ProfileSection() {
                           </InputAdornment>
                         }
                         aria-describedby="search-helper-text"
-                        slotProps={{ input: { 'aria-label': 'weight' } }}
+                        slotProps={{ input: { 'aria-label': 'Search profile options' } }}
                       />
                       <Divider />
                     </Box>
@@ -176,18 +272,37 @@ export default function ProfileSection() {
                         '&::-webkit-scrollbar': { width: 5 }
                       }}
                     >
-                      <UpgradePlanCard />
-                      <Divider />
                       <Card sx={{ bgcolor: 'primary.light', ...theme.applyStyles('dark', { bgcolor: 'dark.800' }), my: 2 }}>
                         <CardContent>
-                          <Stack sx={{ gap: 3 }}>
+                          <Stack sx={{ gap: 2 }}>
                             <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
-                              <Typography variant="subtitle1">Start DND Mode</Typography>
-                              <Switch color="primary" checked={sdm} onChange={(e) => setSdm(e.target.checked)} name="sdm" size="small" />
+                              <Box>
+                                <Typography variant="subtitle1">Start DND Mode</Typography>
+                                {sdm && (
+                                  <Typography variant="caption" color="text.secondary">
+                                    Do Not Disturb is active
+                                  </Typography>
+                                )}
+                              </Box>
+                              <Switch color="primary" checked={sdm} onChange={(event) => handleDndChange(event.target.checked)} name="sdm" size="small" />
                             </Stack>
                             <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
-                              <Typography variant="subtitle1">Allow Notifications</Typography>
-                              <Switch checked={notification} onChange={(e) => setNotification(e.target.checked)} name="sdm" size="small" />
+                              <Box>
+                                <Typography variant="subtitle1">Allow Notifications</Typography>
+                                {notificationMessage && (
+                                  <Typography variant="caption" color="text.secondary">
+                                    {notificationMessage}
+                                  </Typography>
+                                )}
+                              </Box>
+                              <Switch
+                                checked={notification}
+                                onChange={(event) => {
+                                  handleNotificationChange(event.target.checked);
+                                }}
+                                name="notifications"
+                                size="small"
+                              />
                             </Stack>
                           </Stack>
                         </CardContent>
@@ -203,61 +318,30 @@ export default function ProfileSection() {
                           '& .MuiListItemButton-root': { mt: 0.5 }
                         }}
                       >
-                        <ListItemButton
-                          sx={{ borderRadius: `${borderRadius}px` }}
-                          selected={selectedIndex === 0}
-                          onClick={(event: React.MouseEvent<HTMLDivElement>) => handleListItemClick(event, 0, '#!')}
-                        >
-                          <ListItemIcon>
-                            <IconSettings stroke={1.5} size="20px" />
-                          </ListItemIcon>
-                          <ListItemText
-                            primary={
-                              <Typography variant="body2">
-                                <FormattedMessage id="account-settings" />
-                              </Typography>
-                            }
-                          />
-                        </ListItemButton>
-                        <ListItemButton
-                          sx={{ borderRadius: `${borderRadius}px` }}
-                          selected={selectedIndex === 1}
-                          onClick={(event: React.MouseEvent<HTMLDivElement>) => handleListItemClick(event, 1, '#!')}
-                        >
-                          <ListItemIcon>
-                            <IconUser stroke={1.5} size="20px" />
-                          </ListItemIcon>
-                          <ListItemText
-                            primary={
-                              <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
+                        {visibleOptions.map((option, index) => (
+                          <ListItemButton
+                            key={option.label}
+                            sx={{ borderRadius: `${borderRadius}px` }}
+                            selected={selectedIndex === profileOptions.findIndex((candidate) => candidate.label === option.label)}
+                            onClick={option.onClick}
+                          >
+                            <ListItemIcon>{option.icon}</ListItemIcon>
+                            <ListItemText
+                              primary={
                                 <Typography variant="body2">
-                                  <FormattedMessage id="social-profile" />
+                                  {option.label}
                                 </Typography>
-                                <Chip
-                                  slotProps={{
-                                    label: { sx: { mt: 0.25, ...theme.applyStyles('dark', { color: 'background.default' }) } }
-                                  }}
-                                  label="02"
-                                  variant="filled"
-                                  size="small"
-                                  color="warning"
-                                />
-                              </Stack>
-                            }
-                          />
-                        </ListItemButton>
-                        <ListItemButton sx={{ borderRadius: `${borderRadius}px` }} selected={selectedIndex === 4} onClick={handleLogout}>
-                          <ListItemIcon>
-                            <IconLogout stroke={1.5} size="20px" />
-                          </ListItemIcon>
-                          <ListItemText
-                            primary={
-                              <Typography variant="body2">
-                                <FormattedMessage id="logout" />
-                              </Typography>
-                            }
-                          />
-                        </ListItemButton>
+                              }
+                            />
+                          </ListItemButton>
+                        ))}
+                        {visibleOptions.length === 0 && (
+                          <Box sx={{ px: 1, py: 2 }}>
+                            <Typography variant="body2" color="text.secondary" align="center">
+                              No options found
+                            </Typography>
+                          </Box>
+                        )}
                       </List>
                     </Box>
                   </MainCard>
@@ -267,6 +351,58 @@ export default function ProfileSection() {
           </ClickAwayListener>
         )}
       </Popper>
+
+      <Dialog open={activeDialog === 'account'} onClose={() => setActiveDialog(null)} maxWidth="xs" fullWidth>
+        <DialogTitle>Account Settings</DialogTitle>
+        <DialogContent dividers>
+          <Stack spacing={1.5}>
+            {[
+              ['Name', 'Demo User'],
+              ['Role', 'Project Admin'],
+              ['Company', 'Megawatt'],
+              ['Email', 'admin@megawatt.local']
+            ].map(([label, fieldValue]) => (
+              <Stack key={label} direction="row" justifyContent="space-between" spacing={2}>
+                <Typography variant="body2" color="text.secondary">
+                  {label}
+                </Typography>
+                <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                  {fieldValue}
+                </Typography>
+              </Stack>
+            ))}
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setActiveDialog(null)}>Close</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={activeDialog === 'social'} onClose={() => setActiveDialog(null)} maxWidth="xs" fullWidth>
+        <DialogTitle>Social Profile</DialogTitle>
+        <DialogContent dividers>
+          <Stack spacing={1.5}>
+            {[
+              ['User', 'Demo User'],
+              ['Department', 'Operations'],
+              ['LinkedIn', 'Not connected'],
+              ['Activity', 'Managing Megawatt demo workspace']
+            ].map(([label, fieldValue]) => (
+              <Stack key={label} direction="row" justifyContent="space-between" spacing={2}>
+                <Typography variant="body2" color="text.secondary">
+                  {label}
+                </Typography>
+                <Typography variant="body2" sx={{ fontWeight: 700, textAlign: 'right' }}>
+                  {fieldValue}
+                </Typography>
+              </Stack>
+            ))}
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setActiveDialog(null)}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

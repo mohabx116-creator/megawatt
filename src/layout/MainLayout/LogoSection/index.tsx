@@ -11,7 +11,7 @@ import Logo from 'ui-component/Logo';
 
 export default function LogoSection() {
   return (
-    <Link component={RouterLink} to={DASHBOARD_PATH} aria-label="theme-logo">
+    <Link component={RouterLink} to={DASHBOARD_PATH} aria-label="Megawatt logo" underline="none" sx={{ display: 'inline-flex' }}>
       <Logo />
     </Link>
   );
