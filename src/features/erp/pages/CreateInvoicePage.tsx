@@ -24,10 +24,12 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import MainCard from 'ui-component/cards/MainCard';
 import { useLanguage } from 'i18n';
+import { MobileCreateInvoice } from '../components/mobile/MobileCreateInvoice';
 
 import { ErpFullWidthPage } from '../components/ErpFullWidthPage';
 import { ErpPageHeader } from '../components/ErpPageHeader';
@@ -143,6 +145,7 @@ const compactLineInputSx = {
 
 export const CreateInvoicePage = () => {
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
   const { t, language, formatCurrency } = useLanguage();
   const currencyAdornment = language === 'ar' ? 'جنيه' : 'EGP';
@@ -338,6 +341,10 @@ export const CreateInvoicePage = () => {
     localStorage.setItem(generatedInvoiceStorageKey, JSON.stringify(snapshot));
     setGeneratedInvoiceNumber(invoiceNumber);
   };
+
+  if (isMobile) {
+    return <MobileCreateInvoice />;
+  }
 
   return (
     <ErpFullWidthPage>

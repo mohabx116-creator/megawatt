@@ -20,7 +20,7 @@ export const ErpFullWidthPage = ({ children, sx }: ErpFullWidthPageProps) => (
         }
       }}
     />
-    <Box className="erp-full-width-page" sx={{ width: '100%', maxWidth: 'none', margin: 0, alignSelf: 'stretch', minWidth: 0, ...sx }}>
+    <Box className="erp-full-width-page" sx={{ width: '100%', maxWidth: 'none', margin: 0, alignSelf: 'stretch', minWidth: 0, overflowX: 'hidden', ...sx }}>
       {children}
     </Box>
   </>

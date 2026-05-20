@@ -20,8 +20,12 @@ import Typography from '@mui/material/Typography';
 import { alpha, useTheme } from '@mui/material/styles';
 import { SvgIconComponent } from '@mui/icons-material';
 
+import useMediaQuery from '@mui/material/useMediaQuery';
+
 import MainCard from 'ui-component/cards/MainCard';
 import { useLanguage } from 'i18n';
+
+import { MobileDashboard } from '../components/mobile/MobileDashboard';
 
 import { ErpFullWidthPage } from '../components/ErpFullWidthPage';
 import { ErpPageHeader } from '../components/ErpPageHeader';
@@ -51,6 +55,7 @@ const sortedInvoices = [...mockInvoices].sort(
 
 export const DashboardPage = () => {
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { t, language, formatCurrency, formatDate, formatStatus, formatNumber } = useLanguage();
 
   const lowStockItems = mockInventory.filter((item) => item.quantityOnHand <= item.reorderLevel);
@@ -129,6 +134,10 @@ export const DashboardPage = () => {
 
   const maxInventoryValue = Math.max(...topInventory.map((item) => item.value), 1);
   const performanceMax = Math.max(mockFinanceSummary.revenue, mockFinanceSummary.expenses, 1);
+
+  if (isMobile) {
+    return <MobileDashboard />;
+  }
 
   return (
     <ErpFullWidthPage>

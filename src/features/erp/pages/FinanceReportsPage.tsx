@@ -17,11 +17,13 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { SvgIconComponent } from '@mui/icons-material';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import MainCard from 'ui-component/cards/MainCard';
 import { useLanguage } from 'i18n';
+import { MobileFinanceReports } from '../components/mobile/MobileFinanceReports';
 
 import { ErpFullWidthPage } from '../components/ErpFullWidthPage';
 import { ErpPageHeader } from '../components/ErpPageHeader';
@@ -60,6 +62,7 @@ const sortedExpenses = [...mockExpenses].sort((first, second) => new Date(second
 
 export const FinanceReportsPage = () => {
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { t, language, formatCurrency, formatDate, formatNumber, formatStatus } = useLanguage();
 
   const invoiceTotals = mockInvoices.reduce(
@@ -147,6 +150,10 @@ export const FinanceReportsPage = () => {
       color: mockFinanceSummary.netProfit >= 0 ? theme.palette.success.main : theme.palette.error.main
     }
   ];
+
+  if (isMobile) {
+    return <MobileFinanceReports />;
+  }
 
   return (
     <ErpFullWidthPage>

@@ -13,11 +13,13 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import MainCard from 'ui-component/cards/MainCard';
 import { useLanguage } from 'i18n';
+import { MobileInventory } from '../components/mobile/MobileInventory';
 
 import { ErpFullWidthPage } from '../components/ErpFullWidthPage';
 import { ErpPageHeader } from '../components/ErpPageHeader';
@@ -53,6 +55,7 @@ const getInventoryRows = (): InventoryRow[] =>
 
 export const InventoryPage = () => {
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { t, language, formatCurrency, formatDate, formatNumber } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -86,6 +89,10 @@ export const InventoryPage = () => {
     { label: t('inventory.lowStockItems'), value: formatNumber(lowStockItems.length), tone: theme.palette.warning.main },
     { label: t('inventory.outOfStock'), value: formatNumber(outOfStockItems.length), tone: theme.palette.error.main }
   ];
+
+  if (isMobile) {
+    return <MobileInventory />;
+  }
 
   return (
     <ErpFullWidthPage>

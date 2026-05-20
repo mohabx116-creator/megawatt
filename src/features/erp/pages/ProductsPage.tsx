@@ -19,8 +19,12 @@ import Typography from '@mui/material/Typography';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import { alpha, useTheme } from '@mui/material/styles';
 
+import useMediaQuery from '@mui/material/useMediaQuery';
+
 import MainCard from 'ui-component/cards/MainCard';
 import { useLanguage } from 'i18n';
+
+import { MobileProducts } from '../components/mobile/MobileProducts';
 
 import { ErpFullWidthPage } from '../components/ErpFullWidthPage';
 import { ErpPageHeader } from '../components/ErpPageHeader';
@@ -42,6 +46,7 @@ const getProductInventoryValue = (productId: string, salePrice: number) => {
 
 export const ProductsPage = () => {
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { t, language, formatCurrency, formatNumber, formatStatus } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
@@ -79,6 +84,10 @@ export const ProductsPage = () => {
     { label: t('products.lowStockProducts'), value: formatNumber(lowStockProducts.length), tone: theme.palette.warning.main },
     { label: t('dashboard.inventoryValue'), value: formatCurrency(totalInventoryValue), tone: theme.palette.primary.main }
   ];
+
+  if (isMobile) {
+    return <MobileProducts />;
+  }
 
   return (
     <ErpFullWidthPage>
