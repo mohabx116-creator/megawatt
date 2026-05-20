@@ -1,218 +1,262 @@
-import { useMemo, useState } from 'react';
-
 import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
-import LinearProgress from '@mui/material/LinearProgress';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { useTheme, alpha } from '@mui/material/styles';
+
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import { alpha, useTheme } from '@mui/material/styles';
+import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
+import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
+import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
+import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
+import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined';
+import QrCodeScannerOutlinedIcon from '@mui/icons-material/QrCodeScannerOutlined';
+import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
+import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
 
-import MainCard from 'ui-component/cards/MainCard';
 import { useLanguage } from 'i18n';
-
-import { ErpStatusChip } from '../ErpStatusChip';
 import { mockInventory, mockProducts } from '../../mockData';
-import { InventoryItem, Product } from '../../types';
-import { translateCategory, translateProductName, translateUnit, translateWarehouse } from '../../utils/displayTranslations';
-import { MobileStatCard } from './MobileStatCard';
-
-type InventoryRow = InventoryItem & {
-  product?: Product;
-  reservedQuantity: number;
-  availableQuantity: number;
-  stockValue: number;
-  stockStatus: 'in_stock' | 'low_stock' | 'out_of_stock';
-};
-
-const getInventoryRows = (): InventoryRow[] =>
-  mockInventory.map((item) => {
-    const product = mockProducts.find((candidate) => candidate.id === item.productId);
-    const reservedQuantity = 0;
-    const availableQuantity = Math.max(item.quantityOnHand - reservedQuantity, 0);
-    const stockStatus = item.quantityOnHand === 0 ? 'out_of_stock' : item.quantityOnHand <= item.reorderLevel ? 'low_stock' : 'in_stock';
-
-    return {
-      ...item,
-      product,
-      reservedQuantity,
-      availableQuantity,
-      stockValue: item.quantityOnHand * (product?.salePrice ?? 0),
-      stockStatus
-    };
-  });
 
 export const MobileInventory = () => {
   const theme = useTheme();
-  const { t, language, formatCurrency, formatDate, formatNumber } = useLanguage();
-  const [searchTerm, setSearchTerm] = useState('');
+  const { t, formatNumber } = useLanguage();
 
-  const inventoryRows = useMemo(() => getInventoryRows(), []);
-  const filteredRows = useMemo(() => {
-    const normalizedSearch = searchTerm.trim().toLowerCase();
+  const totalItems = mockInventory.length;
+  const lowStockItems = mockInventory.filter((item) => item.quantityOnHand > 0 && item.quantityOnHand <= item.reorderLevel);
+  const outOfStockItems = mockInventory.filter((item) => item.quantityOnHand === 0);
 
-    return inventoryRows.filter((item) => {
-      if (!normalizedSearch) return true;
-
-      return [
-        item.productName,
-        item.sku,
-        item.warehouseName,
-        item.warehouseId,
-        item.product?.category ?? '',
-        translateProductName(language, item.productName),
-        translateWarehouse(language, item.warehouseName),
-        translateCategory(language, item.product?.category)
-      ].some((value) => value.toLowerCase().includes(normalizedSearch));
-    });
-  }, [inventoryRows, language, searchTerm]);
-
-  const totalInventoryValue = inventoryRows.reduce((sum, item) => sum + item.stockValue, 0);
-  const lowStockCount = inventoryRows.filter((item) => item.stockStatus === 'low_stock').length;
-  const outOfStockCount = inventoryRows.filter((item) => item.stockStatus === 'out_of_stock').length;
+  const getProductDetails = (productId: string) => mockProducts.find((p) => p.id === productId);
 
   return (
-    <Box sx={{ width: '100%', minWidth: 0 }}>
-      <Stack spacing={2}>
-        <Box>
-          <Typography variant="h2">{t('inventory.title')}</Typography>
-          <Typography variant="body2" color="text.secondary">
-            {t('inventory.subtitle')}
-          </Typography>
-        </Box>
-
-        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 1.25 }}>
-          <MobileStatCard label={t('inventory.totalStockedSkus')} value={formatNumber(inventoryRows.length)} accent={theme.palette.primary.main} />
-          <MobileStatCard label={t('dashboard.inventoryValue')} value={formatCurrency(totalInventoryValue)} accent={theme.palette.success.main} />
-          <MobileStatCard label={t('inventory.lowStockItems')} value={formatNumber(lowStockCount)} accent={theme.palette.warning.main} />
-          <MobileStatCard label={t('inventory.outOfStock')} value={formatNumber(outOfStockCount)} accent={theme.palette.error.main} />
-        </Box>
-
-        <MainCard border elevation={0} contentSX={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
-          <TextField
-            fullWidth
-            size="small"
-            label={t('inventory.search')}
-            value={searchTerm}
-            onChange={(event) => setSearchTerm(event.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchOutlinedIcon fontSize="small" />
-                </InputAdornment>
-              )
+    <Box sx={{ pb: 12, bgcolor: theme.palette.background.default, minHeight: '100vh', position: 'relative' }}>
+      {/* Top App Bar */}
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        sx={{
+          px: 2,
+          height: 64,
+          bgcolor: theme.palette.background.paper,
+          borderBottom: `1px solid ${theme.palette.divider}`,
+          position: 'sticky',
+          top: 0,
+          zIndex: 50
+        }}
+      >
+        <Stack direction="row" alignItems="center" spacing={1.5}>
+          <Box
+            sx={{
+              width: 32,
+              height: 32,
+              borderRadius: '50%',
+              bgcolor: theme.palette.primary.main,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
             }}
-          />
-        </MainCard>
-
-        <Stack spacing={1.25}>
-          {filteredRows.map((item) => {
-            const isCritical = item.stockStatus === 'out_of_stock';
-            const isLowStock = item.stockStatus === 'low_stock';
-            const progressValue = Math.min((item.quantityOnHand / Math.max(item.reorderLevel, 1)) * 100, 100);
-
-            return (
-              <MainCard
-                key={item.id}
-                border
-                elevation={0}
-                contentSX={{ p: 1.5, '&:last-child': { pb: 1.5 } }}
-                sx={{
-                  backgroundColor: isCritical
-                    ? alpha(theme.palette.error.main, 0.05)
-                    : isLowStock
-                      ? alpha(theme.palette.warning.main, 0.05)
-                      : theme.palette.background.paper
-                }}
-              >
-                <Stack spacing={1.25}>
-                  <Stack direction="row" justifyContent="space-between" spacing={1.25} alignItems="flex-start">
-                    <Box sx={{ minWidth: 0 }}>
-                      <Typography variant="h4" noWrap>
-                        {translateProductName(language, item.productName)}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {item.sku}
-                      </Typography>
-                    </Box>
-                    <ErpStatusChip status={item.stockStatus} />
-                  </Stack>
-
-                  <Box>
-                    <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                      {translateWarehouse(language, item.warehouseName)}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {item.product?.category ? translateCategory(language, item.product.category) : t('inventory.uncategorized')}
-                    </Typography>
-                  </Box>
-
-                  <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 1 }}>
-                    <Box>
-                      <Typography variant="caption" color="text.secondary">
-                        {t('inventory.quantityOnHand')}
-                      </Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                        {formatNumber(item.quantityOnHand)} {translateUnit(language, item.unit)}
-                      </Typography>
-                    </Box>
-                    <Box>
-                      <Typography variant="caption" color="text.secondary">
-                        {t('inventory.available')}
-                      </Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                        {formatNumber(item.availableQuantity)}
-                      </Typography>
-                    </Box>
-                    <Box>
-                      <Typography variant="caption" color="text.secondary">
-                        {t('inventory.reorderLevel')}
-                      </Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                        {formatNumber(item.reorderLevel)}
-                      </Typography>
-                    </Box>
-                  </Box>
-
-                  <LinearProgress
-                    variant="determinate"
-                    value={progressValue}
-                    sx={{
-                      height: 7,
-                      borderRadius: 1,
-                      backgroundColor: alpha(theme.palette.divider, 0.55),
-                      '& .MuiLinearProgress-bar': {
-                        backgroundColor: isCritical
-                          ? theme.palette.error.main
-                          : isLowStock
-                            ? theme.palette.warning.main
-                            : theme.palette.primary.main
-                      }
-                    }}
-                  />
-
-                  <Stack direction="row" justifyContent="space-between" spacing={1.5}>
-                    <Typography variant="caption" color="text.secondary">
-                      {t('inventory.lastRestocked')}: {formatDate(item.lastRestocked)}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {formatCurrency(item.stockValue)}
-                    </Typography>
-                  </Stack>
-                </Stack>
-              </MainCard>
-            );
-          })}
-          {filteredRows.length === 0 && (
-            <MainCard border elevation={0}>
-              <Typography variant="body2" color="text.secondary" align="center">
-                {t('inventory.noMatches')}
-              </Typography>
-            </MainCard>
-          )}
+          >
+            <Typography variant="h6" sx={{ color: 'white', fontWeight: 800 }}>M</Typography>
+          </Box>
+          <Typography variant="h3" sx={{ fontWeight: 700, color: theme.palette.primary.main }}>
+            MegaWatt ERP
+          </Typography>
+        </Stack>
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <IconButton size="small" sx={{ color: theme.palette.primary.main }}>
+            <SearchOutlinedIcon />
+          </IconButton>
+          <Box sx={{ bgcolor: theme.palette.secondary.light, color: theme.palette.secondary.dark, px: 1, py: 0.5, borderRadius: 1 }}>
+            <Typography variant="caption" sx={{ fontWeight: 700 }}>AR</Typography>
+          </Box>
         </Stack>
       </Stack>
+
+      <Box sx={{ px: 2, pt: 2 }}>
+        {/* Warehouse Selector */}
+        <Box sx={{ mb: 3 }}>
+          <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary', display: 'block', mb: 0.5, textTransform: 'uppercase' }}>
+            {t('inventory.warehouse')}
+          </Typography>
+          <Select
+            fullWidth
+            value="main"
+            size="small"
+            IconComponent={ExpandMoreOutlinedIcon}
+            sx={{
+              bgcolor: theme.palette.background.paper,
+              borderRadius: 2,
+              fontWeight: 600,
+              color: theme.palette.primary.main,
+              '& .MuiOutlinedInput-notchedOutline': { borderColor: theme.palette.divider }
+            }}
+          >
+            <MenuItem value="main">Main Warehouse - Cairo North</MenuItem>
+            <MenuItem value="alex">Dist. Center - Alexandria</MenuItem>
+            <MenuItem value="suez">Factory A - Suez Zone</MenuItem>
+          </Select>
+        </Box>
+
+        {/* Summary Cards Grid */}
+        <Stack direction="row" spacing={1.5} sx={{ mb: 1.5, overflowX: 'auto', '&::-webkit-scrollbar': { display: 'none' } }}>
+          <Box sx={{ minWidth: 160, flex: 1, bgcolor: theme.palette.background.paper, p: 2, borderRadius: 3, border: `1px solid ${theme.palette.divider}` }}>
+            <Inventory2OutlinedIcon sx={{ color: theme.palette.primary.main, mb: 1 }} />
+            <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary', display: 'block', textTransform: 'uppercase' }}>
+              Total Items
+            </Typography>
+            <Typography variant="h4" sx={{ fontWeight: 700, color: theme.palette.primary.main }}>
+              {formatNumber(totalItems)}
+            </Typography>
+          </Box>
+
+          <Box sx={{ minWidth: 160, flex: 1, bgcolor: alpha(theme.palette.error.main, 0.05), p: 2, borderRadius: 3, border: `1px solid ${theme.palette.error.main}` }}>
+            <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 1 }}>
+              <WarningAmberOutlinedIcon sx={{ color: theme.palette.error.main }} />
+              <Box sx={{ bgcolor: theme.palette.error.main, color: 'white', px: 1, py: 0.25, borderRadius: 4 }}>
+                <Typography variant="caption" sx={{ fontSize: 10, fontWeight: 700 }}>ACTION</Typography>
+              </Box>
+            </Stack>
+            <Typography variant="caption" sx={{ fontWeight: 700, color: theme.palette.error.dark, display: 'block', textTransform: 'uppercase' }}>
+              Low Stock
+            </Typography>
+            <Typography variant="h4" sx={{ fontWeight: 700, color: theme.palette.error.main }}>
+              {formatNumber(lowStockItems.length)} Units
+            </Typography>
+          </Box>
+        </Stack>
+
+        <Box sx={{ mb: 3, bgcolor: alpha(theme.palette.grey[500], 0.1), p: 2, borderRadius: 3, border: `1px solid ${theme.palette.divider}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Box>
+            <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary', display: 'block', textTransform: 'uppercase' }}>
+              Out of Stock
+            </Typography>
+            <Typography variant="h4" sx={{ fontWeight: 700, color: 'text.primary' }}>
+              {formatNumber(outOfStockItems.length)} Items
+            </Typography>
+          </Box>
+          <ErrorOutlineOutlinedIcon sx={{ color: 'text.secondary', fontSize: 32 }} />
+        </Box>
+
+        {/* Search & Filter Bar */}
+        <Stack direction="row" spacing={1.5} sx={{ mb: 3 }}>
+          <TextField
+            fullWidth
+            placeholder="Search by name or barcode..."
+            variant="outlined"
+            size="small"
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <QrCodeScannerOutlinedIcon sx={{ color: 'text.secondary' }} />
+                  </InputAdornment>
+                ),
+                sx: { borderRadius: 2, bgcolor: alpha(theme.palette.background.paper, 0.5) }
+              }
+            }}
+          />
+          <IconButton sx={{ bgcolor: theme.palette.background.paper, borderRadius: 2, border: `1px solid ${theme.palette.divider}` }}>
+            <FilterListOutlinedIcon sx={{ color: theme.palette.primary.main }} />
+          </IconButton>
+        </Stack>
+
+        {/* Product List */}
+        <Box sx={{ mb: 2 }}>
+          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+            <Typography variant="h4" sx={{ color: theme.palette.primary.main, fontWeight: 700 }}>
+              Recent Inventory
+            </Typography>
+            <Stack direction="row" alignItems="center" spacing={0.5} sx={{ color: theme.palette.primary.main }}>
+              <Typography variant="caption" sx={{ fontWeight: 700 }}>VIEW ALL</Typography>
+              <ChevronRightOutlinedIcon sx={{ fontSize: 18 }} />
+            </Stack>
+          </Stack>
+
+          <Stack spacing={1.5}>
+            {mockInventory.slice(0, 5).map((item) => {
+              const product = getProductDetails(item.productId);
+              if (!product) return null;
+
+              const isLowStock = item.quantityOnHand <= item.reorderLevel;
+              const isOutOfStock = item.quantityOnHand === 0;
+
+              const stockTone = isOutOfStock ? theme.palette.error.main : isLowStock ? theme.palette.error.main : theme.palette.primary.main;
+
+              return (
+                <Box
+                  key={item.id}
+                  sx={{
+                    bgcolor: theme.palette.background.paper,
+                    border: `1px solid ${theme.palette.divider}`,
+                    borderRadius: 3,
+                    p: 1.5,
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                  }}
+                >
+                  <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+                    <Stack direction="row" spacing={2}>
+                      <Box sx={{ width: 64, height: 64, bgcolor: theme.palette.grey[100], borderRadius: 2, border: `1px solid ${theme.palette.divider}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                         <Inventory2OutlinedIcon sx={{ color: theme.palette.grey[400] }} />
+                      </Box>
+                      <Box>
+                        <Stack direction="row" alignItems="center" spacing={1}>
+                          <Typography variant="subtitle2" sx={{ fontWeight: 700, color: theme.palette.primary.main }}>
+                            {product.name}
+                          </Typography>
+                          {isLowStock && !isOutOfStock && (
+                            <Box sx={{ px: 0.5, py: 0.25, bgcolor: alpha(theme.palette.error.main, 0.1), border: `1px solid ${alpha(theme.palette.error.main, 0.2)}`, borderRadius: 1 }}>
+                              <Typography variant="caption" sx={{ fontSize: 9, fontWeight: 700, color: theme.palette.error.main }}>LOW STOCK</Typography>
+                            </Box>
+                          )}
+                          {isOutOfStock && (
+                            <Box sx={{ px: 0.5, py: 0.25, bgcolor: alpha(theme.palette.error.main, 0.1), border: `1px solid ${alpha(theme.palette.error.main, 0.2)}`, borderRadius: 1 }}>
+                              <Typography variant="caption" sx={{ fontSize: 9, fontWeight: 700, color: theme.palette.error.main }}>OUT OF STOCK</Typography>
+                            </Box>
+                          )}
+                        </Stack>
+                        <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 0.5 }}>
+                          CODE: {product.sku}
+                        </Typography>
+                        <Box sx={{ mt: 1, display: 'inline-flex', alignItems: 'center', px: 1, py: 0.5, bgcolor: alpha(stockTone, 0.05), border: `1px solid ${alpha(stockTone, 0.1)}`, borderRadius: 1 }}>
+                          <Typography variant="caption" sx={{ fontWeight: 700, color: stockTone }}>
+                            STOCK: {formatNumber(item.quantityOnHand)} {product.unit}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Stack>
+                    <IconButton size="small" sx={{ color: 'text.secondary' }}>
+                      <MoreVertOutlinedIcon />
+                    </IconButton>
+                  </Stack>
+                </Box>
+              );
+            })}
+          </Stack>
+        </Box>
+      </Box>
+
+      {/* FAB */}
+      <IconButton
+        sx={{
+          position: 'fixed',
+          bottom: 24,
+          right: 24,
+          width: 56,
+          height: 56,
+          bgcolor: theme.palette.secondary.light,
+          color: theme.palette.secondary.dark,
+          boxShadow: 4,
+          zIndex: 40,
+          border: '1px solid rgba(255,255,255,0.2)',
+          '&:hover': { bgcolor: theme.palette.secondary.main, color: 'white' }
+        }}
+      >
+        <QrCodeScannerOutlinedIcon sx={{ fontSize: 32 }} />
+      </IconButton>
     </Box>
   );
 };
