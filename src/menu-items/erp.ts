@@ -5,7 +5,9 @@ import {
   IconFileInvoice,
   IconReportMoney,
   IconPrinter,
-  IconFileDescription
+  IconFileDescription,
+  IconUsers,
+  IconFiles
 } from '@tabler/icons-react';
 
 const erp = {
@@ -38,11 +40,35 @@ const erp = {
       breadcrumbs: false
     },
     {
+      id: 'erp-customers',
+      title: 'nav.customers',
+      type: 'item',
+      url: '/erp/customers',
+      icon: IconUsers,
+      breadcrumbs: false
+    },
+    {
+      id: 'erp-quotations',
+      title: 'nav.quotations',
+      type: 'item',
+      url: '/erp/quotations',
+      icon: IconFiles,
+      breadcrumbs: false
+    },
+    {
       id: 'erp-create-quotation',
       title: 'nav.createQuotation',
       type: 'item',
       url: '/erp/create-quotation',
       icon: IconFileDescription,
+      breadcrumbs: false
+    },
+    {
+      id: 'erp-invoices',
+      title: 'nav.invoices',
+      type: 'item',
+      url: '/erp/invoices',
+      icon: IconFileInvoice,
       breadcrumbs: false
     },
     {

@@ -1,6 +1,9 @@
 export { MobileDashboard } from './MobileDashboard';
 export { MobileProducts } from './MobileProducts';
 export { MobileInventory } from './MobileInventory';
+export { MobileCustomers } from './MobileCustomers';
+export { MobileQuotations } from './MobileQuotations';
+export { MobileInvoices } from './MobileInvoices';
 export { MobileCreateInvoice } from './MobileCreateInvoice';
 export { MobileCreateQuotation } from './MobileCreateQuotation';
 export { MobileFinanceReports } from './MobileFinanceReports';

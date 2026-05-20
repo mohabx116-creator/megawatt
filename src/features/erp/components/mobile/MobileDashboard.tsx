@@ -5,6 +5,8 @@ import NoteAddOutlinedIcon from '@mui/icons-material/NoteAddOutlined';
 import FinanceOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
+import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
+import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import TrendingUpOutlinedIcon from '@mui/icons-material/TrendingUpOutlined';
 import WarehouseOutlinedIcon from '@mui/icons-material/WarehouseOutlined';
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
@@ -49,6 +51,9 @@ export const MobileDashboard = () => {
   const actions = [
     { label: t('nav.createInvoice'), icon: <NoteAddOutlinedIcon />, path: '/erp/create-invoice', primary: true },
     { label: t('nav.createQuotation'), icon: <DescriptionOutlinedIcon />, path: '/erp/create-quotation' },
+    { label: t('nav.customers'), icon: <PeopleAltOutlinedIcon />, path: '/erp/customers' },
+    { label: t('nav.quotations'), icon: <DescriptionOutlinedIcon />, path: '/erp/quotations' },
+    { label: t('nav.invoices'), icon: <ReceiptLongOutlinedIcon />, path: '/erp/invoices' },
     { label: t('nav.products'), icon: <Inventory2OutlinedIcon />, path: '/erp/products' },
     { label: t('nav.inventory'), icon: <WarehouseOutlinedIcon />, path: '/erp/inventory' },
     { label: t('nav.financeReports'), icon: <FinanceOutlinedIcon />, path: '/erp/finance-reports' }

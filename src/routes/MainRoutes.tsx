@@ -9,8 +9,11 @@ import {
   DashboardPage,
   ProductsPage,
   InventoryPage,
+  CustomersPage,
+  QuotationsPage,
   CreateInvoicePage,
   CreateQuotationPage,
+  InvoicesPage,
   FinanceReportsPage,
   PrintPreviewPage,
   QuotationPreviewPage
@@ -50,12 +53,24 @@ const MainRoutes = {
       element: <InventoryPage />
     },
     {
-      path: '/erp/create-invoice',
-      element: <CreateInvoicePage />
+      path: '/erp/customers',
+      element: <CustomersPage />
+    },
+    {
+      path: '/erp/quotations',
+      element: <QuotationsPage />
     },
     {
       path: '/erp/create-quotation',
       element: <CreateQuotationPage />
+    },
+    {
+      path: '/erp/invoices',
+      element: <InvoicesPage />
+    },
+    {
+      path: '/erp/create-invoice',
+      element: <CreateInvoicePage />
     },
     {
       path: '/erp/finance-reports',
