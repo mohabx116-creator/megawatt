@@ -612,7 +612,7 @@ export const CreateInvoicePage = () => {
                       balance: formatCurrency(invoiceTotals.balanceDue)
                     })}
                   </span>
-                  <Button variant="outlined" size="small" onClick={() => navigate('/erp/print-preview')}>
+                  <Button variant="outlined" size="small" onClick={() => navigate('/erp/print-preview?type=invoice')}>
                     {t('invoice.viewPrintPreview')}
                   </Button>
                 </Stack>

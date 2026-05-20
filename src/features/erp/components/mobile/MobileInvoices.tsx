@@ -154,7 +154,7 @@ export const MobileInvoices = () => {
                   ))}
                 </Stack>
 
-                <Button fullWidth variant="outlined" startIcon={<PrintOutlinedIcon />} onClick={() => navigate('/erp/print-preview')}>
+                <Button fullWidth variant="outlined" startIcon={<PrintOutlinedIcon />} onClick={() => navigate('/erp/print-preview?type=invoice')}>
                   {t('invoice.viewPrintPreview')}
                 </Button>
               </Stack>

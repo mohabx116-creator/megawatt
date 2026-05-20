@@ -6,6 +6,7 @@ import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
+import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Stack from '@mui/material/Stack';
@@ -39,7 +40,7 @@ export const MobileShell = ({ title = 'Megawatt', children, showBottomNav = true
     { label: t('nav.products'), path: '/erp/products', icon: <StorefrontOutlinedIcon />, match: ['/erp/products'] },
     { label: t('nav.inventory'), path: '/erp/inventory', icon: <Inventory2OutlinedIcon />, match: ['/erp/inventory'] },
     { label: t('nav.invoices'), path: '/erp/invoices', icon: <ReceiptLongOutlinedIcon />, match: ['/erp/invoices', '/erp/create-invoice', '/erp/print-preview'] },
-    { label: t('nav.financeReports'), path: '/erp/finance-reports', icon: <ReceiptLongOutlinedIcon />, match: ['/erp/finance-reports'] }
+    { label: t('nav.financeReports'), path: '/erp/finance-reports', icon: <AccountBalanceWalletOutlinedIcon />, match: ['/erp/finance-reports'] }
   ];
 
   return (

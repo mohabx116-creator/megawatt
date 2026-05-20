@@ -1,23 +1,22 @@
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import PrintOutlinedIcon from '@mui/icons-material/PrintOutlined';
+import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import GlobalStyles from '@mui/material/GlobalStyles';
 import Stack from '@mui/material/Stack';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
-import { alpha, useTheme } from '@mui/material/styles';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+import { useTheme } from '@mui/material/styles';
 
 import MainCard from 'ui-component/cards/MainCard';
 import { useLanguage } from 'i18n';
@@ -25,47 +24,18 @@ import { useLanguage } from 'i18n';
 import { ErpFullWidthPage } from '../components/ErpFullWidthPage';
 import { ErpPageHeader } from '../components/ErpPageHeader';
 import { mockCustomers, mockInvoices } from '../mockData';
-import { translateExpenseDescription, translatePartyName, translateProductName, translateUnit } from '../utils/displayTranslations';
 
-type PrintableInvoiceLine = {
-  id: string;
-  productName: string;
-  sku: string;
-  unit: string;
-  quantity: number;
-  unitPrice: number;
-  discount: number;
-  taxRate: number;
-  taxAmount: number;
-  lineTotal: number;
-};
+import { InvoicePrintDocument, PrintableInvoice } from '../components/print/InvoicePrintDocument';
+import { QuotationPrintDocument } from '../components/print/QuotationPrintDocument';
 
-type PrintableInvoice = {
-  invoiceNumber: string;
-  invoiceDate: string;
-  dueDate: string;
-  paymentTerms: string;
-  paymentStatus: string;
-  customer: {
-    name: string;
-    companyName: string;
-    phone?: string;
-    address?: string;
-    city?: string;
-    taxRegistrationNumber?: string;
-  };
-  lines: PrintableInvoiceLine[];
-  totals: {
-    subtotal: number;
-    lineDiscountTotal: number;
-    invoiceDiscount: number;
-    vatAmount: number;
-    grandTotal: number;
-    paidAmount: number;
-    balanceDue: number;
-  };
-  notes?: string;
-};
+import {
+  getGeneratedQuotation,
+  clearGeneratedQuotation,
+  convertQuotationToInvoiceSnapshot,
+  MEGAWATT_LAST_GENERATED_INVOICE
+} from '../sales-documents';
+
+import { createFallbackQuotation } from '../utils/documentListData';
 
 const generatedInvoiceStorageKey = 'megawatt:last-generated-invoice';
 
@@ -134,25 +104,50 @@ const getFallbackInvoice = (): PrintableInvoice => {
 export const PrintPreviewPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { t, language, isRtl, formatCurrency, formatDate, formatStatus } = useLanguage();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { t, isRtl } = useLanguage();
   const [storageVersion, setStorageVersion] = useState(0);
+
+  // Snackbar Toast notification state
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Determine active tab from URL query param `type`. Defaults to `invoice`.
+  const activeTab = searchParams.get('type') === 'quotation' ? 'quotation' : 'invoice';
 
   const storedInvoice = useMemo(() => getStoredInvoice(), [storageVersion]);
   const invoice = useMemo(() => storedInvoice ?? getFallbackInvoice(), [storedInvoice]);
-  const totalDiscounts = invoice.totals.lineDiscountTotal + invoice.totals.invoiceDiscount;
-  const formatPaymentTerms = (value: string) => {
-    if (value === 'cash') return t('invoice.cash');
-    if (value === 'visa') return t('invoice.visa');
-    return t('invoice.days', { days: value });
+
+  const storedQuotation = useMemo(() => getGeneratedQuotation(), [storageVersion]);
+  const quotation = useMemo(() => storedQuotation ?? createFallbackQuotation(), [storedQuotation]);
+
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: 'invoice' | 'quotation') => {
+    setSearchParams({ type: newValue });
   };
 
-  const clearGeneratedInvoice = () => {
+  const clearInvoice = () => {
     localStorage.removeItem(generatedInvoiceStorageKey);
     setStorageVersion((currentVersion) => currentVersion + 1);
   };
 
+  const clearQuotation = () => {
+    clearGeneratedQuotation();
+    setStorageVersion((currentVersion) => currentVersion + 1);
+  };
+
+  const convertToInvoice = () => {
+    if (!quotation) return;
+    localStorage.setItem(MEGAWATT_LAST_GENERATED_INVOICE, JSON.stringify(convertQuotationToInvoiceSnapshot(quotation)));
+    setStorageVersion((currentVersion) => currentVersion + 1);
+    setToastMessage(t('print.convertedToInvoiceSuccessfully'));
+    // Redirect to Invoices tab on the same preview hub
+    setSearchParams({ type: 'invoice' });
+  };
+
+  const printSelector = activeTab === 'invoice' ? '.megawatt-invoice-print-root' : '.megawatt-quotation-print-root';
+
   return (
     <ErpFullWidthPage>
+      {/* Strict CSS isolation in Print Media Query based on the selected tab */}
       <GlobalStyles
         styles={{
           '@media print': {
@@ -170,10 +165,10 @@ export const PrintPreviewPage = () => {
             'body *': {
               visibility: 'hidden !important'
             },
-            '.megawatt-print-root, .megawatt-print-root *': {
+            [`${printSelector}, ${printSelector} *`]: {
               visibility: 'visible !important'
             },
-            '.megawatt-print-root': {
+            [printSelector]: {
               position: 'absolute !important',
               left: '0 !important',
               top: '0 !important',
@@ -183,7 +178,7 @@ export const PrintPreviewPage = () => {
               padding: '0 !important',
               background: '#fff !important'
             },
-            '.megawatt-invoice-document': {
+            '.megawatt-invoice-document, .megawatt-quotation-document': {
               width: '100% !important',
               maxWidth: '100% !important',
               margin: '0 !important',
@@ -193,11 +188,11 @@ export const PrintPreviewPage = () => {
               background: '#fff !important',
               color: '#000 !important'
             },
-            '.megawatt-invoice-document table': {
+            '.megawatt-invoice-document table, .megawatt-quotation-document table': {
               width: '100% !important',
               tableLayout: 'auto !important'
             },
-            '.megawatt-invoice-document th, .megawatt-invoice-document td': {
+            '.megawatt-invoice-document th, .megawatt-invoice-document td, .megawatt-quotation-document th, .megawatt-quotation-document td': {
               padding: '5px 6px !important',
               fontSize: '10px !important',
               lineHeight: '1.35 !important'
@@ -210,194 +205,94 @@ export const PrintPreviewPage = () => {
         }}
       />
 
-      <Box>
+      <Box sx={{ width: '100%' }}>
         <Box className="no-print">
-          <ErpPageHeader title={t('print.title')} subtitle={t('print.subtitle')} />
+          <ErpPageHeader title={t('print.documentsPreview')} subtitle={t('print.subtitle')} />
 
           <MainCard border elevation={0} contentSX={{ p: 2, '&:last-child': { pb: 2 } }} sx={{ mb: 2 }}>
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} justifyContent="space-between">
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
-                <Button variant="contained" startIcon={<PrintOutlinedIcon />} onClick={() => window.print()}>
-                  {t('common.print')}
-                </Button>
-                <Button variant="outlined" startIcon={<ArrowBackOutlinedIcon />} onClick={() => navigate('/erp/create-invoice')}>
-                  {t('print.backToCreateInvoice')}
-                </Button>
+            {/* Touch friendly and responsive Tab interface */}
+            <Tabs
+              value={activeTab}
+              onChange={handleTabChange}
+              indicatorColor="primary"
+              textColor="primary"
+              variant="fullWidth"
+              sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}
+            >
+              <Tab label={t('print.invoices')} value="invoice" />
+              <Tab label={t('print.quotations')} value="quotation" />
+            </Tabs>
+
+            {activeTab === 'invoice' ? (
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} justifyContent="space-between">
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
+                  <Button variant="contained" startIcon={<PrintOutlinedIcon />} onClick={() => window.print()}>
+                    {t('print.printInvoice')}
+                  </Button>
+                  <Button variant="outlined" startIcon={<ArrowBackOutlinedIcon />} onClick={() => navigate('/erp/create-invoice')}>
+                    {t('print.backToCreateInvoice')}
+                  </Button>
+                </Stack>
+                <Stack direction="row" spacing={1.5} alignItems="center">
+                  {!storedInvoice && (
+                    <Chip label={t('print.showingFallbackDocument')} color="warning" variant="outlined" size="small" />
+                  )}
+                  {storedInvoice && (
+                    <Button color="error" variant="outlined" startIcon={<DeleteOutlineOutlinedIcon />} onClick={clearInvoice}>
+                      {t('print.clearGeneratedInvoice')}
+                    </Button>
+                  )}
+                </Stack>
               </Stack>
-              {storedInvoice && (
-                <Button color="error" variant="outlined" startIcon={<DeleteOutlineOutlinedIcon />} onClick={clearGeneratedInvoice}>
-                  {t('print.clearGeneratedInvoice')}
-                </Button>
-              )}
-            </Stack>
+            ) : (
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} justifyContent="space-between">
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
+                  <Button variant="contained" startIcon={<PrintOutlinedIcon />} onClick={() => window.print()}>
+                    {t('print.printQuotation')}
+                  </Button>
+                  <Button variant="outlined" startIcon={<ArrowBackOutlinedIcon />} onClick={() => navigate('/erp/create-quotation')}>
+                    {t('print.backToCreateQuotation')}
+                  </Button>
+                  <Button variant="outlined" startIcon={<ReceiptLongOutlinedIcon />} onClick={convertToInvoice}>
+                    {t('quotation.convertToInvoice')}
+                  </Button>
+                </Stack>
+                <Stack direction="row" spacing={1.5} alignItems="center">
+                  {!storedQuotation && (
+                    <Chip label={t('print.showingFallbackDocument')} color="warning" variant="outlined" size="small" />
+                  )}
+                  {storedQuotation && (
+                    <Button color="error" variant="outlined" startIcon={<DeleteOutlineOutlinedIcon />} onClick={clearQuotation}>
+                      {t('print.clearGeneratedQuotation')}
+                    </Button>
+                  )}
+                </Stack>
+              </Stack>
+            )}
           </MainCard>
         </Box>
 
-        <Box
-          className="megawatt-print-root megawatt-invoice-document"
-          sx={{
-            width: '100%',
-            maxWidth: 980,
-            mx: 'auto',
-            p: { xs: 2, md: 4 },
-            border: `1px solid ${theme.palette.divider}`,
-            backgroundColor: theme.palette.background.paper,
-            color: theme.palette.text.primary,
-            direction: isRtl ? 'rtl' : 'ltr',
-            textAlign: isRtl ? 'right' : 'left'
-          }}
-        >
-          <Stack spacing={3}>
-            <Grid container spacing={2} alignItems="flex-start">
-              <Grid size={{ xs: 12, md: 7 }}>
-                <Typography variant="h2">Megawatt</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {t('print.companyTagline')}
-                </Typography>
-                <Stack spacing={0.5} sx={{ mt: 2 }}>
-                  <Typography variant="body2">{t('print.cairoEgypt')}</Typography>
-                  <Typography variant="body2">{t('print.phone')}: +20 2 0000 0000</Typography>
-                  <Typography variant="body2">{t('print.taxRegistration')}: EG-000-000-000</Typography>
-                </Stack>
-              </Grid>
-              <Grid size={{ xs: 12, md: 5 }}>
-                <Stack spacing={1} alignItems={{ xs: 'flex-start', md: 'flex-end' }}>
-                  <Typography variant="h1" sx={{ color: theme.palette.primary.main }}>
-                    {t('print.taxInvoice')}
-                  </Typography>
-                  <Chip label={formatStatus(invoice.paymentStatus)} variant="outlined" color={invoice.paymentStatus === 'paid' ? 'success' : invoice.paymentStatus === 'unpaid' ? 'error' : 'warning'} />
-                </Stack>
-              </Grid>
-            </Grid>
-
-            <Grid container spacing={2}>
-              <Grid size={{ xs: 12, md: 6 }}>
-                <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}` }}>
-                  <Typography variant="h4" sx={{ mb: 1 }}>
-                    {t('print.customerDetails')}
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontWeight: 700 }}>
-                    {translatePartyName(language, invoice.customer.companyName)}
-                  </Typography>
-                  <Typography variant="body2">{translatePartyName(language, invoice.customer.name)}</Typography>
-                  {invoice.customer.phone && <Typography variant="body2">{t('print.phone')}: {invoice.customer.phone}</Typography>}
-                  {(invoice.customer.address || invoice.customer.city) && (
-                    <Typography variant="body2">
-                      {[invoice.customer.address, invoice.customer.city].filter(Boolean).join(', ')}
-                    </Typography>
-                  )}
-                  {invoice.customer.taxRegistrationNumber && (
-                    <Typography variant="body2">{t('print.taxRegistration')}: {invoice.customer.taxRegistrationNumber}</Typography>
-                  )}
-                </Box>
-              </Grid>
-              <Grid size={{ xs: 12, md: 6 }}>
-                <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}`, backgroundColor: alpha(theme.palette.primary.main, 0.03) }}>
-                  {[
-                    [t('print.invoiceNumber'), invoice.invoiceNumber],
-                    [t('invoice.invoiceDate'), formatDate(invoice.invoiceDate)],
-                    [t('invoice.dueDate'), formatDate(invoice.dueDate)],
-                    [t('invoice.paymentTerms'), formatPaymentTerms(invoice.paymentTerms)],
-                    [t('invoice.paymentStatus'), formatStatus(invoice.paymentStatus)]
-                  ].map(([label, value]) => (
-                    <Stack key={label} direction="row" justifyContent="space-between" spacing={2} sx={{ py: 0.5 }}>
-                      <Typography variant="body2" color="text.secondary">
-                        {label}
-                      </Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 700, textAlign: 'right' }}>
-                        {value}
-                      </Typography>
-                    </Stack>
-                  ))}
-                </Box>
-              </Grid>
-            </Grid>
-
-            <TableContainer component={Box} sx={{ width: '100%', overflowX: 'auto', border: `1px solid ${theme.palette.divider}` }}>
-              <Table size="small" aria-label="print invoice line items">
-                <TableHead>
-                  <TableRow sx={{ backgroundColor: alpha(theme.palette.primary.main, 0.07) }}>
-                    <TableCell>{t('inventory.sku')}</TableCell>
-                    <TableCell>{t('invoice.product')}</TableCell>
-                    <TableCell>{t('common.unit')}</TableCell>
-                    <TableCell align="right">{t('common.quantity')}</TableCell>
-                    <TableCell align="right">{t('invoice.unitPrice')}</TableCell>
-                    <TableCell align="right">{t('invoice.discount')}</TableCell>
-                    <TableCell align="right">{t('invoice.vat')}</TableCell>
-                    <TableCell align="right">{t('invoice.lineTotal')}</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {invoice.lines.map((line) => (
-                    <TableRow key={line.id}>
-                      <TableCell sx={{ fontWeight: 700 }}>{line.sku}</TableCell>
-                      <TableCell>{translateProductName(language, line.productName)}</TableCell>
-                      <TableCell>{translateUnit(language, line.unit)}</TableCell>
-                      <TableCell align="right">{line.quantity}</TableCell>
-                      <TableCell align="right">{formatCurrency(line.unitPrice)}</TableCell>
-                      <TableCell align="right">{formatCurrency(line.discount)}</TableCell>
-                      <TableCell align="right">
-                        {line.taxRate}% ({formatCurrency(line.taxAmount)})
-                      </TableCell>
-                      <TableCell align="right" sx={{ fontWeight: 700 }}>
-                        {formatCurrency(line.lineTotal)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-
-            <Grid container spacing={2} justifyContent="flex-end">
-              <Grid size={{ xs: 12, md: 5 }}>
-                <Stack spacing={1.25} sx={{ p: 2, border: `1px solid ${theme.palette.divider}` }}>
-                  {[
-                    ['subtotal', t('invoice.subtotalBeforeVat'), invoice.totals.subtotal],
-                    ['discounts', t('print.discounts'), -totalDiscounts],
-                    ['vat', t('invoice.vatAmount'), invoice.totals.vatAmount],
-                    ['grand', t('invoice.grandTotal'), invoice.totals.grandTotal],
-                    ['paid', t('invoice.paidAmount'), invoice.totals.paidAmount],
-                    ['balance', t('invoice.balanceDue'), invoice.totals.balanceDue]
-                  ].map(([key, label, value]) => (
-                    <Stack
-                      key={key}
-                      direction="row"
-                      justifyContent="space-between"
-                      spacing={2}
-                      sx={key === 'grand' ? { pt: 1, borderTop: `1px solid ${theme.palette.divider}` } : undefined}
-                    >
-                      <Typography variant={key === 'grand' ? 'h4' : 'body2'}>{label}</Typography>
-                      <Typography variant={key === 'grand' ? 'h4' : 'body2'} sx={{ fontWeight: 700 }}>
-                        {formatCurrency(value as number)}
-                      </Typography>
-                    </Stack>
-                  ))}
-                </Stack>
-              </Grid>
-            </Grid>
-
-            <Grid container spacing={3} sx={{ pt: 2 }}>
-              <Grid size={{ xs: 12, md: 7 }}>
-                <Typography variant="h4" sx={{ mb: 1 }}>
-                  {t('print.notes')}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {invoice.notes ? translateExpenseDescription(language, invoice.notes) : t('print.defaultNotes')}
-                </Typography>
-                <Typography variant="body2" sx={{ mt: 2 }}>
-                  {t('print.thankYou')}
-                </Typography>
-              </Grid>
-              <Grid size={{ xs: 12, md: 5 }}>
-                <Box sx={{ pt: 6, borderBottom: `1px solid ${theme.palette.text.primary}` }} />
-                <Typography variant="body2" align="center" sx={{ mt: 1 }}>
-                  {t('print.authorizedSignature')}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Stack>
+        {/* Scrollable container for mobile responsiveness */}
+        <Box sx={{ overflowX: 'auto', py: 1 }}>
+          {activeTab === 'invoice' ? (
+            <InvoicePrintDocument invoice={invoice} />
+          ) : (
+            <QuotationPrintDocument quotation={quotation} />
+          )}
         </Box>
       </Box>
+
+      {/* Snackbar notification */}
+      <Snackbar
+        open={toastMessage !== null}
+        autoHideDuration={4000}
+        onClose={() => setToastMessage(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: isRtl ? 'left' : 'right' }}
+      >
+        <Alert onClose={() => setToastMessage(null)} severity="success" sx={{ width: '100%' }}>
+          {toastMessage}
+        </Alert>
+      </Snackbar>
     </ErpFullWidthPage>
   );
 };

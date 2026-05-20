@@ -413,7 +413,7 @@ export const MobileCreateQuotation = () => {
             <Alert
               severity="success"
               action={
-                <Button color="inherit" size="small" startIcon={<PrintOutlinedIcon />} onClick={() => navigate('/erp/quotation-preview')}>
+                <Button color="inherit" size="small" startIcon={<PrintOutlinedIcon />} onClick={() => navigate('/erp/print-preview?type=quotation')}>
                   {t('quotation.viewPreview')}
                 </Button>
               }

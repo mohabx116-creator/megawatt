@@ -67,7 +67,7 @@ export const QuotationsPage = () => {
 
   const convertToInvoice = (quotation: (typeof quotations)[number]) => {
     localStorage.setItem(MEGAWATT_LAST_GENERATED_INVOICE, JSON.stringify(convertQuotationToInvoiceSnapshot(quotation)));
-    navigate('/erp/print-preview');
+    navigate('/erp/print-preview?type=invoice');
   };
 
   const summaryCards = [
@@ -166,7 +166,7 @@ export const QuotationsPage = () => {
                     <TableCell align="right">{formatCurrency(quotation.grandTotal)}</TableCell>
                     <TableCell align="right">
                       <Stack direction="row" spacing={1} justifyContent="flex-end">
-                        <Button size="small" variant="outlined" startIcon={<VisibilityOutlinedIcon />} onClick={() => navigate('/erp/quotation-preview')}>
+                        <Button size="small" variant="outlined" startIcon={<VisibilityOutlinedIcon />} onClick={() => navigate('/erp/print-preview?type=quotation')}>
                           {t('quotation.viewPreview')}
                         </Button>
                         <Button size="small" variant="contained" startIcon={<ReceiptLongOutlinedIcon />} onClick={() => convertToInvoice(quotation)}>

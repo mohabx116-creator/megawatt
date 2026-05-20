@@ -50,7 +50,7 @@ export const MobileQuotations = () => {
 
   const convertToInvoice = (quotation: (typeof quotations)[number]) => {
     localStorage.setItem(MEGAWATT_LAST_GENERATED_INVOICE, JSON.stringify(convertQuotationToInvoiceSnapshot(quotation)));
-    navigate('/erp/print-preview');
+    navigate('/erp/print-preview?type=invoice');
   };
 
   return (
@@ -158,7 +158,7 @@ export const MobileQuotations = () => {
                   </Stack>
 
                   <Stack direction="row" spacing={1}>
-                    <Button fullWidth variant="outlined" startIcon={<VisibilityOutlinedIcon />} onClick={() => navigate('/erp/quotation-preview')}>
+                    <Button fullWidth variant="outlined" startIcon={<VisibilityOutlinedIcon />} onClick={() => navigate('/erp/print-preview?type=quotation')}>
                       {t('quotation.viewPreview')}
                     </Button>
                     <Button fullWidth variant="contained" startIcon={<ReceiptLongOutlinedIcon />} onClick={() => convertToInvoice(quotation)}>

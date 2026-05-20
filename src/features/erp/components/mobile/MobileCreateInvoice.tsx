@@ -400,7 +400,7 @@ export const MobileCreateInvoice = () => {
             <Alert
               severity="success"
               action={
-                <Button color="inherit" size="small" startIcon={<PrintOutlinedIcon />} onClick={() => navigate('/erp/print-preview')}>
+                <Button color="inherit" size="small" startIcon={<PrintOutlinedIcon />} onClick={() => navigate('/erp/print-preview?type=invoice')}>
                   {t('invoice.viewPrintPreview')}
                 </Button>
               }

@@ -159,7 +159,7 @@ export const InvoicesPage = () => {
                   <TableCell align="right">{formatCurrency(invoice.paidAmount)}</TableCell>
                   <TableCell align="right">{formatCurrency(invoice.balanceDue)}</TableCell>
                   <TableCell align="right">
-                    <Button size="small" variant="outlined" startIcon={<PrintOutlinedIcon />} onClick={() => navigate('/erp/print-preview')}>
+                    <Button size="small" variant="outlined" startIcon={<PrintOutlinedIcon />} onClick={() => navigate('/erp/print-preview?type=invoice')}>
                       {t('invoice.viewPrintPreview')}
                     </Button>
                   </TableCell>

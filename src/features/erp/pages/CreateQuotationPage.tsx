@@ -347,7 +347,7 @@ export const CreateQuotationPage = () => {
               <Alert severity="success" variant="outlined">
                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} justifyContent="space-between" alignItems={{ xs: 'stretch', sm: 'center' }}>
                   <span>{t('quotation.generatedSuccess', { quotation: generatedQuotationNumber })}</span>
-                  <Button variant="contained" size="small" startIcon={<VisibilityOutlinedIcon />} onClick={() => navigate('/erp/quotation-preview')}>
+                  <Button variant="contained" size="small" startIcon={<VisibilityOutlinedIcon />} onClick={() => navigate('/erp/print-preview?type=quotation')}>
                     {t('quotation.viewPreview')}
                   </Button>
                 </Stack>
