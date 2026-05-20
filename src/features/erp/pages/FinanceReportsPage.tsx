@@ -21,12 +21,18 @@ import { SvgIconComponent } from '@mui/icons-material';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import MainCard from 'ui-component/cards/MainCard';
+import { useLanguage } from 'i18n';
 
 import { ErpFullWidthPage } from '../components/ErpFullWidthPage';
 import { ErpPageHeader } from '../components/ErpPageHeader';
 import { mockCustomers, mockExpenses, mockFinanceSummary, mockInvoices, mockPayments } from '../mockData';
 import { Expense, Invoice, Payment } from '../types';
-import { formatDate, formatEgp, formatLabel, formatNumber } from '../utils/formatters';
+import {
+  translateExpenseCategory,
+  translateExpenseDescription,
+  translatePartyName,
+  translatePaymentMethod
+} from '../utils/displayTranslations';
 
 type FinanceMetric = {
   title: string;
@@ -43,9 +49,9 @@ const getPaymentStatusColor = (invoice: Invoice): ChipProps['color'] => {
   return 'default';
 };
 
-const getCustomerName = (customerId: string) => {
+const getCustomerName = (customerId: string, fallback: string) => {
   const customer = mockCustomers.find((candidate) => candidate.id === customerId);
-  return customer?.companyName ?? customer?.name ?? 'Unknown customer';
+  return customer?.companyName ?? customer?.name ?? fallback;
 };
 
 const sortedInvoices = [...mockInvoices].sort((first, second) => new Date(second.issueDate).getTime() - new Date(first.issueDate).getTime());
@@ -54,6 +60,7 @@ const sortedExpenses = [...mockExpenses].sort((first, second) => new Date(second
 
 export const FinanceReportsPage = () => {
   const theme = useTheme();
+  const { t, language, formatCurrency, formatDate, formatNumber, formatStatus } = useLanguage();
 
   const invoiceTotals = mockInvoices.reduce(
     (totals, invoice) => ({
@@ -72,70 +79,70 @@ export const FinanceReportsPage = () => {
 
   const metrics: FinanceMetric[] = [
     {
-      title: 'Revenue',
-      value: formatEgp(mockFinanceSummary.revenue),
+      title: t('finance.revenue'),
+      value: formatCurrency(mockFinanceSummary.revenue),
       helper: mockFinanceSummary.period,
       icon: AssessmentOutlinedIcon,
       color: theme.palette.primary.main
     },
     {
-      title: 'Cost of Goods',
-      value: formatEgp(mockFinanceSummary.cost),
-      helper: 'Direct product cost',
+      title: t('finance.costOfGoods'),
+      value: formatCurrency(mockFinanceSummary.cost),
+      helper: t('finance.directProductCost'),
       icon: TrendingDownOutlinedIcon,
       color: theme.palette.grey[700]
     },
     {
-      title: 'Gross Profit',
-      value: formatEgp(mockFinanceSummary.grossProfit),
-      helper: `${formatNumber((mockFinanceSummary.grossProfit / Math.max(mockFinanceSummary.revenue, 1)) * 100)}% margin`,
+      title: t('finance.grossProfit'),
+      value: formatCurrency(mockFinanceSummary.grossProfit),
+      helper: t('finance.margin', { value: formatNumber((mockFinanceSummary.grossProfit / Math.max(mockFinanceSummary.revenue, 1)) * 100) }),
       icon: TrendingUpOutlinedIcon,
       color: theme.palette.success.main
     },
     {
-      title: 'Operating Expenses',
-      value: formatEgp(mockFinanceSummary.expenses),
-      helper: `${mockExpenses.length} recorded expenses`,
+      title: t('finance.operatingExpenses'),
+      value: formatCurrency(mockFinanceSummary.expenses),
+      helper: t('finance.recordedExpenses', { count: formatNumber(mockExpenses.length) }),
       icon: ReceiptLongOutlinedIcon,
       color: theme.palette.warning.main
     },
     {
-      title: 'Net Profit',
-      value: formatEgp(mockFinanceSummary.netProfit),
-      helper: mockFinanceSummary.netProfit >= 0 ? 'Profitable period' : 'Loss-making period',
+      title: t('finance.netProfit'),
+      value: formatCurrency(mockFinanceSummary.netProfit),
+      helper: mockFinanceSummary.netProfit >= 0 ? t('finance.profitablePeriod') : t('finance.lossMakingPeriod'),
       icon: SavingsOutlinedIcon,
       color: mockFinanceSummary.netProfit >= 0 ? theme.palette.success.main : theme.palette.error.main
     },
     {
-      title: 'Receivables',
-      value: formatEgp(mockFinanceSummary.receivables),
-      helper: `${formatNumber(mockInvoices.length)} invoices tracked`,
+      title: t('finance.receivables'),
+      value: formatCurrency(mockFinanceSummary.receivables),
+      helper: t('finance.invoicesTracked', { count: formatNumber(mockInvoices.length) }),
       icon: AccountBalanceOutlinedIcon,
       color: theme.palette.warning.main
     },
     {
-      title: 'Payables',
-      value: formatEgp(mockFinanceSummary.payables),
-      helper: 'Supplier balances',
+      title: t('finance.payables'),
+      value: formatCurrency(mockFinanceSummary.payables),
+      helper: t('finance.supplierBalances'),
       icon: PaymentsOutlinedIcon,
       color: theme.palette.error.main
     },
     {
-      title: 'Collection Rate',
+      title: t('finance.collectionRate'),
       value: `${formatNumber(collectionRate)}%`,
-      helper: `${formatEgp(invoiceTotals.paid)} collected`,
+      helper: t('finance.collected', { amount: formatCurrency(invoiceTotals.paid) }),
       icon: TrendingUpOutlinedIcon,
       color: theme.palette.primary.main
     }
   ];
 
   const profitabilityRows = [
-    { label: 'Revenue', value: mockFinanceSummary.revenue, color: theme.palette.primary.main },
-    { label: 'Cost', value: mockFinanceSummary.cost, color: theme.palette.grey[600] },
-    { label: 'Gross Profit', value: mockFinanceSummary.grossProfit, color: theme.palette.success.main },
-    { label: 'Expenses', value: mockFinanceSummary.expenses, color: theme.palette.warning.main },
+    { label: t('finance.revenue'), value: mockFinanceSummary.revenue, color: theme.palette.primary.main },
+    { label: t('finance.cost'), value: mockFinanceSummary.cost, color: theme.palette.grey[600] },
+    { label: t('finance.grossProfit'), value: mockFinanceSummary.grossProfit, color: theme.palette.success.main },
+    { label: t('finance.expenses'), value: mockFinanceSummary.expenses, color: theme.palette.warning.main },
     {
-      label: 'Net Profit',
+      label: t('finance.netProfit'),
       value: mockFinanceSummary.netProfit,
       color: mockFinanceSummary.netProfit >= 0 ? theme.palette.success.main : theme.palette.error.main
     }
@@ -143,7 +150,7 @@ export const FinanceReportsPage = () => {
 
   return (
     <ErpFullWidthPage>
-      <ErpPageHeader title="Finance Reports" subtitle="Revenue, expenses, receivables, and profitability overview" />
+      <ErpPageHeader title={t('finance.title')} subtitle={t('finance.subtitle')} />
 
       <Grid container spacing={2}>
         {metrics.map((metric) => {
@@ -183,7 +190,7 @@ export const FinanceReportsPage = () => {
         })}
 
         <Grid size={{ xs: 12, lg: 8 }}>
-          <MainCard title="Profitability Summary" border elevation={0} headerSX={{ py: 1.75 }}>
+          <MainCard title={t('finance.profitabilitySummary')} border elevation={0} headerSX={{ py: 1.75 }}>
             <Stack spacing={2.25}>
               {profitabilityRows.map((row) => {
                 const progress = Math.min((Math.abs(row.value) / maxProfitabilityValue) * 100, 100);
@@ -195,7 +202,7 @@ export const FinanceReportsPage = () => {
                         {row.label}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        {formatEgp(row.value)}
+                        {formatCurrency(row.value)}
                       </Typography>
                     </Stack>
                     <LinearProgress
@@ -216,10 +223,10 @@ export const FinanceReportsPage = () => {
               })}
               <Grid container spacing={1.5} sx={{ pt: 0.75 }}>
                 {[
-                  ['Gross margin', `${formatNumber((mockFinanceSummary.grossProfit / Math.max(mockFinanceSummary.revenue, 1)) * 100)}%`],
-                  ['Expense ratio', `${formatNumber((mockFinanceSummary.expenses / Math.max(mockFinanceSummary.revenue, 1)) * 100)}%`],
-                  ['Cash collected', formatEgp(invoiceTotals.paid)],
-                  ['Payables', formatEgp(mockFinanceSummary.payables)]
+                  [t('finance.grossMargin'), `${formatNumber((mockFinanceSummary.grossProfit / Math.max(mockFinanceSummary.revenue, 1)) * 100)}%`],
+                  [t('finance.expenseRatio'), `${formatNumber((mockFinanceSummary.expenses / Math.max(mockFinanceSummary.revenue, 1)) * 100)}%`],
+                  [t('finance.cashCollected'), formatCurrency(invoiceTotals.paid)],
+                  [t('finance.payables'), formatCurrency(mockFinanceSummary.payables)]
                 ].map(([label, value]) => (
                   <Grid key={label} size={{ xs: 12, sm: 6, md: 3 }}>
                     <Box
@@ -243,15 +250,15 @@ export const FinanceReportsPage = () => {
         </Grid>
 
         <Grid size={{ xs: 12, lg: 4 }}>
-          <MainCard title="Receivables & Cash Health" border elevation={0} headerSX={{ py: 1.75 }}>
+          <MainCard title={t('finance.receivablesCashHealth')} border elevation={0} headerSX={{ py: 1.75 }}>
             <Stack spacing={2}>
               {[
-                ['Total receivables', formatEgp(mockFinanceSummary.receivables)],
-                ['Outstanding balance', formatEgp(invoiceTotals.outstanding)],
-                ['Paid invoices', formatNumber(paidInvoiceCount)],
-                ['Partially paid invoices', formatNumber(partialInvoiceCount)],
-                ['Unpaid / overdue invoices', formatNumber(unpaidOrOverdueCount)],
-                ['Collection rate', `${formatNumber(collectionRate)}%`]
+                [t('finance.totalReceivables'), formatCurrency(mockFinanceSummary.receivables)],
+                [t('finance.outstandingBalance'), formatCurrency(invoiceTotals.outstanding)],
+                [t('finance.paidInvoices'), formatNumber(paidInvoiceCount)],
+                [t('finance.partiallyPaidInvoices'), formatNumber(partialInvoiceCount)],
+                [t('finance.unpaidOverdueInvoices'), formatNumber(unpaidOrOverdueCount)],
+                [t('finance.collectionRate'), `${formatNumber(collectionRate)}%`]
               ].map(([label, value]) => (
                 <Stack key={label} direction="row" justifyContent="space-between" spacing={2}>
                   <Typography variant="body2" color="text.secondary">
@@ -265,7 +272,7 @@ export const FinanceReportsPage = () => {
               <Box>
                 <Stack direction="row" justifyContent="space-between" spacing={2} sx={{ mb: 0.75 }}>
                   <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700, textTransform: 'uppercase' }}>
-                    Collection progress
+                    {t('finance.collectionProgress')}
                   </Typography>
                   <Typography variant="caption" sx={{ fontWeight: 700 }}>
                     {formatNumber(collectionRate)}%
@@ -287,9 +294,9 @@ export const FinanceReportsPage = () => {
               </Box>
               <Grid container spacing={1}>
                 {[
-                  ['Paid', paidInvoiceCount, theme.palette.success.main],
-                  ['Partial', partialInvoiceCount, theme.palette.warning.main],
-                  ['Risk', unpaidOrOverdueCount, theme.palette.error.main]
+                  [formatStatus('paid'), paidInvoiceCount, theme.palette.success.main],
+                  [t('finance.partial'), partialInvoiceCount, theme.palette.warning.main],
+                  [t('finance.risk'), unpaidOrOverdueCount, theme.palette.error.main]
                 ].map(([label, value, color]) => (
                   <Grid key={label as string} size={4}>
                     <Box
@@ -318,10 +325,13 @@ export const FinanceReportsPage = () => {
                 }}
               >
                 <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                  Follow-up priority
+                  {t('finance.followUpPriority')}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  {formatEgp(invoiceTotals.outstanding)} remains open across {formatNumber(partialInvoiceCount + unpaidOrOverdueCount)} invoices.
+                  {t('finance.openAcrossInvoices', {
+                    amount: formatCurrency(invoiceTotals.outstanding),
+                    count: formatNumber(partialInvoiceCount + unpaidOrOverdueCount)
+                  })}
                 </Typography>
               </Box>
             </Stack>
@@ -329,18 +339,18 @@ export const FinanceReportsPage = () => {
         </Grid>
 
         <Grid size={12}>
-          <MainCard title="Recent Invoices" border elevation={0} headerSX={{ py: 1.75 }} contentSX={{ p: 0, '&:last-child': { pb: 0 } }}>
+          <MainCard title={t('finance.recentInvoices')} border elevation={0} headerSX={{ py: 1.75 }} contentSX={{ p: 0, '&:last-child': { pb: 0 } }}>
             <TableContainer component={Box} sx={{ width: '100%', overflowX: 'auto' }}>
               <Table size="small" aria-label="recent invoices" sx={{ minWidth: 820 }}>
                 <TableHead>
                   <TableRow sx={{ backgroundColor: alpha(theme.palette.primary.main, 0.04) }}>
-                    <TableCell>Invoice</TableCell>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Customer</TableCell>
-                    <TableCell align="right">Total</TableCell>
-                    <TableCell align="right">Paid</TableCell>
-                    <TableCell align="right">Balance</TableCell>
-                    <TableCell>Status</TableCell>
+                    <TableCell>{t('invoice.invoice')}</TableCell>
+                    <TableCell>{t('common.date')}</TableCell>
+                    <TableCell>{t('invoice.customer')}</TableCell>
+                    <TableCell align="right">{t('common.total')}</TableCell>
+                    <TableCell align="right">{formatStatus('paid')}</TableCell>
+                    <TableCell align="right">{t('invoice.balanceDue')}</TableCell>
+                    <TableCell>{t('common.status')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -348,12 +358,12 @@ export const FinanceReportsPage = () => {
                     <TableRow key={invoice.id} hover>
                       <TableCell sx={{ fontWeight: 700 }}>{invoice.invoiceNumber}</TableCell>
                       <TableCell>{formatDate(invoice.issueDate)}</TableCell>
-                      <TableCell>{invoice.customerName}</TableCell>
-                      <TableCell align="right">{formatEgp(invoice.total)}</TableCell>
-                      <TableCell align="right">{formatEgp(invoice.paidAmount)}</TableCell>
-                      <TableCell align="right">{formatEgp(invoice.balanceDue)}</TableCell>
+                      <TableCell>{translatePartyName(language, invoice.customerName)}</TableCell>
+                      <TableCell align="right">{formatCurrency(invoice.total)}</TableCell>
+                      <TableCell align="right">{formatCurrency(invoice.paidAmount)}</TableCell>
+                      <TableCell align="right">{formatCurrency(invoice.balanceDue)}</TableCell>
                       <TableCell>
-                        <Chip size="small" variant="outlined" color={getPaymentStatusColor(invoice)} label={formatLabel(invoice.paymentStatus)} sx={{ borderRadius: 1, fontWeight: 700 }} />
+                        <Chip size="small" variant="outlined" color={getPaymentStatusColor(invoice)} label={formatStatus(invoice.paymentStatus)} sx={{ borderRadius: 1, fontWeight: 700 }} />
                       </TableCell>
                     </TableRow>
                   ))}
@@ -364,15 +374,15 @@ export const FinanceReportsPage = () => {
         </Grid>
 
         <Grid size={12}>
-          <MainCard title="Payments" border elevation={0} headerSX={{ py: 1.75 }} contentSX={{ p: 0, '&:last-child': { pb: 0 } }}>
+          <MainCard title={t('finance.payments')} border elevation={0} headerSX={{ py: 1.75 }} contentSX={{ p: 0, '&:last-child': { pb: 0 } }}>
             <TableContainer component={Box} sx={{ width: '100%', overflowX: 'auto' }}>
               <Table size="small" aria-label="payments" sx={{ minWidth: 720 }}>
                 <TableHead>
                   <TableRow sx={{ backgroundColor: alpha(theme.palette.primary.main, 0.04) }}>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Reference</TableCell>
-                    <TableCell>Method</TableCell>
-                    <TableCell align="right">Amount</TableCell>
+                    <TableCell>{t('common.date')}</TableCell>
+                    <TableCell>{t('finance.reference')}</TableCell>
+                    <TableCell>{t('finance.method')}</TableCell>
+                    <TableCell align="right">{t('finance.amount')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -384,11 +394,11 @@ export const FinanceReportsPage = () => {
                           {payment.invoiceId}
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
-                          {getCustomerName(payment.customerId)}
+                          {translatePartyName(language, getCustomerName(payment.customerId, t('common.notAvailable')))}
                         </Typography>
                       </TableCell>
-                      <TableCell>{formatLabel(payment.method)}</TableCell>
-                      <TableCell align="right">{formatEgp(payment.amount)}</TableCell>
+                      <TableCell>{translatePaymentMethod(language, payment.method)}</TableCell>
+                      <TableCell align="right">{formatCurrency(payment.amount)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -398,17 +408,17 @@ export const FinanceReportsPage = () => {
         </Grid>
 
         <Grid size={12}>
-          <MainCard title="Expenses" border elevation={0} headerSX={{ py: 1.75 }} contentSX={{ p: 0, '&:last-child': { pb: 0 } }}>
+          <MainCard title={t('finance.expenses')} border elevation={0} headerSX={{ py: 1.75 }} contentSX={{ p: 0, '&:last-child': { pb: 0 } }}>
             <TableContainer component={Box} sx={{ width: '100%', overflowX: 'auto' }}>
               <Table size="small" aria-label="expenses" sx={{ minWidth: 760 }}>
                 <TableHead>
                   <TableRow sx={{ backgroundColor: alpha(theme.palette.primary.main, 0.04) }}>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Category</TableCell>
-                    <TableCell>Description</TableCell>
-                    <TableCell>Vendor</TableCell>
-                    <TableCell>Recorded By</TableCell>
-                    <TableCell align="right">Amount</TableCell>
+                    <TableCell>{t('common.date')}</TableCell>
+                    <TableCell>{t('common.category')}</TableCell>
+                    <TableCell>{t('finance.description')}</TableCell>
+                    <TableCell>{t('finance.vendor')}</TableCell>
+                    <TableCell>{t('finance.recordedBy')}</TableCell>
+                    <TableCell align="right">{t('finance.amount')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -416,13 +426,13 @@ export const FinanceReportsPage = () => {
                     <TableRow key={expense.id} hover>
                       <TableCell>{formatDate(expense.date)}</TableCell>
                       <TableCell>
-                        <Chip size="small" variant="outlined" label={formatLabel(expense.category)} sx={{ borderRadius: 1, fontWeight: 700 }} />
+                        <Chip size="small" variant="outlined" label={translateExpenseCategory(language, expense.category)} sx={{ borderRadius: 1, fontWeight: 700 }} />
                       </TableCell>
-                      <TableCell>{expense.description}</TableCell>
-                      <TableCell>{expense.vendorName}</TableCell>
+                      <TableCell>{translateExpenseDescription(language, expense.description)}</TableCell>
+                      <TableCell>{translatePartyName(language, expense.vendorName)}</TableCell>
                       <TableCell>{expense.recordedBy}</TableCell>
                       <TableCell align="right" sx={{ fontWeight: 700 }}>
-                        {formatEgp(expense.amount)}
+                        {formatCurrency(expense.amount)}
                       </TableCell>
                     </TableRow>
                   ))}

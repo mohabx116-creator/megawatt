@@ -27,13 +27,14 @@ import Typography from '@mui/material/Typography';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import MainCard from 'ui-component/cards/MainCard';
+import { useLanguage } from 'i18n';
 
 import { ErpFullWidthPage } from '../components/ErpFullWidthPage';
 import { ErpPageHeader } from '../components/ErpPageHeader';
 import { ErpStatusChip } from '../components/ErpStatusChip';
 import { mockCustomers, mockProducts } from '../mockData';
 import { Product } from '../types';
-import { formatEgp } from '../utils/formatters';
+import { translateCategory, translatePartyName, translateProductName, translateUnit } from '../utils/displayTranslations';
 
 type PaymentTerms = 'cash' | '7' | '15' | '30';
 
@@ -143,6 +144,8 @@ const compactLineInputSx = {
 export const CreateInvoicePage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
+  const { t, language, formatCurrency } = useLanguage();
+  const currencyAdornment = language === 'ar' ? 'جنيه' : 'EGP';
   const [customerId, setCustomerId] = useState('');
   const [invoiceDate, setInvoiceDate] = useState(today);
   const [paymentTerms, setPaymentTerms] = useState<PaymentTerms>('15');
@@ -263,17 +266,17 @@ export const CreateInvoicePage = () => {
     const validLines = lineItems.filter((line) => line.productId && line.quantity > 0 && line.unitPrice >= 0);
 
     if (!customerId) {
-      nextErrors.customerId = 'Customer is required.';
+      nextErrors.customerId = t('invoice.customerRequired');
     }
 
     if (validLines.length === 0) {
-      nextErrors.lineItems = 'Add at least one line item with quantity greater than zero.';
+      nextErrors.lineItems = t('invoice.lineRequired');
     }
 
     if (paidAmount < 0) {
-      nextErrors.paidAmount = 'Paid amount cannot be negative.';
+      nextErrors.paidAmount = t('invoice.paidNegative');
     } else if (paidAmount > invoiceTotals.grandTotal) {
-      nextErrors.paidAmount = 'Paid amount cannot exceed the invoice total.';
+      nextErrors.paidAmount = t('invoice.paidTooHigh');
     }
 
     setErrors(nextErrors);
@@ -338,19 +341,19 @@ export const CreateInvoicePage = () => {
 
   return (
     <ErpFullWidthPage>
-      <ErpPageHeader title="Create Invoice" subtitle="Build a sales invoice for Megawatt customers" />
+      <ErpPageHeader title={t('invoice.title')} subtitle={t('invoice.subtitle')} />
 
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, lg: 8 }}>
           <Stack spacing={2}>
-            <MainCard title="Customer & Invoice Details" border elevation={0} headerSX={{ py: 1.75 }}>
+            <MainCard title={t('invoice.customerDetails')} border elevation={0} headerSX={{ py: 1.75 }}>
               <Grid container spacing={2}>
                 <Grid size={{ xs: 12, md: 6 }}>
                   <FormControl fullWidth error={Boolean(errors.customerId)}>
-                    <InputLabel id="invoice-customer-label">Customer</InputLabel>
+                    <InputLabel id="invoice-customer-label">{t('invoice.customer')}</InputLabel>
                     <Select
                       labelId="invoice-customer-label"
-                      label="Customer"
+                      label={t('invoice.customer')}
                       value={customerId}
                       onChange={(event: SelectChangeEvent) => {
                         setCustomerId(event.target.value);
@@ -359,7 +362,7 @@ export const CreateInvoicePage = () => {
                     >
                       {mockCustomers.map((customer) => (
                         <MenuItem key={customer.id} value={customer.id}>
-                          {customer.companyName}
+                          {translatePartyName(language, customer.companyName)}
                         </MenuItem>
                       ))}
                     </Select>
@@ -371,19 +374,19 @@ export const CreateInvoicePage = () => {
                   </FormControl>
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6, md: 2 }}>
-                  <TextField fullWidth label="Invoice Date" type="date" value={invoiceDate} onChange={(event) => handleInvoiceDateChange(event.target.value)} InputLabelProps={{ shrink: true }} />
+                  <TextField fullWidth label={t('invoice.invoiceDate')} type="date" value={invoiceDate} onChange={(event) => handleInvoiceDateChange(event.target.value)} InputLabelProps={{ shrink: true }} />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6, md: 2 }}>
-                  <TextField fullWidth label="Due Date" type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} InputLabelProps={{ shrink: true }} />
+                  <TextField fullWidth label={t('invoice.dueDate')} type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} InputLabelProps={{ shrink: true }} />
                 </Grid>
                 <Grid size={{ xs: 12, md: 2 }}>
                   <FormControl fullWidth>
-                    <InputLabel id="payment-terms-label">Payment Terms</InputLabel>
-                    <Select labelId="payment-terms-label" label="Payment Terms" value={paymentTerms} onChange={handlePaymentTermsChange}>
-                      <MenuItem value="cash">Cash</MenuItem>
-                      <MenuItem value="7">7 Days</MenuItem>
-                      <MenuItem value="15">15 Days</MenuItem>
-                      <MenuItem value="30">30 Days</MenuItem>
+                    <InputLabel id="payment-terms-label">{t('invoice.paymentTerms')}</InputLabel>
+                    <Select labelId="payment-terms-label" label={t('invoice.paymentTerms')} value={paymentTerms} onChange={handlePaymentTermsChange}>
+                      <MenuItem value="cash">{t('invoice.cash')}</MenuItem>
+                      <MenuItem value="7">{t('invoice.days', { days: 7 })}</MenuItem>
+                      <MenuItem value="15">{t('invoice.days', { days: 15 })}</MenuItem>
+                      <MenuItem value="30">{t('invoice.days', { days: 30 })}</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
@@ -401,16 +404,16 @@ export const CreateInvoicePage = () => {
                       <Grid container spacing={2}>
                         <Grid size={{ xs: 12, md: 3 }}>
                           <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700, textTransform: 'uppercase' }}>
-                            Contact
+                            {t('invoice.contact')}
                           </Typography>
-                          <Typography variant="body2">{selectedCustomer.name}</Typography>
+                          <Typography variant="body2">{translatePartyName(language, selectedCustomer.name)}</Typography>
                           <Typography variant="caption" color="text.secondary">
                             {selectedCustomer.phone}
                           </Typography>
                         </Grid>
                         <Grid size={{ xs: 12, md: 6 }}>
                           <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700, textTransform: 'uppercase' }}>
-                            Location
+                            {t('invoice.location')}
                           </Typography>
                           <Typography variant="body2">{selectedCustomer.address}</Typography>
                           <Typography variant="caption" color="text.secondary">
@@ -419,9 +422,9 @@ export const CreateInvoicePage = () => {
                         </Grid>
                         <Grid size={{ xs: 12, md: 3 }}>
                           <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700, textTransform: 'uppercase' }}>
-                            Tax Registration
+                            {t('invoice.taxRegistration')}
                           </Typography>
-                          <Typography variant="body2">{selectedCustomer.taxRegistrationNumber ?? 'Not available'}</Typography>
+                          <Typography variant="body2">{selectedCustomer.taxRegistrationNumber ?? t('common.notAvailable')}</Typography>
                         </Grid>
                       </Grid>
                     </Box>
@@ -431,13 +434,13 @@ export const CreateInvoicePage = () => {
             </MainCard>
 
             <MainCard
-              title="Line Items"
+              title={t('invoice.lineItems')}
               border
               elevation={0}
               headerSX={{ py: 1.75 }}
               secondary={
                 <Button size="small" variant="outlined" startIcon={<AddOutlinedIcon />} onClick={addLine}>
-                  Add Line
+                  {t('invoice.addLine')}
                 </Button>
               }
               contentSX={{ p: 2, '&:last-child': { pb: 2 } }}
@@ -460,23 +463,23 @@ export const CreateInvoicePage = () => {
                 <Table size="small" aria-label="invoice line items" sx={{ minWidth: 920, tableLayout: 'fixed' }}>
                   <TableHead>
                     <TableRow sx={{ backgroundColor: alpha(theme.palette.primary.main, 0.04) }}>
-                      <TableCell sx={{ ...compactLineCellSx, width: 220, minWidth: 220 }}>Product</TableCell>
-                      <TableCell sx={{ ...compactLineCellSx, width: 115 }}>SKU</TableCell>
-                      <TableCell sx={{ ...compactLineCellSx, width: 75 }}>Unit</TableCell>
+                      <TableCell sx={{ ...compactLineCellSx, width: 220, minWidth: 220 }}>{t('invoice.product')}</TableCell>
+                      <TableCell sx={{ ...compactLineCellSx, width: 115 }}>{t('invoice.sku')}</TableCell>
+                      <TableCell sx={{ ...compactLineCellSx, width: 75 }}>{t('common.unit')}</TableCell>
                       <TableCell align="right" sx={{ ...compactLineCellSx, width: 82 }}>
-                        Quantity
+                        {t('common.quantity')}
                       </TableCell>
                       <TableCell align="right" sx={{ ...compactLineCellSx, width: 112 }}>
-                        Unit Price
+                        {t('invoice.unitPrice')}
                       </TableCell>
                       <TableCell align="right" sx={{ ...compactLineCellSx, width: 108 }}>
-                        Discount
+                        {t('invoice.discount')}
                       </TableCell>
                       <TableCell align="right" sx={{ ...compactLineCellSx, width: 55 }}>
-                        VAT
+                        {t('invoice.vat')}
                       </TableCell>
                       <TableCell align="right" sx={{ ...compactLineCellSx, width: 105 }}>
-                        Line Total
+                        {t('invoice.lineTotal')}
                       </TableCell>
                       <TableCell align="center" sx={{ ...compactLineCellSx, width: 34 }} />
                     </TableRow>
@@ -490,10 +493,10 @@ export const CreateInvoicePage = () => {
                         <TableRow key={line.id}>
                           <TableCell sx={{ ...compactLineCellSx, width: 220, minWidth: 220 }}>
                             <FormControl fullWidth size="small" sx={{ minWidth: 0 }}>
-                              <InputLabel id={`product-label-${line.id}`}>Product</InputLabel>
+                              <InputLabel id={`product-label-${line.id}`}>{t('invoice.product')}</InputLabel>
                               <Select
                                 labelId={`product-label-${line.id}`}
-                                label="Product"
+                                label={t('invoice.product')}
                                 value={line.productId}
                                 onChange={(event: SelectChangeEvent) => handleProductChange(line.id, event.target.value)}
                                 sx={{
@@ -508,19 +511,19 @@ export const CreateInvoicePage = () => {
                               >
                                 {mockProducts.map((candidate) => (
                                   <MenuItem key={candidate.id} value={candidate.id}>
-                                    {candidate.name}
+                                    {translateProductName(language, candidate)}
                                   </MenuItem>
                                 ))}
                               </Select>
                             </FormControl>
                             {product && (
                               <Typography variant="caption" color="text.secondary">
-                                {product.category}
+                                {translateCategory(language, product.category)}
                               </Typography>
                             )}
                           </TableCell>
-                          <TableCell sx={{ ...compactLineCellSx, whiteSpace: 'nowrap', fontWeight: 700 }}>{line.sku || 'Not available'}</TableCell>
-                          <TableCell sx={compactLineCellSx}>{line.unit || 'Not available'}</TableCell>
+                          <TableCell sx={{ ...compactLineCellSx, whiteSpace: 'nowrap', fontWeight: 700 }}>{line.sku || t('common.notAvailable')}</TableCell>
+                          <TableCell sx={compactLineCellSx}>{line.unit ? translateUnit(language, line.unit) : t('common.notAvailable')}</TableCell>
                           <TableCell align="right" sx={compactLineCellSx}>
                             <TextField
                               size="small"
@@ -538,7 +541,7 @@ export const CreateInvoicePage = () => {
                               value={line.unitPrice}
                               onChange={(event) => updateLine(line.id, { unitPrice: clampNumber(Number(event.target.value)) })}
                               inputProps={{ min: 0, step: 1 }}
-                              InputProps={{ startAdornment: <InputAdornment position="start">EGP</InputAdornment> }}
+                              InputProps={{ startAdornment: <InputAdornment position="start">{currencyAdornment}</InputAdornment> }}
                               sx={{ width: 100, ...compactLineInputSx }}
                             />
                           </TableCell>
@@ -549,7 +552,7 @@ export const CreateInvoicePage = () => {
                               value={line.discount}
                               onChange={(event) => updateLine(line.id, { discount: clampNumber(Number(event.target.value)) })}
                               inputProps={{ min: 0, step: 1 }}
-                              InputProps={{ startAdornment: <InputAdornment position="start">EGP</InputAdornment> }}
+                              InputProps={{ startAdornment: <InputAdornment position="start">{currencyAdornment}</InputAdornment> }}
                               sx={{ width: 96, ...compactLineInputSx }}
                             />
                           </TableCell>
@@ -557,14 +560,14 @@ export const CreateInvoicePage = () => {
                             {line.taxRate}%
                           </TableCell>
                           <TableCell align="right" sx={{ ...compactLineCellSx, fontWeight: 700 }}>
-                            {formatEgp(totals?.total ?? 0)}
+                            {formatCurrency(totals?.total ?? 0)}
                           </TableCell>
                           <TableCell align="center" sx={{ ...compactLineCellSx, width: 34 }}>
                             <IconButton
                               color="error"
                               disabled={lineItems.length === 1}
                               onClick={() => removeLine(line.id)}
-                              aria-label="Remove line"
+                              aria-label={t('common.remove')}
                               size="small"
                               sx={{ p: 0.5 }}
                             >
@@ -579,13 +582,13 @@ export const CreateInvoicePage = () => {
               </TableContainer>
             </MainCard>
 
-            <MainCard title="Actions" border elevation={0} headerSX={{ py: 1.75 }}>
+            <MainCard title={t('common.actions')} border elevation={0} headerSX={{ py: 1.75 }}>
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
                 <Button variant="contained" startIcon={<SendOutlinedIcon />} onClick={generateInvoice}>
-                  Generate Invoice
+                  {t('invoice.generateInvoice')}
                 </Button>
                 <Button variant="outlined" startIcon={<RestartAltOutlinedIcon />} onClick={resetForm}>
-                  Reset
+                  {t('common.reset')}
                 </Button>
               </Stack>
             </MainCard>
@@ -594,11 +597,15 @@ export const CreateInvoicePage = () => {
               <Alert severity="success" variant="outlined">
                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ xs: 'stretch', sm: 'center' }} justifyContent="space-between">
                   <span>
-                    Invoice {generatedInvoiceNumber} generated for {selectedCustomer?.companyName}. Total {formatEgp(invoiceTotals.grandTotal)} and balance due{' '}
-                    {formatEgp(invoiceTotals.balanceDue)}.
+                    {t('invoice.generatedMessage', {
+                      invoice: generatedInvoiceNumber,
+                      customer: translatePartyName(language, selectedCustomer?.companyName),
+                      total: formatCurrency(invoiceTotals.grandTotal),
+                      balance: formatCurrency(invoiceTotals.balanceDue)
+                    })}
                   </span>
                   <Button variant="outlined" size="small" onClick={() => navigate('/erp/print-preview')}>
-                    View Print Preview
+                    {t('invoice.viewPrintPreview')}
                   </Button>
                 </Stack>
               </Alert>
@@ -607,27 +614,27 @@ export const CreateInvoicePage = () => {
         </Grid>
 
         <Grid size={{ xs: 12, lg: 4 }}>
-          <MainCard title="Invoice Summary" border elevation={0} headerSX={{ py: 1.75 }} sx={{ position: { lg: 'sticky' }, top: { lg: 16 } }}>
+          <MainCard title={t('invoice.summary')} border elevation={0} headerSX={{ py: 1.75 }} sx={{ position: { lg: 'sticky' }, top: { lg: 16 } }}>
             <Stack spacing={2}>
               {[
-                ['Subtotal before VAT', invoiceTotals.subtotal],
-                ['Line discounts', -invoiceTotals.lineDiscountTotal],
-                ['Invoice discount', -invoiceTotals.invoiceLevelDiscount],
-                ['VAT amount', invoiceTotals.vatAmount]
+                [t('invoice.subtotalBeforeVat'), invoiceTotals.subtotal],
+                [t('invoice.lineDiscounts'), -invoiceTotals.lineDiscountTotal],
+                [t('invoice.invoiceDiscount'), -invoiceTotals.invoiceLevelDiscount],
+                [t('invoice.vatAmount'), invoiceTotals.vatAmount]
               ].map(([label, value]) => (
                 <Stack key={label} direction="row" justifyContent="space-between" spacing={2}>
                   <Typography variant="body2" color="text.secondary">
                     {label}
                   </Typography>
                   <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                    {formatEgp(value as number)}
+                    {formatCurrency(value as number)}
                   </Typography>
                 </Stack>
               ))}
 
               <TextField
                 fullWidth
-                label="Invoice-level discount"
+                label={t('invoice.invoiceLevelDiscount')}
                 type="number"
                 value={invoiceDiscount}
                 onChange={(event) => {
@@ -635,19 +642,19 @@ export const CreateInvoicePage = () => {
                   setGeneratedInvoiceNumber('');
                 }}
                 inputProps={{ min: 0, step: 1 }}
-                InputProps={{ startAdornment: <InputAdornment position="start">EGP</InputAdornment> }}
+                InputProps={{ startAdornment: <InputAdornment position="start">{currencyAdornment}</InputAdornment> }}
               />
 
               <Box sx={{ borderTop: `1px solid ${theme.palette.divider}`, pt: 2 }}>
                 <Stack direction="row" justifyContent="space-between" spacing={2}>
-                  <Typography variant="h4">Grand Total</Typography>
-                  <Typography variant="h4">{formatEgp(invoiceTotals.grandTotal)}</Typography>
+                  <Typography variant="h4">{t('invoice.grandTotal')}</Typography>
+                  <Typography variant="h4">{formatCurrency(invoiceTotals.grandTotal)}</Typography>
                 </Stack>
               </Box>
 
               <TextField
                 fullWidth
-                label="Paid Amount"
+                label={t('invoice.paidAmount')}
                 type="number"
                 value={paidAmount}
                 error={Boolean(errors.paidAmount)}
@@ -657,21 +664,21 @@ export const CreateInvoicePage = () => {
                   setGeneratedInvoiceNumber('');
                 }}
                 inputProps={{ min: 0, step: 1 }}
-                InputProps={{ startAdornment: <InputAdornment position="start">EGP</InputAdornment> }}
+                InputProps={{ startAdornment: <InputAdornment position="start">{currencyAdornment}</InputAdornment> }}
               />
 
               <Stack direction="row" justifyContent="space-between" spacing={2}>
                 <Typography variant="body2" color="text.secondary">
-                  Balance Due
+                  {t('invoice.balanceDue')}
                 </Typography>
                 <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                  {formatEgp(invoiceTotals.balanceDue)}
+                  {formatCurrency(invoiceTotals.balanceDue)}
                 </Typography>
               </Stack>
 
               <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
                 <Typography variant="body2" color="text.secondary">
-                  Payment Status
+                  {t('invoice.paymentStatus')}
                 </Typography>
                 <ErpStatusChip status={paymentStatus} />
               </Stack>

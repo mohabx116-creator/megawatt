@@ -16,10 +16,12 @@ import Box from '@mui/material/Box';
 
 // project imports
 import Transitions from 'ui-component/extended/Transitions';
+import useConfig from 'hooks/useConfig';
+import { useLanguage } from 'i18n';
+import { ThemeDirection } from 'config';
 
 // assets
 import TranslateTwoToneIcon from '@mui/icons-material/TranslateTwoTone';
-import useConfig from 'hooks/useConfig';
 
 // types
 import { I18n } from 'types/config';
@@ -28,9 +30,10 @@ import { I18n } from 'types/config';
 
 export default function LocalizationSection() {
   const {
-    state: { borderRadius, i18n },
+    state: { borderRadius, i18n, themeDirection },
     setField
   } = useConfig();
+  const { language, setLanguage } = useLanguage();
 
   const theme = useTheme();
   const downMD = useMediaQuery(theme.breakpoints.down('md'));
@@ -43,6 +46,10 @@ export default function LocalizationSection() {
     lng: I18n
   ) => {
     setField('i18n', lng);
+    if (lng === 'en' || lng === 'ar') {
+      setLanguage(lng);
+      setField('themeDirection', lng === 'ar' ? ThemeDirection.RTL : ThemeDirection.LTR);
+    }
     setOpen(false);
   };
 
@@ -65,6 +72,16 @@ export default function LocalizationSection() {
     }
     prevOpen.current = open;
   }, [open]);
+
+  useEffect(() => {
+    if (i18n !== language) {
+      setField('i18n', language);
+    }
+    const nextDirection = language === 'ar' ? ThemeDirection.RTL : ThemeDirection.LTR;
+    if (themeDirection !== nextDirection) {
+      setField('themeDirection', nextDirection);
+    }
+  }, [i18n, language, setField, themeDirection]);
 
   return (
     <>
@@ -97,13 +114,13 @@ export default function LocalizationSection() {
           alt="language"
           onClick={handleToggle}
         >
-          <Activity mode={i18n !== 'en' ? 'visible' : 'hidden'}>
+          <Activity mode={language !== 'en' ? 'visible' : 'hidden'}>
             <Typography variant="h5" sx={{ textTransform: 'uppercase', color: 'inherit' }}>
-              {i18n}
+              {language}
             </Typography>
           </Activity>
 
-          <Activity mode={i18n === 'en' ? 'visible' : 'hidden'}>
+          <Activity mode={language === 'en' ? 'visible' : 'hidden'}>
             <TranslateTwoToneIcon sx={{ fontSize: '1.3rem' }} />
           </Activity>
         </Avatar>
@@ -138,7 +155,7 @@ export default function LocalizationSection() {
                       borderRadius: `${borderRadius}px`
                     }}
                   >
-                    <ListItemButton selected={i18n === 'en'} onClick={(event) => handleListItemClick(event, 'en')}>
+                    <ListItemButton selected={language === 'en'} onClick={(event) => handleListItemClick(event, 'en')}>
                       <ListItemText
                         primary={
                           <Grid container>
@@ -150,37 +167,13 @@ export default function LocalizationSection() {
                         }
                       />
                     </ListItemButton>
-                    <ListItemButton selected={i18n === 'fr'} onClick={(event) => handleListItemClick(event, 'fr')}>
+                    <ListItemButton selected={language === 'ar'} onClick={(event) => handleListItemClick(event, 'ar')}>
                       <ListItemText
                         primary={
                           <Grid container>
-                            <Typography>français</Typography>
+                            <Typography>العربية</Typography>
                             <Typography variant="caption" sx={{ ml: '8px' }}>
-                              (French)
-                            </Typography>
-                          </Grid>
-                        }
-                      />
-                    </ListItemButton>
-                    <ListItemButton selected={i18n === 'ro'} onClick={(event) => handleListItemClick(event, 'ro')}>
-                      <ListItemText
-                        primary={
-                          <Grid container>
-                            <Typography>Română</Typography>
-                            <Typography variant="caption" sx={{ ml: '8px' }}>
-                              (Romanian)
-                            </Typography>
-                          </Grid>
-                        }
-                      />
-                    </ListItemButton>
-                    <ListItemButton selected={i18n === 'zh'} onClick={(event) => handleListItemClick(event, 'zh')}>
-                      <ListItemText
-                        primary={
-                          <Grid container>
-                            <Typography>中国人</Typography>
-                            <Typography variant="caption" sx={{ ml: '8px' }}>
-                              (Chinese)
+                              (Arabic)
                             </Typography>
                           </Grid>
                         }

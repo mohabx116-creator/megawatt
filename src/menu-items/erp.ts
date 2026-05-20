@@ -14,7 +14,7 @@ const erp = {
   children: [
     {
       id: 'erp-dashboard',
-      title: 'Dashboard',
+      title: 'nav.dashboard',
       type: 'item',
       url: '/erp/dashboard',
       icon: IconDashboard,
@@ -22,7 +22,7 @@ const erp = {
     },
     {
       id: 'erp-products',
-      title: 'Products',
+      title: 'nav.products',
       type: 'item',
       url: '/erp/products',
       icon: IconBox,
@@ -30,7 +30,7 @@ const erp = {
     },
     {
       id: 'erp-inventory',
-      title: 'Inventory',
+      title: 'nav.inventory',
       type: 'item',
       url: '/erp/inventory',
       icon: IconPackage,
@@ -38,7 +38,7 @@ const erp = {
     },
     {
       id: 'erp-create-invoice',
-      title: 'Create Invoice',
+      title: 'nav.createInvoice',
       type: 'item',
       url: '/erp/create-invoice',
       icon: IconFileInvoice,
@@ -46,7 +46,7 @@ const erp = {
     },
     {
       id: 'erp-finance-reports',
-      title: 'Finance Reports',
+      title: 'nav.financeReports',
       type: 'item',
       url: '/erp/finance-reports',
       icon: IconReportMoney,
@@ -54,7 +54,7 @@ const erp = {
     },
     {
       id: 'erp-print-preview',
-      title: 'Print Preview',
+      title: 'nav.printPreview',
       type: 'item',
       url: '/erp/print-preview',
       icon: IconPrinter,

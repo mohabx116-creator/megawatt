@@ -17,13 +17,14 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import MainCard from 'ui-component/cards/MainCard';
+import { useLanguage } from 'i18n';
 
 import { ErpFullWidthPage } from '../components/ErpFullWidthPage';
 import { ErpPageHeader } from '../components/ErpPageHeader';
 import { ErpStatusChip } from '../components/ErpStatusChip';
 import { mockInventory, mockProducts } from '../mockData';
 import { InventoryItem, Product } from '../types';
-import { formatDate, formatEgp, formatNumber } from '../utils/formatters';
+import { translateCategory, translateProductName, translateUnit, translateWarehouse } from '../utils/displayTranslations';
 
 type InventoryRow = InventoryItem & {
   product?: Product;
@@ -52,6 +53,7 @@ const getInventoryRows = (): InventoryRow[] =>
 
 export const InventoryPage = () => {
   const theme = useTheme();
+  const { t, language, formatCurrency, formatDate, formatNumber } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
 
   const inventoryRows = useMemo(() => getInventoryRows(), []);
@@ -61,26 +63,33 @@ export const InventoryPage = () => {
     return inventoryRows.filter((item) => {
       if (!normalizedSearch) return true;
 
-      return [item.productName, item.sku, item.warehouseName, item.warehouseId, item.product?.category ?? ''].some((value) =>
-        value.toLowerCase().includes(normalizedSearch)
-      );
+      return [
+        item.productName,
+        item.sku,
+        item.warehouseName,
+        item.warehouseId,
+        item.product?.category ?? '',
+        translateProductName(language, item.productName),
+        translateWarehouse(language, item.warehouseName),
+        translateCategory(language, item.product?.category)
+      ].some((value) => value.toLowerCase().includes(normalizedSearch));
     });
-  }, [inventoryRows, searchTerm]);
+  }, [inventoryRows, language, searchTerm]);
 
   const totalInventoryValue = inventoryRows.reduce((sum, item) => sum + item.stockValue, 0);
   const lowStockItems = inventoryRows.filter((item) => item.stockStatus === 'low_stock');
   const outOfStockItems = inventoryRows.filter((item) => item.stockStatus === 'out_of_stock');
 
   const summaryCards = [
-    { label: 'Total Stocked SKUs', value: formatNumber(inventoryRows.length), tone: theme.palette.primary.main },
-    { label: 'Inventory Value', value: formatEgp(totalInventoryValue), tone: theme.palette.primary.main },
-    { label: 'Low Stock Items', value: formatNumber(lowStockItems.length), tone: theme.palette.warning.main },
-    { label: 'Out of Stock', value: formatNumber(outOfStockItems.length), tone: theme.palette.error.main }
+    { label: t('inventory.totalStockedSkus'), value: formatNumber(inventoryRows.length), tone: theme.palette.primary.main },
+    { label: t('dashboard.inventoryValue'), value: formatCurrency(totalInventoryValue), tone: theme.palette.primary.main },
+    { label: t('inventory.lowStockItems'), value: formatNumber(lowStockItems.length), tone: theme.palette.warning.main },
+    { label: t('inventory.outOfStock'), value: formatNumber(outOfStockItems.length), tone: theme.palette.error.main }
   ];
 
   return (
     <ErpFullWidthPage>
-      <ErpPageHeader title="Inventory" subtitle="Track warehouse quantities and reorder levels" />
+      <ErpPageHeader title={t('inventory.title')} subtitle={t('inventory.subtitle')} />
 
       <Grid container spacing={2} sx={{ mb: 2, width: '100%', maxWidth: '100%' }}>
         {summaryCards.map((card) => (
@@ -109,7 +118,7 @@ export const InventoryPage = () => {
           <TextField
             fullWidth
             size="small"
-            label="Search inventory"
+            label={t('inventory.search')}
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
             InputProps={{
@@ -121,7 +130,7 @@ export const InventoryPage = () => {
             }}
           />
           <Typography variant="body2" color="text.secondary">
-            Showing {formatNumber(filteredRows.length)} of {formatNumber(inventoryRows.length)} inventory records
+            {t('inventory.showingRecords', { shown: formatNumber(filteredRows.length), total: formatNumber(inventoryRows.length) })}
           </Typography>
         </Stack>
 
@@ -129,16 +138,16 @@ export const InventoryPage = () => {
           <Table size="small" aria-label="inventory table" sx={{ minWidth: 1180 }}>
             <TableHead>
               <TableRow sx={{ backgroundColor: alpha(theme.palette.primary.main, 0.04) }}>
-                <TableCell>Product Name</TableCell>
-                <TableCell>SKU</TableCell>
-                <TableCell>Warehouse / Location</TableCell>
-                <TableCell align="right">Quantity On Hand</TableCell>
-                <TableCell align="right">Reserved</TableCell>
-                <TableCell align="right">Available</TableCell>
-                <TableCell align="right">Reorder Level</TableCell>
-                <TableCell>Unit</TableCell>
-                <TableCell>Stock Status</TableCell>
-                <TableCell>Last Restocked</TableCell>
+                <TableCell>{t('inventory.productName')}</TableCell>
+                <TableCell>{t('inventory.sku')}</TableCell>
+                <TableCell>{t('inventory.warehouseLocation')}</TableCell>
+                <TableCell align="right">{t('inventory.quantityOnHand')}</TableCell>
+                <TableCell align="right">{t('inventory.reserved')}</TableCell>
+                <TableCell align="right">{t('inventory.available')}</TableCell>
+                <TableCell align="right">{t('inventory.reorderLevel')}</TableCell>
+                <TableCell>{t('common.unit')}</TableCell>
+                <TableCell>{t('inventory.stockStatus')}</TableCell>
+                <TableCell>{t('inventory.lastRestocked')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -168,15 +177,15 @@ export const InventoryPage = () => {
                   >
                     <TableCell>
                       <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                        {item.productName}
+                        {translateProductName(language, item.productName)}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        {item.product?.category ?? 'Uncategorized'} - {formatEgp(item.stockValue)}
+                        {item.product?.category ? translateCategory(language, item.product.category) : t('inventory.uncategorized')} - {formatCurrency(item.stockValue)}
                       </Typography>
                     </TableCell>
                     <TableCell sx={{ fontWeight: 700, whiteSpace: 'nowrap' }}>{item.sku}</TableCell>
                     <TableCell>
-                      <Typography variant="body2">{item.warehouseName}</Typography>
+                      <Typography variant="body2">{translateWarehouse(language, item.warehouseName)}</Typography>
                       <Typography variant="caption" color="text.secondary">
                         {item.warehouseId}
                       </Typography>
@@ -209,7 +218,7 @@ export const InventoryPage = () => {
                     <TableCell align="right">{formatNumber(item.reservedQuantity)}</TableCell>
                     <TableCell align="right">{formatNumber(item.availableQuantity)}</TableCell>
                     <TableCell align="right">{formatNumber(item.reorderLevel)}</TableCell>
-                    <TableCell>{item.unit}</TableCell>
+                    <TableCell>{translateUnit(language, item.unit)}</TableCell>
                     <TableCell>
                       <ErpStatusChip status={item.stockStatus} />
                     </TableCell>
@@ -221,7 +230,7 @@ export const InventoryPage = () => {
                 <TableRow>
                   <TableCell colSpan={10}>
                     <Typography variant="body2" color="text.secondary" align="center" sx={{ py: 3 }}>
-                      No inventory records match the current search.
+                      {t('inventory.noMatches')}
                     </Typography>
                   </TableCell>
                 </TableRow>

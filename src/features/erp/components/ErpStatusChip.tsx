@@ -1,6 +1,6 @@
 import Chip, { ChipProps } from '@mui/material/Chip';
 
-import { formatLabel } from '../utils/formatters';
+import { useLanguage } from 'i18n';
 
 type ErpStatusChipProps = {
   status: string;
@@ -15,6 +15,8 @@ const getStatusColor = (status: string): ChipProps['color'] => {
   return 'info';
 };
 
-export const ErpStatusChip = ({ status, color }: ErpStatusChipProps) => (
-  <Chip size="small" label={formatLabel(status)} color={color ?? getStatusColor(status)} variant="outlined" sx={{ borderRadius: 1, fontWeight: 700 }} />
-);
+export const ErpStatusChip = ({ status, color }: ErpStatusChipProps) => {
+  const { formatStatus } = useLanguage();
+
+  return <Chip size="small" label={formatStatus(status)} color={color ?? getStatusColor(status)} variant="outlined" sx={{ borderRadius: 1, fontWeight: 700 }} />;
+};

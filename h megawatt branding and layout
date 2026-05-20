@@ -1,0 +1,14 @@
+.gitignore
+favicon.png
+index.html
+src/assets/images/megawatt-admin.jpg
+src/assets/images/megawatt-logo.jpg
+src/assets/images/megawatt-logo.png
+src/assets/images/megawatt-mark.jpg
+src/config.ts
+src/features/erp/pages/PrintPreviewPage.tsx
+src/layout/MainLayout/Header/ProfileSection/index.tsx
+src/layout/MainLayout/LogoSection/index.tsx
+src/layout/MainLayout/Sidebar/index.tsx
+src/ui-component/Logo.tsx
+tab-icon.jpg

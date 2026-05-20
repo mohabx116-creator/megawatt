@@ -20,13 +20,14 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import MainCard from 'ui-component/cards/MainCard';
+import { useLanguage } from 'i18n';
 
 import { ErpFullWidthPage } from '../components/ErpFullWidthPage';
 import { ErpPageHeader } from '../components/ErpPageHeader';
 import { ErpStatusChip } from '../components/ErpStatusChip';
 import { mockInventory, mockProducts } from '../mockData';
 import { ProductCategory, ProductStatus } from '../types';
-import { formatEgp, formatLabel, formatNumber } from '../utils/formatters';
+import { translateCategory, translatePartyName, translateProductName, translateUnit } from '../utils/displayTranslations';
 
 type ProductStatusFilter = ProductStatus | 'all';
 type CategoryFilter = ProductCategory | 'all';
@@ -41,6 +42,7 @@ const getProductInventoryValue = (productId: string, salePrice: number) => {
 
 export const ProductsPage = () => {
   const theme = useTheme();
+  const { t, language, formatCurrency, formatNumber, formatStatus } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
   const [statusFilter, setStatusFilter] = useState<ProductStatusFilter>('all');
@@ -51,29 +53,36 @@ export const ProductsPage = () => {
     return mockProducts.filter((product) => {
       const matchesSearch =
         !normalizedSearch ||
-        [product.name, product.sku, product.category, product.brand, product.supplierName].some((value) =>
-          value.toLowerCase().includes(normalizedSearch)
-        );
+        [
+          product.name,
+          product.sku,
+          product.category,
+          product.brand,
+          product.supplierName,
+          translateProductName(language, product),
+          translateCategory(language, product.category),
+          translatePartyName(language, product.supplierName)
+        ].some((value) => value.toLowerCase().includes(normalizedSearch));
       const matchesCategory = categoryFilter === 'all' || product.category === categoryFilter;
       const matchesStatus = statusFilter === 'all' || product.status === statusFilter;
 
       return matchesSearch && matchesCategory && matchesStatus;
     });
-  }, [categoryFilter, searchTerm, statusFilter]);
+  }, [categoryFilter, language, searchTerm, statusFilter]);
 
   const totalInventoryValue = mockProducts.reduce((sum, product) => sum + getProductInventoryValue(product.id, product.salePrice), 0);
   const lowStockProducts = mockProducts.filter((product) => product.stockQuantity <= product.reorderLevel || product.status === 'low_stock');
 
   const summaryCards = [
-    { label: 'Total Products', value: formatNumber(mockProducts.length), tone: theme.palette.primary.main },
-    { label: 'Active Products', value: formatNumber(mockProducts.filter((product) => product.status === 'active').length), tone: theme.palette.success.main },
-    { label: 'Low Stock Products', value: formatNumber(lowStockProducts.length), tone: theme.palette.warning.main },
-    { label: 'Inventory Value', value: formatEgp(totalInventoryValue), tone: theme.palette.primary.main }
+    { label: t('products.totalProducts'), value: formatNumber(mockProducts.length), tone: theme.palette.primary.main },
+    { label: t('products.activeProducts'), value: formatNumber(mockProducts.filter((product) => product.status === 'active').length), tone: theme.palette.success.main },
+    { label: t('products.lowStockProducts'), value: formatNumber(lowStockProducts.length), tone: theme.palette.warning.main },
+    { label: t('dashboard.inventoryValue'), value: formatCurrency(totalInventoryValue), tone: theme.palette.primary.main }
   ];
 
   return (
     <ErpFullWidthPage>
-      <ErpPageHeader title="Products" subtitle="Manage Megawatt electrical supplies catalog" />
+      <ErpPageHeader title={t('products.title')} subtitle={t('products.subtitle')} />
 
       <Grid container spacing={2} sx={{ mb: 2, width: '100%', maxWidth: '100%' }}>
         {summaryCards.map((card) => (
@@ -101,7 +110,7 @@ export const ProductsPage = () => {
           <TextField
             fullWidth
             size="small"
-            label="Search products"
+            label={t('products.search')}
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
             InputProps={{
@@ -113,33 +122,33 @@ export const ProductsPage = () => {
             }}
           />
           <FormControl size="small" sx={{ minWidth: { xs: '100%', md: 190 } }}>
-            <InputLabel id="product-category-filter-label">Category</InputLabel>
+            <InputLabel id="product-category-filter-label">{t('common.category')}</InputLabel>
             <Select
               labelId="product-category-filter-label"
-              label="Category"
+              label={t('common.category')}
               value={categoryFilter}
               onChange={(event: SelectChangeEvent) => setCategoryFilter(event.target.value as CategoryFilter)}
             >
-              <MenuItem value="all">All categories</MenuItem>
+              <MenuItem value="all">{t('common.allCategories')}</MenuItem>
               {productCategories.map((category) => (
                 <MenuItem key={category} value={category}>
-                  {category}
+                  {translateCategory(language, category)}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
           <FormControl size="small" sx={{ minWidth: { xs: '100%', md: 170 } }}>
-            <InputLabel id="product-status-filter-label">Status</InputLabel>
+            <InputLabel id="product-status-filter-label">{t('common.status')}</InputLabel>
             <Select
               labelId="product-status-filter-label"
-              label="Status"
+              label={t('common.status')}
               value={statusFilter}
               onChange={(event: SelectChangeEvent) => setStatusFilter(event.target.value as ProductStatusFilter)}
             >
-              <MenuItem value="all">All statuses</MenuItem>
+              <MenuItem value="all">{t('common.allStatuses')}</MenuItem>
               {productStatuses.map((status) => (
                 <MenuItem key={status} value={status}>
-                  {formatLabel(status)}
+                  {formatStatus(status)}
                 </MenuItem>
               ))}
             </Select>
@@ -150,15 +159,15 @@ export const ProductsPage = () => {
           <Table size="small" aria-label="products table" sx={{ minWidth: 1120 }}>
             <TableHead>
               <TableRow sx={{ backgroundColor: alpha(theme.palette.primary.main, 0.04) }}>
-                <TableCell>SKU</TableCell>
-                <TableCell>Product Name</TableCell>
-                <TableCell>Category</TableCell>
-                <TableCell>Brand / Supplier</TableCell>
-                <TableCell>Unit</TableCell>
-                <TableCell align="right">Purchase Price</TableCell>
-                <TableCell align="right">Sale Price</TableCell>
-                <TableCell align="right">VAT</TableCell>
-                <TableCell>Status</TableCell>
+                <TableCell>{t('inventory.sku')}</TableCell>
+                <TableCell>{t('products.productName')}</TableCell>
+                <TableCell>{t('common.category')}</TableCell>
+                <TableCell>{t('products.brandSupplier')}</TableCell>
+                <TableCell>{t('common.unit')}</TableCell>
+                <TableCell align="right">{t('products.purchasePrice')}</TableCell>
+                <TableCell align="right">{t('products.salePrice')}</TableCell>
+                <TableCell align="right">{t('invoice.vat')}</TableCell>
+                <TableCell>{t('common.status')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -167,22 +176,22 @@ export const ProductsPage = () => {
                   <TableCell sx={{ fontWeight: 700, whiteSpace: 'nowrap' }}>{product.sku}</TableCell>
                   <TableCell>
                     <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                      {product.name}
+                      {translateProductName(language, product)}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                      Stock {formatNumber(product.stockQuantity)} / reorder {formatNumber(product.reorderLevel)}
+                      {t('products.stockReorder', { stock: formatNumber(product.stockQuantity), reorder: formatNumber(product.reorderLevel) })}
                     </Typography>
                   </TableCell>
-                  <TableCell>{product.category}</TableCell>
+                  <TableCell>{translateCategory(language, product.category)}</TableCell>
                   <TableCell>
                     <Typography variant="body2">{product.brand}</Typography>
                     <Typography variant="caption" color="text.secondary">
-                      {product.supplierName}
+                      {translatePartyName(language, product.supplierName)}
                     </Typography>
                   </TableCell>
-                  <TableCell>{product.unit}</TableCell>
-                  <TableCell align="right">{formatEgp(product.purchasePrice)}</TableCell>
-                  <TableCell align="right">{formatEgp(product.salePrice)}</TableCell>
+                  <TableCell>{translateUnit(language, product.unit)}</TableCell>
+                  <TableCell align="right">{formatCurrency(product.purchasePrice)}</TableCell>
+                  <TableCell align="right">{formatCurrency(product.salePrice)}</TableCell>
                   <TableCell align="right">{product.taxRate}%</TableCell>
                   <TableCell>
                     <ErpStatusChip status={product.status} />
@@ -193,7 +202,7 @@ export const ProductsPage = () => {
                 <TableRow>
                   <TableCell colSpan={9}>
                     <Typography variant="body2" color="text.secondary" align="center" sx={{ py: 3 }}>
-                      No products match the current filters.
+                      {t('products.noMatches')}
                     </Typography>
                   </TableCell>
                 </TableRow>

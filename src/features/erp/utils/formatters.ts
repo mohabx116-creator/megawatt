@@ -1,5 +1,17 @@
+import { resources, languageStorageKey } from 'i18n/resources';
+import { Language } from 'i18n/types';
+
+const getStoredLanguage = (): Language => {
+  const language = localStorage.getItem(languageStorageKey);
+  return language === 'ar' ? 'ar' : 'en';
+};
+
 export const formatEgp = (value = 0) =>
-  `EGP ${new Intl.NumberFormat('en-EG', {
+  getStoredLanguage() === 'ar'
+    ? `${new Intl.NumberFormat('en-EG', {
+        maximumFractionDigits: 0
+      }).format(Number.isFinite(value) ? value : 0)} جنيه`
+    : `EGP ${new Intl.NumberFormat('en-EG', {
     maximumFractionDigits: 0
   }).format(Number.isFinite(value) ? value : 0)}`;
 
@@ -9,12 +21,13 @@ export const formatNumber = (value = 0) =>
   }).format(Number.isFinite(value) ? value : 0);
 
 export const formatDate = (value?: string) => {
-  if (!value) return 'Not available';
+  const language = getStoredLanguage();
+  if (!value) return resources[language]['common.notAvailable'];
 
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return 'Not available';
+  if (Number.isNaN(date.getTime())) return resources[language]['common.notAvailable'];
 
-  return new Intl.DateTimeFormat('en-EG', {
+  return new Intl.DateTimeFormat(language === 'ar' ? 'ar-EG' : 'en-EG', {
     day: '2-digit',
     month: 'short',
     year: 'numeric'
@@ -51,9 +64,14 @@ const labelMap: Record<string, string> = {
   miscellaneous: 'Miscellaneous'
 };
 
-export const formatLabel = (value: string) =>
-  labelMap[value] ??
-  value
-    .split('_')
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(' ');
+export const formatLabel = (value: string) => {
+  const language = getStoredLanguage();
+  return (
+    resources[language][`status.${value}`] ??
+    labelMap[value] ??
+    value
+      .split('_')
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ')
+  );
+};

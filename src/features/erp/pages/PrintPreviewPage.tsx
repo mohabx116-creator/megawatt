@@ -20,11 +20,12 @@ import Typography from '@mui/material/Typography';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import MainCard from 'ui-component/cards/MainCard';
+import { useLanguage } from 'i18n';
 
 import { ErpFullWidthPage } from '../components/ErpFullWidthPage';
 import { ErpPageHeader } from '../components/ErpPageHeader';
 import { mockCustomers, mockInvoices } from '../mockData';
-import { formatDate, formatEgp, formatLabel } from '../utils/formatters';
+import { translateExpenseDescription, translatePartyName, translateProductName, translateUnit } from '../utils/displayTranslations';
 
 type PrintableInvoiceLine = {
   id: string;
@@ -130,16 +131,16 @@ const getFallbackInvoice = (): PrintableInvoice => {
   };
 };
 
-const formatPaymentTerms = (value: string) => (value === 'cash' ? 'Cash' : `${value} Days`);
-
 export const PrintPreviewPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
+  const { t, language, isRtl, formatCurrency, formatDate, formatStatus } = useLanguage();
   const [storageVersion, setStorageVersion] = useState(0);
 
   const storedInvoice = useMemo(() => getStoredInvoice(), [storageVersion]);
   const invoice = useMemo(() => storedInvoice ?? getFallbackInvoice(), [storedInvoice]);
   const totalDiscounts = invoice.totals.lineDiscountTotal + invoice.totals.invoiceDiscount;
+  const formatPaymentTerms = (value: string) => (value === 'cash' ? t('invoice.cash') : t('invoice.days', { days: value }));
 
   const clearGeneratedInvoice = () => {
     localStorage.removeItem(generatedInvoiceStorageKey);
@@ -207,21 +208,21 @@ export const PrintPreviewPage = () => {
 
       <Box>
         <Box className="no-print">
-          <ErpPageHeader title="Print Preview" subtitle="Review and print Megawatt sales invoice" />
+          <ErpPageHeader title={t('print.title')} subtitle={t('print.subtitle')} />
 
           <MainCard border elevation={0} contentSX={{ p: 2, '&:last-child': { pb: 2 } }} sx={{ mb: 2 }}>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} justifyContent="space-between">
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
                 <Button variant="contained" startIcon={<PrintOutlinedIcon />} onClick={() => window.print()}>
-                  Print
+                  {t('common.print')}
                 </Button>
                 <Button variant="outlined" startIcon={<ArrowBackOutlinedIcon />} onClick={() => navigate('/erp/create-invoice')}>
-                  Back to Create Invoice
+                  {t('print.backToCreateInvoice')}
                 </Button>
               </Stack>
               {storedInvoice && (
                 <Button color="error" variant="outlined" startIcon={<DeleteOutlineOutlinedIcon />} onClick={clearGeneratedInvoice}>
-                  Clear Generated Invoice
+                  {t('print.clearGeneratedInvoice')}
                 </Button>
               )}
             </Stack>
@@ -237,7 +238,9 @@ export const PrintPreviewPage = () => {
             p: { xs: 2, md: 4 },
             border: `1px solid ${theme.palette.divider}`,
             backgroundColor: theme.palette.background.paper,
-            color: theme.palette.text.primary
+            color: theme.palette.text.primary,
+            direction: isRtl ? 'rtl' : 'ltr',
+            textAlign: isRtl ? 'right' : 'left'
           }}
         >
           <Stack spacing={3}>
@@ -245,20 +248,20 @@ export const PrintPreviewPage = () => {
               <Grid size={{ xs: 12, md: 7 }}>
                 <Typography variant="h2">Megawatt</Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Industrial Electrical Tools & Factory Supplies
+                  {t('print.companyTagline')}
                 </Typography>
                 <Stack spacing={0.5} sx={{ mt: 2 }}>
-                  <Typography variant="body2">Cairo, Egypt</Typography>
-                  <Typography variant="body2">Phone: +20 2 0000 0000</Typography>
-                  <Typography variant="body2">Tax Registration: EG-000-000-000</Typography>
+                  <Typography variant="body2">{t('print.cairoEgypt')}</Typography>
+                  <Typography variant="body2">{t('print.phone')}: +20 2 0000 0000</Typography>
+                  <Typography variant="body2">{t('print.taxRegistration')}: EG-000-000-000</Typography>
                 </Stack>
               </Grid>
               <Grid size={{ xs: 12, md: 5 }}>
                 <Stack spacing={1} alignItems={{ xs: 'flex-start', md: 'flex-end' }}>
                   <Typography variant="h1" sx={{ color: theme.palette.primary.main }}>
-                    TAX INVOICE
+                    {t('print.taxInvoice')}
                   </Typography>
-                  <Chip label={formatLabel(invoice.paymentStatus)} variant="outlined" color={invoice.paymentStatus === 'paid' ? 'success' : invoice.paymentStatus === 'unpaid' ? 'error' : 'warning'} />
+                  <Chip label={formatStatus(invoice.paymentStatus)} variant="outlined" color={invoice.paymentStatus === 'paid' ? 'success' : invoice.paymentStatus === 'unpaid' ? 'error' : 'warning'} />
                 </Stack>
               </Grid>
             </Grid>
@@ -267,31 +270,31 @@ export const PrintPreviewPage = () => {
               <Grid size={{ xs: 12, md: 6 }}>
                 <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}` }}>
                   <Typography variant="h4" sx={{ mb: 1 }}>
-                    Customer Details
+                    {t('print.customerDetails')}
                   </Typography>
                   <Typography variant="body1" sx={{ fontWeight: 700 }}>
-                    {invoice.customer.companyName}
+                    {translatePartyName(language, invoice.customer.companyName)}
                   </Typography>
-                  <Typography variant="body2">{invoice.customer.name}</Typography>
-                  {invoice.customer.phone && <Typography variant="body2">Phone: {invoice.customer.phone}</Typography>}
+                  <Typography variant="body2">{translatePartyName(language, invoice.customer.name)}</Typography>
+                  {invoice.customer.phone && <Typography variant="body2">{t('print.phone')}: {invoice.customer.phone}</Typography>}
                   {(invoice.customer.address || invoice.customer.city) && (
                     <Typography variant="body2">
                       {[invoice.customer.address, invoice.customer.city].filter(Boolean).join(', ')}
                     </Typography>
                   )}
                   {invoice.customer.taxRegistrationNumber && (
-                    <Typography variant="body2">Tax Registration: {invoice.customer.taxRegistrationNumber}</Typography>
+                    <Typography variant="body2">{t('print.taxRegistration')}: {invoice.customer.taxRegistrationNumber}</Typography>
                   )}
                 </Box>
               </Grid>
               <Grid size={{ xs: 12, md: 6 }}>
                 <Box sx={{ p: 2, border: `1px solid ${theme.palette.divider}`, backgroundColor: alpha(theme.palette.primary.main, 0.03) }}>
                   {[
-                    ['Invoice Number', invoice.invoiceNumber],
-                    ['Invoice Date', formatDate(invoice.invoiceDate)],
-                    ['Due Date', formatDate(invoice.dueDate)],
-                    ['Payment Terms', formatPaymentTerms(invoice.paymentTerms)],
-                    ['Payment Status', formatLabel(invoice.paymentStatus)]
+                    [t('print.invoiceNumber'), invoice.invoiceNumber],
+                    [t('invoice.invoiceDate'), formatDate(invoice.invoiceDate)],
+                    [t('invoice.dueDate'), formatDate(invoice.dueDate)],
+                    [t('invoice.paymentTerms'), formatPaymentTerms(invoice.paymentTerms)],
+                    [t('invoice.paymentStatus'), formatStatus(invoice.paymentStatus)]
                   ].map(([label, value]) => (
                     <Stack key={label} direction="row" justifyContent="space-between" spacing={2} sx={{ py: 0.5 }}>
                       <Typography variant="body2" color="text.secondary">
@@ -310,30 +313,30 @@ export const PrintPreviewPage = () => {
               <Table size="small" aria-label="print invoice line items">
                 <TableHead>
                   <TableRow sx={{ backgroundColor: alpha(theme.palette.primary.main, 0.07) }}>
-                    <TableCell>SKU</TableCell>
-                    <TableCell>Product</TableCell>
-                    <TableCell>Unit</TableCell>
-                    <TableCell align="right">Quantity</TableCell>
-                    <TableCell align="right">Unit Price</TableCell>
-                    <TableCell align="right">Discount</TableCell>
-                    <TableCell align="right">VAT</TableCell>
-                    <TableCell align="right">Line Total</TableCell>
+                    <TableCell>{t('inventory.sku')}</TableCell>
+                    <TableCell>{t('invoice.product')}</TableCell>
+                    <TableCell>{t('common.unit')}</TableCell>
+                    <TableCell align="right">{t('common.quantity')}</TableCell>
+                    <TableCell align="right">{t('invoice.unitPrice')}</TableCell>
+                    <TableCell align="right">{t('invoice.discount')}</TableCell>
+                    <TableCell align="right">{t('invoice.vat')}</TableCell>
+                    <TableCell align="right">{t('invoice.lineTotal')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {invoice.lines.map((line) => (
                     <TableRow key={line.id}>
                       <TableCell sx={{ fontWeight: 700 }}>{line.sku}</TableCell>
-                      <TableCell>{line.productName}</TableCell>
-                      <TableCell>{line.unit}</TableCell>
+                      <TableCell>{translateProductName(language, line.productName)}</TableCell>
+                      <TableCell>{translateUnit(language, line.unit)}</TableCell>
                       <TableCell align="right">{line.quantity}</TableCell>
-                      <TableCell align="right">{formatEgp(line.unitPrice)}</TableCell>
-                      <TableCell align="right">{formatEgp(line.discount)}</TableCell>
+                      <TableCell align="right">{formatCurrency(line.unitPrice)}</TableCell>
+                      <TableCell align="right">{formatCurrency(line.discount)}</TableCell>
                       <TableCell align="right">
-                        {line.taxRate}% ({formatEgp(line.taxAmount)})
+                        {line.taxRate}% ({formatCurrency(line.taxAmount)})
                       </TableCell>
                       <TableCell align="right" sx={{ fontWeight: 700 }}>
-                        {formatEgp(line.lineTotal)}
+                        {formatCurrency(line.lineTotal)}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -345,23 +348,23 @@ export const PrintPreviewPage = () => {
               <Grid size={{ xs: 12, md: 5 }}>
                 <Stack spacing={1.25} sx={{ p: 2, border: `1px solid ${theme.palette.divider}` }}>
                   {[
-                    ['Subtotal before VAT', invoice.totals.subtotal],
-                    ['Discounts', -totalDiscounts],
-                    ['VAT amount', invoice.totals.vatAmount],
-                    ['Grand total', invoice.totals.grandTotal],
-                    ['Paid amount', invoice.totals.paidAmount],
-                    ['Balance due', invoice.totals.balanceDue]
-                  ].map(([label, value]) => (
+                    ['subtotal', t('invoice.subtotalBeforeVat'), invoice.totals.subtotal],
+                    ['discounts', t('print.discounts'), -totalDiscounts],
+                    ['vat', t('invoice.vatAmount'), invoice.totals.vatAmount],
+                    ['grand', t('invoice.grandTotal'), invoice.totals.grandTotal],
+                    ['paid', t('invoice.paidAmount'), invoice.totals.paidAmount],
+                    ['balance', t('invoice.balanceDue'), invoice.totals.balanceDue]
+                  ].map(([key, label, value]) => (
                     <Stack
-                      key={label}
+                      key={key}
                       direction="row"
                       justifyContent="space-between"
                       spacing={2}
-                      sx={label === 'Grand total' ? { pt: 1, borderTop: `1px solid ${theme.palette.divider}` } : undefined}
+                      sx={key === 'grand' ? { pt: 1, borderTop: `1px solid ${theme.palette.divider}` } : undefined}
                     >
-                      <Typography variant={label === 'Grand total' ? 'h4' : 'body2'}>{label}</Typography>
-                      <Typography variant={label === 'Grand total' ? 'h4' : 'body2'} sx={{ fontWeight: 700 }}>
-                        {formatEgp(value as number)}
+                      <Typography variant={key === 'grand' ? 'h4' : 'body2'}>{label}</Typography>
+                      <Typography variant={key === 'grand' ? 'h4' : 'body2'} sx={{ fontWeight: 700 }}>
+                        {formatCurrency(value as number)}
                       </Typography>
                     </Stack>
                   ))}
@@ -372,19 +375,19 @@ export const PrintPreviewPage = () => {
             <Grid container spacing={3} sx={{ pt: 2 }}>
               <Grid size={{ xs: 12, md: 7 }}>
                 <Typography variant="h4" sx={{ mb: 1 }}>
-                  Notes
+                  {t('print.notes')}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {invoice.notes ?? 'Sold goods are subject to Megawatt warranty and return policies. Please reference the invoice number when making payment.'}
+                  {invoice.notes ? translateExpenseDescription(language, invoice.notes) : t('print.defaultNotes')}
                 </Typography>
                 <Typography variant="body2" sx={{ mt: 2 }}>
-                  Thank you for choosing Megawatt.
+                  {t('print.thankYou')}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, md: 5 }}>
                 <Box sx={{ pt: 6, borderBottom: `1px solid ${theme.palette.text.primary}` }} />
                 <Typography variant="body2" align="center" sx={{ mt: 1 }}>
-                  Authorized Signature
+                  {t('print.authorizedSignature')}
                 </Typography>
               </Grid>
             </Grid>

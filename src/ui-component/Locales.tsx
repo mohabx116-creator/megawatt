@@ -10,12 +10,8 @@ import { I18n } from 'types/config';
 // load locales files
 function loadLocaleData(i18n: I18n) {
   switch (i18n) {
-    case 'fr':
-      return import('utils/locales/fr.json');
-    case 'ro':
-      return import('utils/locales/ro.json');
-    case 'zh':
-      return import('utils/locales/zh.json');
+    case 'ar':
+      return import('utils/locales/ar.json');
     default:
       return import('utils/locales/en.json');
   }
@@ -32,8 +28,9 @@ export default function Locales({ children }: LocalsProps) {
     state: { i18n }
   } = useConfig();
   const [messages, setMessages] = useState<Record<string, string> | Record<string, MessageFormatElement[]> | undefined>();
+  const activeLocale: I18n = i18n === 'ar' ? 'ar' : 'en';
 
-  const localeDataPromise = useMemo(() => loadLocaleData(i18n), [i18n]);
+  const localeDataPromise = useMemo(() => loadLocaleData(activeLocale), [activeLocale]);
   useEffect(() => {
     localeDataPromise.then((d: { default: Record<string, string> | Record<string, MessageFormatElement[]> | undefined }) => {
       setMessages(d.default);
@@ -43,7 +40,7 @@ export default function Locales({ children }: LocalsProps) {
   return (
     <>
       <Activity mode={messages ? 'visible' : 'hidden'}>
-        <IntlProvider locale={i18n} defaultLocale="en" messages={messages}>
+        <IntlProvider locale={activeLocale} defaultLocale="en" messages={messages}>
           {children}
         </IntlProvider>
       </Activity>

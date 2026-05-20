@@ -21,12 +21,13 @@ import { alpha, useTheme } from '@mui/material/styles';
 import { SvgIconComponent } from '@mui/icons-material';
 
 import MainCard from 'ui-component/cards/MainCard';
+import { useLanguage } from 'i18n';
 
 import { ErpFullWidthPage } from '../components/ErpFullWidthPage';
 import { ErpPageHeader } from '../components/ErpPageHeader';
 import { mockDashboardMetrics, mockFinanceSummary, mockInventory, mockInvoices, mockProducts } from '../mockData';
 import { Invoice } from '../types';
-import { formatDate, formatEgp, formatLabel } from '../utils/formatters';
+import { translatePartyName, translateProductName, translateUnit } from '../utils/displayTranslations';
 
 type KpiCard = {
   title: string;
@@ -50,6 +51,7 @@ const sortedInvoices = [...mockInvoices].sort(
 
 export const DashboardPage = () => {
   const theme = useTheme();
+  const { t, language, formatCurrency, formatDate, formatStatus, formatNumber } = useLanguage();
 
   const lowStockItems = mockInventory.filter((item) => item.quantityOnHand <= item.reorderLevel);
   const openInvoices = mockInvoices.filter((invoice) => invoice.balanceDue > 0);
@@ -65,50 +67,50 @@ export const DashboardPage = () => {
 
   const kpiCards: KpiCard[] = [
     {
-      title: 'Revenue',
-      value: formatEgp(mockFinanceSummary.revenue),
+      title: t('dashboard.revenue'),
+      value: formatCurrency(mockFinanceSummary.revenue),
       trend: revenueMetric?.trendPercent,
-      trendLabel: revenueMetric ? 'Compared with previous month' : mockFinanceSummary.period,
+      trendLabel: revenueMetric ? t('dashboard.comparedPreviousMonth') : mockFinanceSummary.period,
       icon: AssessmentOutlinedIcon,
       accent: 'primary'
     },
     {
-      title: 'Gross Profit',
-      value: formatEgp(mockFinanceSummary.grossProfit),
+      title: t('dashboard.grossProfit'),
+      value: formatCurrency(mockFinanceSummary.grossProfit),
       trend: marginMetric?.trendPercent,
-      trendLabel: `${marginMetric?.value ?? 0}% margin`,
+      trendLabel: t('dashboard.margin', { value: marginMetric?.value ?? 0 }),
       icon: TrendingUpOutlinedIcon,
       accent: 'success'
     },
     {
-      title: 'Expenses',
-      value: formatEgp(mockFinanceSummary.expenses),
+      title: t('dashboard.expenses'),
+      value: formatCurrency(mockFinanceSummary.expenses),
       trend: -3.4,
-      trendLabel: 'Operating expenses under review',
+      trendLabel: t('dashboard.operatingExpensesUnderReview'),
       icon: TrendingDownOutlinedIcon,
       accent: 'warning'
     },
     {
-      title: 'Receivables',
-      value: formatEgp(mockFinanceSummary.receivables),
+      title: t('dashboard.receivables'),
+      value: formatCurrency(mockFinanceSummary.receivables),
       trend: receivablesMetric?.trendPercent,
-      trendLabel: receivablesMetric ? 'Compared with previous month' : 'Open customer balances',
+      trendLabel: receivablesMetric ? t('dashboard.comparedPreviousMonth') : t('dashboard.openCustomerBalances'),
       icon: AccountBalanceWalletOutlinedIcon,
       accent: 'warning'
     },
     {
-      title: 'Inventory Value',
-      value: formatEgp(totalInventoryValue),
+      title: t('dashboard.inventoryValue'),
+      value: formatCurrency(totalInventoryValue),
       trend: undefined,
-      trendLabel: `${mockInventory.length} stocked SKUs`,
+      trendLabel: t('dashboard.stockedSkus', { count: mockInventory.length }),
       icon: Inventory2OutlinedIcon,
       accent: 'primary'
     },
     {
-      title: 'Stock Alerts',
+      title: t('dashboard.stockAlerts'),
       value: String(lowStockMetric?.value ?? lowStockItems.length),
       trend: lowStockMetric?.trendPercent,
-      trendLabel: lowStockMetric ? 'Requires attention' : 'Requires reorder',
+      trendLabel: lowStockMetric ? t('dashboard.requiresAttention') : t('dashboard.requiresReorder'),
       icon: ReportProblemOutlinedIcon,
       accent: 'error'
     }
@@ -130,7 +132,7 @@ export const DashboardPage = () => {
 
   return (
     <ErpFullWidthPage>
-      <ErpPageHeader title="Megawatt Dashboard" subtitle={`Sales, inventory, and finance summary for ${mockFinanceSummary.period}`} />
+      <ErpPageHeader title={t('dashboard.title')} subtitle={t('dashboard.subtitle', { period: mockFinanceSummary.period })} />
 
       <Grid container spacing={2} sx={{ width: '100%', maxWidth: '100%' }}>
         {kpiCards.map((card) => {
@@ -200,7 +202,7 @@ export const DashboardPage = () => {
 
         <Grid size={{ xs: 12, lg: 8 }}>
           <MainCard
-            title="Operational Performance"
+            title={t('dashboard.operationalPerformance')}
             border
             elevation={0}
             contentSX={{ p: 2.5, '&:last-child': { pb: 2.5 } }}
@@ -209,11 +211,11 @@ export const DashboardPage = () => {
           >
             <Stack spacing={2.5}>
               {[
-                { label: 'Sales Revenue', value: mockFinanceSummary.revenue, color: theme.palette.primary.main },
-                { label: 'Cost of Goods', value: mockFinanceSummary.cost, color: theme.palette.grey[600] },
-                { label: 'Operating Expenses', value: mockFinanceSummary.expenses, color: theme.palette.warning.main },
+                { label: t('dashboard.salesRevenue'), value: mockFinanceSummary.revenue, color: theme.palette.primary.main },
+                { label: t('dashboard.costOfGoods'), value: mockFinanceSummary.cost, color: theme.palette.grey[600] },
+                { label: t('dashboard.operatingExpenses'), value: mockFinanceSummary.expenses, color: theme.palette.warning.main },
                 {
-                  label: 'Net Profit',
+                  label: t('dashboard.netProfit'),
                   value: mockFinanceSummary.netProfit,
                   color: mockFinanceSummary.netProfit >= 0 ? theme.palette.success.main : theme.palette.error.main
                 }
@@ -227,7 +229,7 @@ export const DashboardPage = () => {
                         {item.label}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        {formatEgp(item.value)}
+                        {formatCurrency(item.value)}
                       </Typography>
                     </Stack>
                     <LinearProgress
@@ -252,7 +254,7 @@ export const DashboardPage = () => {
 
         <Grid size={{ xs: 12, lg: 4 }}>
           <MainCard
-            title="Top Inventory"
+            title={t('dashboard.topInventory')}
             border
             elevation={0}
             contentSX={{ p: 2.5, '&:last-child': { pb: 2.5 } }}
@@ -265,14 +267,14 @@ export const DashboardPage = () => {
                   <Stack direction="row" justifyContent="space-between" spacing={2} sx={{ mb: 0.75 }}>
                     <Box sx={{ minWidth: 0 }}>
                       <Typography variant="body2" sx={{ fontWeight: 700 }} noWrap>
-                        {item.productName}
+                        {translateProductName(language, item.productName)}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        {item.quantityOnHand.toLocaleString('en-EG')} {item.unit}
+                        {formatNumber(item.quantityOnHand)} {translateUnit(language, item.unit)}
                       </Typography>
                     </Box>
                     <Typography variant="body2" color="text.secondary">
-                      {formatEgp(item.value)}
+                      {formatCurrency(item.value)}
                     </Typography>
                   </Stack>
                   <LinearProgress
@@ -296,7 +298,7 @@ export const DashboardPage = () => {
 
         <Grid size={{ xs: 12, lg: 8 }}>
           <MainCard
-            title="Latest Sales Invoices"
+            title={t('dashboard.latestSalesInvoices')}
             border
             elevation={0}
             contentSX={{ p: 0, '&:last-child': { pb: 0 } }}
@@ -307,11 +309,11 @@ export const DashboardPage = () => {
               <Table size="small" aria-label="latest sales invoices">
                 <TableHead>
                   <TableRow sx={{ backgroundColor: alpha(theme.palette.primary.main, 0.04) }}>
-                    <TableCell>Invoice</TableCell>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Customer</TableCell>
-                    <TableCell align="right">Total</TableCell>
-                    <TableCell>Status</TableCell>
+                    <TableCell>{t('invoice.invoice')}</TableCell>
+                    <TableCell>{t('common.date')}</TableCell>
+                    <TableCell>{t('invoice.customer')}</TableCell>
+                    <TableCell align="right">{t('common.total')}</TableCell>
+                    <TableCell>{t('common.status')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -319,12 +321,12 @@ export const DashboardPage = () => {
                     <TableRow key={invoice.id} hover>
                       <TableCell sx={{ fontWeight: 700 }}>{invoice.invoiceNumber}</TableCell>
                       <TableCell>{formatDate(invoice.issueDate)}</TableCell>
-                      <TableCell>{invoice.customerName}</TableCell>
-                      <TableCell align="right">{formatEgp(invoice.total)}</TableCell>
+                      <TableCell>{translatePartyName(language, invoice.customerName)}</TableCell>
+                      <TableCell align="right">{formatCurrency(invoice.total)}</TableCell>
                       <TableCell>
                         <Chip
                           size="small"
-                          label={formatLabel(invoice.paymentStatus)}
+                          label={formatStatus(invoice.paymentStatus)}
                           color={getPaymentChipColor(invoice)}
                           variant="outlined"
                           sx={{ borderRadius: 1, fontWeight: 700 }}
@@ -341,7 +343,7 @@ export const DashboardPage = () => {
         <Grid size={{ xs: 12, lg: 4 }}>
           <Stack spacing={2}>
             <MainCard
-              title="Critical Stock Alerts"
+              title={t('dashboard.criticalStockAlerts')}
               border
               elevation={0}
               contentSX={{ p: 2, '&:last-child': { pb: 2 } }}
@@ -366,10 +368,10 @@ export const DashboardPage = () => {
                     <ReportProblemOutlinedIcon fontSize="small" sx={{ color: theme.palette.warning.main, mt: 0.25 }} />
                     <Box sx={{ minWidth: 0 }}>
                       <Typography variant="body2" sx={{ fontWeight: 700 }} noWrap>
-                        {item.productName}
+                        {translateProductName(language, item.productName)}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        Available {item.quantityOnHand} {item.unit}, reorder level {item.reorderLevel}
+                        {t('dashboard.availableReorder', { quantity: item.quantityOnHand, unit: translateUnit(language, item.unit), reorder: item.reorderLevel })}
                       </Typography>
                     </Box>
                   </Stack>
@@ -378,7 +380,7 @@ export const DashboardPage = () => {
             </MainCard>
 
             <MainCard
-              title="Recent Activity"
+              title={t('dashboard.recentActivity')}
               border
               elevation={0}
               contentSX={{ p: 2, '&:last-child': { pb: 2 } }}
@@ -404,16 +406,16 @@ export const DashboardPage = () => {
                     </Box>
                     <Box sx={{ minWidth: 0 }}>
                       <Typography variant="body2" sx={{ fontWeight: 700 }} noWrap>
-                        Issued {invoice.invoiceNumber}
+                        {t('dashboard.issuedInvoice', { invoice: invoice.invoiceNumber })}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        {invoice.customerName} - {formatEgp(invoice.total)}
+                        {translatePartyName(language, invoice.customerName)} - {formatCurrency(invoice.total)}
                       </Typography>
                     </Box>
                   </Stack>
                 ))}
                 <Typography variant="caption" color="text.secondary">
-                  {openInvoices.length} invoices currently have outstanding balances.
+                  {t('dashboard.openInvoices', { count: openInvoices.length })}
                 </Typography>
               </Stack>
             </MainCard>
