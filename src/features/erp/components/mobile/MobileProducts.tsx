@@ -15,12 +15,14 @@ import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutli
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 
+import MainCard from 'ui-component/cards/MainCard';
 import { useLanguage } from 'i18n';
-import { mockProducts, mockInventory } from '../../mockData';
+import { mockProducts } from '../../mockData';
+import { translateProductName, translateCategory } from '../../utils/displayTranslations';
 
 export const MobileProducts = () => {
   const theme = useTheme();
-  const { t, formatCurrency, formatNumber } = useLanguage();
+  const { t, language, formatCurrency, formatNumber, setLanguage } = useLanguage();
 
   return (
     <Box sx={{ pb: 12, bgcolor: theme.palette.background.default, minHeight: '100vh', position: 'relative' }}>
@@ -61,6 +63,12 @@ export const MobileProducts = () => {
           <IconButton size="small" sx={{ color: theme.palette.primary.main }}>
             <SearchOutlinedIcon />
           </IconButton>
+          <Box 
+            onClick={() => setLanguage?.(language === 'en' ? 'ar' : 'en')}
+            sx={{ cursor: 'pointer', bgcolor: theme.palette.secondary.light, color: theme.palette.secondary.dark, px: 1, py: 0.5, borderRadius: 1 }}
+          >
+            <Typography variant="caption" sx={{ fontWeight: 700 }}>{language === 'en' ? 'AR' : 'EN'}</Typography>
+          </Box>
         </Stack>
       </Stack>
 
@@ -69,7 +77,7 @@ export const MobileProducts = () => {
         <Stack direction="row" spacing={1.5} sx={{ mb: 2 }}>
           <TextField
             fullWidth
-            placeholder={t('dashboard.search')}
+            placeholder={t('products.search')}
             variant="outlined"
             size="small"
             slotProps={{
@@ -89,10 +97,9 @@ export const MobileProducts = () => {
         </Stack>
 
         <Stack direction="row" spacing={1} sx={{ mb: 3, overflowX: 'auto', '&::-webkit-scrollbar': { display: 'none' } }}>
-          <Chip label="All" sx={{ bgcolor: theme.palette.primary.main, color: 'white', fontWeight: 700 }} />
-          <Chip label="Electrical" variant="outlined" sx={{ bgcolor: theme.palette.background.paper, fontWeight: 700 }} />
-          <Chip label="Safety" variant="outlined" sx={{ bgcolor: theme.palette.background.paper, fontWeight: 700 }} />
-          <Chip label="Tools" variant="outlined" sx={{ bgcolor: theme.palette.background.paper, fontWeight: 700 }} />
+          <Chip label={t('common.all')} sx={{ bgcolor: theme.palette.primary.main, color: 'white', fontWeight: 700 }} />
+          <Chip label={translateCategory(language as any, 'Cables')} variant="outlined" sx={{ bgcolor: theme.palette.background.paper, fontWeight: 700 }} />
+          <Chip label={translateCategory(language as any, 'Circuit Breakers')} variant="outlined" sx={{ bgcolor: theme.palette.background.paper, fontWeight: 700 }} />
         </Stack>
 
         {/* Product List */}
@@ -115,16 +122,7 @@ export const MobileProducts = () => {
               }
 
               return (
-                <Box
-                  key={product.id}
-                  sx={{
-                    bgcolor: theme.palette.background.paper,
-                    border: `1px solid ${theme.palette.divider}`,
-                    borderRadius: 3,
-                    p: 1.5,
-                    boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
-                  }}
-                >
+                <MainCard key={product.id} content={false} sx={{ p: 1.5 }}>
                   <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
                     <Stack direction="row" spacing={2}>
                       <Box sx={{ width: 64, height: 64, bgcolor: theme.palette.grey[100], borderRadius: 2, border: `1px solid ${theme.palette.divider}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -132,7 +130,7 @@ export const MobileProducts = () => {
                       </Box>
                       <Box>
                         <Typography variant="subtitle2" sx={{ fontWeight: 700, color: theme.palette.primary.main }}>
-                          {product.name}
+                          {translateProductName(language as any, product.name)}
                         </Typography>
                         <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 0.5 }}>
                           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
@@ -140,7 +138,7 @@ export const MobileProducts = () => {
                           </Typography>
                           <Typography variant="caption" sx={{ color: 'text.secondary' }}>•</Typography>
                           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                            {product.category}
+                            {translateCategory(language as any, product.category)}
                           </Typography>
                         </Stack>
                         <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 1 }}>
@@ -149,8 +147,8 @@ export const MobileProducts = () => {
                           </Typography>
                           <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, px: 1, py: 0.25, bgcolor: alpha(tone, 0.1), border: `1px solid ${alpha(tone, 0.2)}`, borderRadius: 1 }}>
                             {icon}
-                            <Typography variant="caption" sx={{ fontSize: 9, fontWeight: 700, color: tone, textTransform: 'uppercase' }}>
-                              {stockStatus.replace('_', ' ')}
+                            <Typography variant="caption" sx={{ fontSize: 9, fontWeight: 700, color: tone }}>
+                              {t(`status.${stockStatus}` as any)}
                             </Typography>
                           </Box>
                         </Stack>
@@ -160,7 +158,7 @@ export const MobileProducts = () => {
                       <MoreVertOutlinedIcon />
                     </IconButton>
                   </Stack>
-                </Box>
+                </MainCard>
               );
             })}
           </Stack>

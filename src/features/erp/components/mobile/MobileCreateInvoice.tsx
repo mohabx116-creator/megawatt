@@ -8,6 +8,7 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useTheme, alpha } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
@@ -19,11 +20,15 @@ import BoltOutlinedIcon from '@mui/icons-material/BoltOutlined';
 import CableOutlinedIcon from '@mui/icons-material/CableOutlined';
 import SettingsInputComponentOutlinedIcon from '@mui/icons-material/SettingsInputComponentOutlined';
 
+import MainCard from 'ui-component/cards/MainCard';
 import { useLanguage } from 'i18n';
+import { translatePartyName, translateWarehouse, translateProductName } from '../../utils/displayTranslations';
+import { mockCustomers } from '../../mockData';
 
 export const MobileCreateInvoice = () => {
   const theme = useTheme();
-  const { t } = useLanguage();
+  const navigate = useNavigate();
+  const { t, language } = useLanguage();
   const [paymentType, setPaymentType] = useState('CASH');
 
   return (
@@ -44,7 +49,7 @@ export const MobileCreateInvoice = () => {
         }}
       >
         <Stack direction="row" alignItems="center" spacing={1.5}>
-          <IconButton size="small" sx={{ color: theme.palette.primary.main }}>
+          <IconButton size="small" sx={{ color: theme.palette.primary.main }} onClick={() => navigate('/erp/dashboard')}>
             <ArrowBackOutlinedIcon />
           </IconButton>
           <Typography variant="h3" sx={{ fontWeight: 700, color: theme.palette.primary.main }}>
@@ -63,21 +68,21 @@ export const MobileCreateInvoice = () => {
             <Box sx={{ width: 32, height: 32, borderRadius: '50%', bgcolor: theme.palette.primary.main, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Typography variant="caption" sx={{ fontWeight: 700 }}>1</Typography>
             </Box>
-            <Typography variant="caption" sx={{ color: theme.palette.primary.main }}>Info</Typography>
+            <Typography variant="caption" sx={{ color: theme.palette.primary.main }}>{t('common.info')}</Typography>
           </Stack>
           <Box sx={{ flexGrow: 1, height: '1px', bgcolor: theme.palette.divider, mx: 1, mb: 2 }} />
           <Stack alignItems="center" spacing={0.5}>
             <Box sx={{ width: 32, height: 32, borderRadius: '50%', bgcolor: theme.palette.grey[200], color: 'text.secondary', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Typography variant="caption" sx={{ fontWeight: 700 }}>2</Typography>
             </Box>
-            <Typography variant="caption" sx={{ color: 'text.secondary' }}>Review</Typography>
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>{t('common.review')}</Typography>
           </Stack>
           <Box sx={{ flexGrow: 1, height: '1px', bgcolor: theme.palette.divider, mx: 1, mb: 2 }} />
           <Stack alignItems="center" spacing={0.5}>
             <Box sx={{ width: 32, height: 32, borderRadius: '50%', bgcolor: theme.palette.grey[200], color: 'text.secondary', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Typography variant="caption" sx={{ fontWeight: 700 }}>3</Typography>
             </Box>
-            <Typography variant="caption" sx={{ color: 'text.secondary' }}>Finalize</Typography>
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>{t('common.finalize')}</Typography>
           </Stack>
         </Stack>
 
@@ -95,14 +100,16 @@ export const MobileCreateInvoice = () => {
               sx={{ bgcolor: theme.palette.background.paper, borderRadius: 2 }}
             >
               <MenuItem value="none">Select Customer</MenuItem>
-              <MenuItem value="1">El-Araby Industrial Group</MenuItem>
+              {mockCustomers.map((c) => (
+                <MenuItem key={c.id} value={c.id}>{translatePartyName(language as any, c.name)}</MenuItem>
+              ))}
             </Select>
           </Box>
 
           <Stack direction="row" spacing={2}>
             <Box sx={{ flex: 1 }}>
               <Typography variant="caption" sx={{ fontWeight: 700, color: theme.palette.primary.main, display: 'block', mb: 0.5, textTransform: 'uppercase' }}>
-                Warehouse
+                {t('common.warehouse')}
               </Typography>
               <Select
                 fullWidth
@@ -111,12 +118,12 @@ export const MobileCreateInvoice = () => {
                 IconComponent={WarehouseOutlinedIcon}
                 sx={{ bgcolor: theme.palette.background.paper, borderRadius: 2 }}
               >
-                <MenuItem value="main">Main Hub</MenuItem>
+                <MenuItem value="main">{translateWarehouse(language as any, 'Cairo Main Warehouse')}</MenuItem>
               </Select>
             </Box>
             <Box sx={{ flex: 1 }}>
               <Typography variant="caption" sx={{ fontWeight: 700, color: theme.palette.primary.main, display: 'block', mb: 0.5, textTransform: 'uppercase' }}>
-                Date
+                {t('invoice.invoiceDate')}
               </Typography>
               <TextField
                 fullWidth
@@ -130,7 +137,7 @@ export const MobileCreateInvoice = () => {
 
           <Box>
             <Typography variant="caption" sx={{ fontWeight: 700, color: theme.palette.primary.main, display: 'block', mb: 0.5, textTransform: 'uppercase' }}>
-              Payment Type
+              {t('invoice.paymentTerms')}
             </Typography>
             <Stack direction="row" spacing={1}>
               {['CASH', 'CREDIT', 'PARTIAL'].map((type) => (
@@ -141,7 +148,7 @@ export const MobileCreateInvoice = () => {
                   onClick={() => setPaymentType(type)}
                   sx={{ flex: 1, borderRadius: 2, fontWeight: 700, boxShadow: 'none', border: paymentType !== type ? `1px solid ${theme.palette.divider}` : undefined }}
                 >
-                  {type}
+                  {t(`status.${type.toLowerCase()}` as any) || type}
                 </Button>
               ))}
             </Stack>
@@ -152,7 +159,7 @@ export const MobileCreateInvoice = () => {
         <Box sx={{ mt: 3, pt: 3, borderTop: `1px solid ${theme.palette.divider}` }}>
           <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
             <Typography variant="h4" sx={{ color: theme.palette.primary.main, fontWeight: 700 }}>
-              Items Added (3)
+              {t('invoice.lineItems')} (3)
             </Typography>
             <Button
               variant="contained"
@@ -161,39 +168,36 @@ export const MobileCreateInvoice = () => {
               startIcon={<AddOutlinedIcon />}
               sx={{ borderRadius: 4, fontWeight: 700, px: 2, bgcolor: alpha(theme.palette.primary.main, 0.1), color: theme.palette.primary.main, boxShadow: 'none' }}
             >
-              ADD ITEM
+              {t('invoice.addLine')}
             </Button>
           </Stack>
 
           <Stack spacing={2}>
             {[
-              { name: 'Industrial Circuit Breaker', price: 'EGP 1,200', qty: '5 units · 32A Triple Pole', icon: <BoltOutlinedIcon /> },
-              { name: 'Copper Armored Cable', price: 'EGP 8,500', qty: '100m · 4-Core 16mm', icon: <CableOutlinedIcon /> },
-              { name: 'Panel Surge Protector', price: 'EGP 3,400', qty: '2 units · Type 2 SPD', icon: <SettingsInputComponentOutlinedIcon /> }
+              { name: translateProductName(language as any, 'Schneider MCB 32A 3 Pole'), price: 'EGP 1,200', qty: '5 units · 32A Triple Pole', icon: <BoltOutlinedIcon /> },
+              { name: translateProductName(language as any, 'Copper Cable 16mm Single Core Red'), price: 'EGP 8,500', qty: '100m · 4-Core 16mm', icon: <CableOutlinedIcon /> },
+              { name: translateProductName(language as any, 'LED Flood Light 200W IP65'), price: 'EGP 3,400', qty: '2 units · Type 2 SPD', icon: <SettingsInputComponentOutlinedIcon /> }
             ].map((item, i) => (
-              <Stack
-                key={i}
-                direction="row"
-                spacing={2}
-                sx={{ p: 2, bgcolor: theme.palette.background.paper, border: `1px solid ${theme.palette.divider}`, borderRadius: 3 }}
-              >
-                <Box sx={{ width: 48, height: 48, bgcolor: theme.palette.grey[100], borderRadius: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {item.icon}
-                </Box>
-                <Box sx={{ flexGrow: 1 }}>
-                  <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-                    <Typography variant="subtitle2" sx={{ fontWeight: 700, color: 'text.primary' }}>{item.name}</Typography>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 700, color: theme.palette.primary.main }}>{item.price}</Typography>
-                  </Stack>
-                  <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block' }}>{item.qty}</Typography>
-                  <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 1 }}>
-                    <Box sx={{ bgcolor: alpha(theme.palette.primary.main, 0.05), px: 1, py: 0.25, borderRadius: 1 }}>
-                      <Typography variant="caption" sx={{ fontSize: 10, fontWeight: 700, color: theme.palette.primary.main }}>TAXABLE</Typography>
-                    </Box>
-                    <DeleteOutlineOutlinedIcon sx={{ color: theme.palette.error.main, fontSize: 20 }} />
-                  </Stack>
-                </Box>
-              </Stack>
+              <MainCard key={i} content={false} sx={{ p: 2 }}>
+                <Stack direction="row" spacing={2}>
+                  <Box sx={{ width: 48, height: 48, bgcolor: theme.palette.grey[100], borderRadius: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {item.icon}
+                  </Box>
+                  <Box sx={{ flexGrow: 1 }}>
+                    <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+                      <Typography variant="subtitle2" sx={{ fontWeight: 700, color: 'text.primary' }}>{item.name}</Typography>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 700, color: theme.palette.primary.main }}>{item.price}</Typography>
+                    </Stack>
+                    <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block' }}>{item.qty}</Typography>
+                    <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 1 }}>
+                      <Box sx={{ bgcolor: alpha(theme.palette.primary.main, 0.05), px: 1, py: 0.25, borderRadius: 1 }}>
+                        <Typography variant="caption" sx={{ fontSize: 10, fontWeight: 700, color: theme.palette.primary.main }}>TAXABLE</Typography>
+                      </Box>
+                      <DeleteOutlineOutlinedIcon sx={{ color: theme.palette.error.main, fontSize: 20 }} />
+                    </Stack>
+                  </Box>
+                </Stack>
+              </MainCard>
             ))}
           </Stack>
         </Box>
@@ -202,16 +206,16 @@ export const MobileCreateInvoice = () => {
         <Box sx={{ mt: 3, p: 2, bgcolor: theme.palette.grey[100], borderRadius: 3 }}>
           <Stack spacing={1}>
             <Stack direction="row" justifyContent="space-between">
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>Subtotal</Typography>
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>{t('invoice.subtotalBeforeVat')}</Typography>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>EGP 13,100.00</Typography>
             </Stack>
             <Stack direction="row" justifyContent="space-between">
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>Tax (14%)</Typography>
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>{t('invoice.vat')} (14%)</Typography>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>EGP 1,834.00</Typography>
             </Stack>
             <Box sx={{ height: '1px', bgcolor: theme.palette.divider, my: 1 }} />
             <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Typography variant="caption" sx={{ fontWeight: 700, color: theme.palette.primary.main }}>GRAND TOTAL</Typography>
+              <Typography variant="caption" sx={{ fontWeight: 700, color: theme.palette.primary.main }}>{t('invoice.grandTotal').toUpperCase()}</Typography>
               <Typography variant="h4" sx={{ fontWeight: 700, color: theme.palette.primary.main }}>EGP 14,934.00</Typography>
             </Stack>
           </Stack>
@@ -227,7 +231,7 @@ export const MobileCreateInvoice = () => {
             startIcon={<QrCode2OutlinedIcon />}
             sx={{ fontWeight: 700, borderRadius: 2 }}
           >
-            SUBMIT & GENERATE QR
+            {t('invoice.generateInvoice')} & QR
           </Button>
           <Button
             variant="outlined"
@@ -236,7 +240,7 @@ export const MobileCreateInvoice = () => {
             size="large"
             sx={{ fontWeight: 700, borderRadius: 2, borderWidth: 2 }}
           >
-            SAVE AS DRAFT
+            {t('status.draft').toUpperCase()}
           </Button>
         </Stack>
       </Box>

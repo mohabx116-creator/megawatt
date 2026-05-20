@@ -4,6 +4,7 @@ import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { useTheme, alpha } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
@@ -17,18 +18,21 @@ import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
 
+import MainCard from 'ui-component/cards/MainCard';
 import { useLanguage } from 'i18n';
+import { translatePartyName, translateProductName } from '../../utils/displayTranslations';
 import { mockFinanceSummary, mockInvoices, mockInventory } from '../../mockData';
 
 export const MobileDashboard = () => {
   const theme = useTheme();
-  const { t, formatCurrency, formatNumber } = useLanguage();
+  const navigate = useNavigate();
+  const { t, language, formatCurrency, formatNumber } = useLanguage();
 
   const lowStockItems = mockInventory.filter((item) => item.quantityOnHand <= item.reorderLevel);
   const unpaidInvoices = mockInvoices.filter((inv) => inv.paymentStatus !== 'paid');
 
   return (
-    <Box sx={{ pb: 10, bgcolor: theme.palette.background.default, minHeight: '100vh' }}>
+    <Box sx={{ pb: 10, minHeight: '100vh', bgcolor: theme.palette.background.default }}>
       {/* Top App Bar */}
       <Stack
         direction="row"
@@ -67,7 +71,6 @@ export const MobileDashboard = () => {
             <NotificationsOutlinedIcon />
           </IconButton>
           <Box sx={{ width: 32, height: 32, borderRadius: '50%', bgcolor: 'grey.300', overflow: 'hidden' }}>
-            {/* User Profile placeholder */}
             <PersonOutlinedIcon sx={{ mt: 0.5, ml: 0.5, color: 'grey.600' }} />
           </Box>
         </Stack>
@@ -78,7 +81,7 @@ export const MobileDashboard = () => {
         <Grid container spacing={2}>
           {/* Revenue */}
           <Grid size={{ xs: 6 }}>
-            <Box sx={{ bgcolor: theme.palette.background.paper, p: 2, borderRadius: 3, border: `1px solid ${theme.palette.divider}` }}>
+            <MainCard content={false} sx={{ p: 2, height: '100%' }}>
               <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary' }}>
                 {t('dashboard.revenue')}
               </Typography>
@@ -89,11 +92,11 @@ export const MobileDashboard = () => {
                 <TrendingUpOutlinedIcon sx={{ fontSize: 14, color: theme.palette.success.main }} />
                 <Typography variant="caption" sx={{ fontWeight: 600, color: theme.palette.success.main }}>+12%</Typography>
               </Box>
-            </Box>
+            </MainCard>
           </Grid>
           {/* Gross Profit */}
           <Grid size={{ xs: 6 }}>
-            <Box sx={{ bgcolor: theme.palette.background.paper, p: 2, borderRadius: 3, border: `1px solid ${theme.palette.divider}` }}>
+            <MainCard content={false} sx={{ p: 2, height: '100%' }}>
               <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary' }}>
                 {t('dashboard.grossProfit')}
               </Typography>
@@ -103,11 +106,11 @@ export const MobileDashboard = () => {
               <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block' }}>
                 {t('dashboard.margin', { value: 25 })}
               </Typography>
-            </Box>
+            </MainCard>
           </Grid>
           {/* Unpaid Invoices */}
           <Grid size={{ xs: 6 }}>
-            <Box sx={{ bgcolor: theme.palette.background.paper, p: 2, borderRadius: 3, border: `1px solid ${theme.palette.divider}` }}>
+            <MainCard content={false} sx={{ p: 2, height: '100%' }}>
               <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary' }}>
                 {t('dashboard.receivables')}
               </Typography>
@@ -115,31 +118,31 @@ export const MobileDashboard = () => {
                 {formatNumber(unpaidInvoices.length)}
               </Typography>
               <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, px: 1, py: 0.25, bgcolor: alpha(theme.palette.error.main, 0.1), borderRadius: 4 }}>
-                <Typography variant="caption" sx={{ fontWeight: 600, color: theme.palette.error.main }}>High Risk</Typography>
+                <Typography variant="caption" sx={{ fontWeight: 600, color: theme.palette.error.main }}>{t('common.highRisk')}</Typography>
               </Box>
-            </Box>
+            </MainCard>
           </Grid>
           {/* Low Stock */}
           <Grid size={{ xs: 6 }}>
-            <Box sx={{ bgcolor: theme.palette.background.paper, p: 2, borderRadius: 3, border: `1px solid ${theme.palette.divider}` }}>
+            <MainCard content={false} sx={{ p: 2, height: '100%' }}>
               <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary' }}>
                 {t('dashboard.stockAlerts')}
               </Typography>
               <Typography variant="h4" sx={{ mt: 1, mb: 1, fontWeight: 700, color: theme.palette.warning.dark }}>
-                {formatNumber(lowStockItems.length)} items
+                {formatNumber(lowStockItems.length)}
               </Typography>
               <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, px: 1, py: 0.25, bgcolor: alpha(theme.palette.warning.main, 0.2), borderRadius: 4 }}>
-                <Typography variant="caption" sx={{ fontWeight: 600, color: theme.palette.warning.dark }}>Critical</Typography>
+                <Typography variant="caption" sx={{ fontWeight: 600, color: theme.palette.warning.dark }}>{t('common.critical')}</Typography>
               </Box>
-            </Box>
+            </MainCard>
           </Grid>
         </Grid>
 
         {/* Mini Chart Section */}
-        <Box sx={{ mt: 3, bgcolor: theme.palette.background.paper, p: 2, borderRadius: 3, border: `1px solid ${theme.palette.divider}` }}>
+        <MainCard content={false} sx={{ mt: 2, p: 2 }}>
           <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
             <Typography variant="h4" sx={{ color: theme.palette.primary.main, fontWeight: 700 }}>
-              Sales Trend
+              {t('dashboard.salesRevenue')}
             </Typography>
             <IconButton size="small">
               <MoreVertOutlinedIcon />
@@ -159,26 +162,21 @@ export const MobileDashboard = () => {
               />
             ))}
           </Stack>
-          <Stack direction="row" justifyContent="space-between" sx={{ mt: 1, color: 'text.secondary' }}>
-            {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d) => (
-              <Typography key={d} variant="caption" sx={{ fontWeight: 600 }}>{d}</Typography>
-            ))}
-          </Stack>
-        </Box>
+        </MainCard>
 
         {/* Quick Actions */}
         <Box sx={{ mt: 3 }}>
           <Typography variant="h4" sx={{ color: theme.palette.primary.main, fontWeight: 700, mb: 2 }}>
-            Quick Actions
+            {t('common.quickActions')}
           </Typography>
           <Stack direction="row" spacing={2} sx={{ overflowX: 'auto', pb: 1, '&::-webkit-scrollbar': { display: 'none' } }}>
             {[
-              { icon: <ReceiptLongOutlinedIcon />, label: 'Invoice', bg: theme.palette.primary.main, color: 'white' },
-              { icon: <PersonAddOutlinedIcon />, label: 'Customer', bg: theme.palette.warning.light, color: theme.palette.warning.dark },
-              { icon: <Inventory2OutlinedIcon />, label: 'Product', bg: alpha(theme.palette.info.main, 0.2), color: theme.palette.info.dark },
-              { icon: <PaymentsOutlinedIcon />, label: 'Expense', bg: theme.palette.background.paper, color: theme.palette.primary.main, border: true }
+              { icon: <ReceiptLongOutlinedIcon />, label: t('invoice.invoice'), bg: theme.palette.primary.main, color: 'white', route: '/erp/create-invoice' },
+              { icon: <PersonAddOutlinedIcon />, label: t('invoice.customer'), bg: theme.palette.warning.light, color: theme.palette.warning.dark, route: '/erp/dashboard' },
+              { icon: <Inventory2OutlinedIcon />, label: t('invoice.product'), bg: alpha(theme.palette.info.main, 0.2), color: theme.palette.info.dark, route: '/erp/products' },
+              { icon: <PaymentsOutlinedIcon />, label: t('finance.expenses'), bg: theme.palette.background.paper, color: theme.palette.primary.main, border: true, route: '/erp/finance-reports' }
             ].map((action, i) => (
-              <Stack key={i} alignItems="center" spacing={1} sx={{ flexShrink: 0 }}>
+              <Stack key={i} alignItems="center" spacing={1} sx={{ flexShrink: 0, cursor: 'pointer' }} onClick={() => navigate(action.route)}>
                 <Box
                   sx={{
                     width: 64,
@@ -190,7 +188,9 @@ export const MobileDashboard = () => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     boxShadow: action.border ? 1 : 3,
-                    border: action.border ? `1px solid ${theme.palette.divider}` : 'none'
+                    border: action.border ? `1px solid ${theme.palette.divider}` : 'none',
+                    transition: 'transform 0.2s',
+                    '&:active': { transform: 'scale(0.95)' }
                   }}
                 >
                   {action.icon}
@@ -205,34 +205,30 @@ export const MobileDashboard = () => {
         <Box sx={{ mt: 3, mb: 4 }}>
           <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
             <Typography variant="h4" sx={{ color: theme.palette.primary.main, fontWeight: 700 }}>
-              Recent Activity
+              {t('dashboard.recentActivity')}
             </Typography>
-            <Typography variant="caption" sx={{ color: theme.palette.primary.main, fontWeight: 700 }}>
-              View All
+            <Typography variant="caption" sx={{ color: theme.palette.primary.main, fontWeight: 700, cursor: 'pointer' }}>
+              {t('common.viewAll')}
             </Typography>
           </Stack>
           <Stack spacing={1.5}>
             {[
-              { title: 'Invoice #1024 Created', subtitle: '2 mins ago • $1,250.00', icon: <DescriptionOutlinedIcon />, color: theme.palette.warning.main },
-              { title: 'New Customer: Alpha Electrics', subtitle: '45 mins ago', icon: <PersonOutlinedIcon />, color: theme.palette.primary.main },
-              { title: 'Stock Alert: Copper Wire 2.5mm', subtitle: '1 hour ago • Below 50 units', icon: <WarningAmberOutlinedIcon />, color: theme.palette.error.main }
+              { title: t('dashboard.issuedInvoice', { invoice: '#1024' }), subtitle: '2 mins ago', icon: <DescriptionOutlinedIcon />, color: theme.palette.warning.main },
+              { title: translatePartyName(language as any, 'Schneider Electric Egypt'), subtitle: '45 mins ago', icon: <PersonOutlinedIcon />, color: theme.palette.primary.main },
+              { title: translateProductName(language as any, 'Copper Cable 16mm Single Core Red'), subtitle: '1 hour ago', icon: <WarningAmberOutlinedIcon />, color: theme.palette.error.main }
             ].map((activity, i) => (
-              <Stack
-                key={i}
-                direction="row"
-                alignItems="center"
-                spacing={2}
-                sx={{ p: 2, bgcolor: theme.palette.background.paper, borderRadius: 3, border: `1px solid ${theme.palette.divider}` }}
-              >
-                <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: alpha(activity.color, 0.1), color: activity.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {activity.icon}
-                </Box>
-                <Box sx={{ flex: 1 }}>
-                  <Typography variant="body2" sx={{ fontWeight: 600 }}>{activity.title}</Typography>
-                  <Typography variant="caption" sx={{ color: 'text.secondary' }}>{activity.subtitle}</Typography>
-                </Box>
-                <ChevronRightOutlinedIcon sx={{ color: 'text.secondary' }} />
-              </Stack>
+              <MainCard key={i} content={false} sx={{ p: 2, cursor: 'pointer', '&:active': { bgcolor: alpha(theme.palette.primary.main, 0.05) } }}>
+                <Stack direction="row" alignItems="center" spacing={2}>
+                  <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: alpha(activity.color, 0.1), color: activity.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {activity.icon}
+                  </Box>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>{activity.title}</Typography>
+                    <Typography variant="caption" sx={{ color: 'text.secondary' }}>{activity.subtitle}</Typography>
+                  </Box>
+                  <ChevronRightOutlinedIcon sx={{ color: 'text.secondary' }} />
+                </Stack>
+              </MainCard>
             ))}
           </Stack>
         </Box>

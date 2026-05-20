@@ -18,12 +18,14 @@ import QrCodeScannerOutlinedIcon from '@mui/icons-material/QrCodeScannerOutlined
 import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
 import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
 
+import MainCard from 'ui-component/cards/MainCard';
 import { useLanguage } from 'i18n';
 import { mockInventory, mockProducts } from '../../mockData';
+import { translateProductName, translateWarehouse } from '../../utils/displayTranslations';
 
 export const MobileInventory = () => {
   const theme = useTheme();
-  const { t, formatNumber } = useLanguage();
+  const { t, language, formatNumber, setLanguage } = useLanguage();
 
   const totalItems = mockInventory.length;
   const lowStockItems = mockInventory.filter((item) => item.quantityOnHand > 0 && item.quantityOnHand <= item.reorderLevel);
@@ -70,8 +72,11 @@ export const MobileInventory = () => {
           <IconButton size="small" sx={{ color: theme.palette.primary.main }}>
             <SearchOutlinedIcon />
           </IconButton>
-          <Box sx={{ bgcolor: theme.palette.secondary.light, color: theme.palette.secondary.dark, px: 1, py: 0.5, borderRadius: 1 }}>
-            <Typography variant="caption" sx={{ fontWeight: 700 }}>AR</Typography>
+          <Box 
+            onClick={() => setLanguage?.(language === 'en' ? 'ar' : 'en')}
+            sx={{ cursor: 'pointer', bgcolor: theme.palette.secondary.light, color: theme.palette.secondary.dark, px: 1, py: 0.5, borderRadius: 1 }}
+          >
+            <Typography variant="caption" sx={{ fontWeight: 700 }}>{language === 'en' ? 'AR' : 'EN'}</Typography>
           </Box>
         </Stack>
       </Stack>
@@ -80,7 +85,7 @@ export const MobileInventory = () => {
         {/* Warehouse Selector */}
         <Box sx={{ mb: 3 }}>
           <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary', display: 'block', mb: 0.5, textTransform: 'uppercase' }}>
-            {t('inventory.warehouse')}
+            {t('common.warehouse')}
           </Typography>
           <Select
             fullWidth
@@ -95,57 +100,56 @@ export const MobileInventory = () => {
               '& .MuiOutlinedInput-notchedOutline': { borderColor: theme.palette.divider }
             }}
           >
-            <MenuItem value="main">Main Warehouse - Cairo North</MenuItem>
-            <MenuItem value="alex">Dist. Center - Alexandria</MenuItem>
-            <MenuItem value="suez">Factory A - Suez Zone</MenuItem>
+            <MenuItem value="main">{translateWarehouse(language as any, 'Cairo Main Warehouse')}</MenuItem>
+            <MenuItem value="alex">{translateWarehouse(language as any, 'Alexandria Cable Yard')}</MenuItem>
           </Select>
         </Box>
 
         {/* Summary Cards Grid */}
         <Stack direction="row" spacing={1.5} sx={{ mb: 1.5, overflowX: 'auto', '&::-webkit-scrollbar': { display: 'none' } }}>
-          <Box sx={{ minWidth: 160, flex: 1, bgcolor: theme.palette.background.paper, p: 2, borderRadius: 3, border: `1px solid ${theme.palette.divider}` }}>
+          <MainCard content={false} sx={{ minWidth: 160, flex: 1, p: 2 }}>
             <Inventory2OutlinedIcon sx={{ color: theme.palette.primary.main, mb: 1 }} />
             <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary', display: 'block', textTransform: 'uppercase' }}>
-              Total Items
+              {t('inventory.totalStockedSkus')}
             </Typography>
             <Typography variant="h4" sx={{ fontWeight: 700, color: theme.palette.primary.main }}>
               {formatNumber(totalItems)}
             </Typography>
-          </Box>
+          </MainCard>
 
-          <Box sx={{ minWidth: 160, flex: 1, bgcolor: alpha(theme.palette.error.main, 0.05), p: 2, borderRadius: 3, border: `1px solid ${theme.palette.error.main}` }}>
+          <MainCard content={false} sx={{ minWidth: 160, flex: 1, p: 2, bgcolor: alpha(theme.palette.error.main, 0.05), borderColor: theme.palette.error.main }}>
             <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 1 }}>
               <WarningAmberOutlinedIcon sx={{ color: theme.palette.error.main }} />
               <Box sx={{ bgcolor: theme.palette.error.main, color: 'white', px: 1, py: 0.25, borderRadius: 4 }}>
-                <Typography variant="caption" sx={{ fontSize: 10, fontWeight: 700 }}>ACTION</Typography>
+                <Typography variant="caption" sx={{ fontSize: 10, fontWeight: 700 }}>{t('common.actions')}</Typography>
               </Box>
             </Stack>
             <Typography variant="caption" sx={{ fontWeight: 700, color: theme.palette.error.dark, display: 'block', textTransform: 'uppercase' }}>
-              Low Stock
+              {t('inventory.lowStockItems')}
             </Typography>
             <Typography variant="h4" sx={{ fontWeight: 700, color: theme.palette.error.main }}>
-              {formatNumber(lowStockItems.length)} Units
+              {formatNumber(lowStockItems.length)} {t('common.unit')}
             </Typography>
-          </Box>
+          </MainCard>
         </Stack>
 
-        <Box sx={{ mb: 3, bgcolor: alpha(theme.palette.grey[500], 0.1), p: 2, borderRadius: 3, border: `1px solid ${theme.palette.divider}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <MainCard content={false} sx={{ mb: 3, bgcolor: alpha(theme.palette.grey[500], 0.1), p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Box>
             <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary', display: 'block', textTransform: 'uppercase' }}>
-              Out of Stock
+              {t('inventory.outOfStock')}
             </Typography>
             <Typography variant="h4" sx={{ fontWeight: 700, color: 'text.primary' }}>
-              {formatNumber(outOfStockItems.length)} Items
+              {formatNumber(outOfStockItems.length)} {t('common.unit')}
             </Typography>
           </Box>
           <ErrorOutlineOutlinedIcon sx={{ color: 'text.secondary', fontSize: 32 }} />
-        </Box>
+        </MainCard>
 
         {/* Search & Filter Bar */}
         <Stack direction="row" spacing={1.5} sx={{ mb: 3 }}>
           <TextField
             fullWidth
-            placeholder="Search by name or barcode..."
+            placeholder={t('inventory.search')}
             variant="outlined"
             size="small"
             slotProps={{
@@ -168,10 +172,10 @@ export const MobileInventory = () => {
         <Box sx={{ mb: 2 }}>
           <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
             <Typography variant="h4" sx={{ color: theme.palette.primary.main, fontWeight: 700 }}>
-              Recent Inventory
+              {t('dashboard.recentActivity')}
             </Typography>
             <Stack direction="row" alignItems="center" spacing={0.5} sx={{ color: theme.palette.primary.main }}>
-              <Typography variant="caption" sx={{ fontWeight: 700 }}>VIEW ALL</Typography>
+              <Typography variant="caption" sx={{ fontWeight: 700 }}>{t('common.viewAll')}</Typography>
               <ChevronRightOutlinedIcon sx={{ fontSize: 18 }} />
             </Stack>
           </Stack>
@@ -187,16 +191,7 @@ export const MobileInventory = () => {
               const stockTone = isOutOfStock ? theme.palette.error.main : isLowStock ? theme.palette.error.main : theme.palette.primary.main;
 
               return (
-                <Box
-                  key={item.id}
-                  sx={{
-                    bgcolor: theme.palette.background.paper,
-                    border: `1px solid ${theme.palette.divider}`,
-                    borderRadius: 3,
-                    p: 1.5,
-                    boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
-                  }}
-                >
+                <MainCard key={item.id} content={false} sx={{ p: 1.5 }}>
                   <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
                     <Stack direction="row" spacing={2}>
                       <Box sx={{ width: 64, height: 64, bgcolor: theme.palette.grey[100], borderRadius: 2, border: `1px solid ${theme.palette.divider}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -205,25 +200,25 @@ export const MobileInventory = () => {
                       <Box>
                         <Stack direction="row" alignItems="center" spacing={1}>
                           <Typography variant="subtitle2" sx={{ fontWeight: 700, color: theme.palette.primary.main }}>
-                            {product.name}
+                            {translateProductName(language as any, product.name)}
                           </Typography>
                           {isLowStock && !isOutOfStock && (
                             <Box sx={{ px: 0.5, py: 0.25, bgcolor: alpha(theme.palette.error.main, 0.1), border: `1px solid ${alpha(theme.palette.error.main, 0.2)}`, borderRadius: 1 }}>
-                              <Typography variant="caption" sx={{ fontSize: 9, fontWeight: 700, color: theme.palette.error.main }}>LOW STOCK</Typography>
+                              <Typography variant="caption" sx={{ fontSize: 9, fontWeight: 700, color: theme.palette.error.main }}>{t('status.low_stock')}</Typography>
                             </Box>
                           )}
                           {isOutOfStock && (
                             <Box sx={{ px: 0.5, py: 0.25, bgcolor: alpha(theme.palette.error.main, 0.1), border: `1px solid ${alpha(theme.palette.error.main, 0.2)}`, borderRadius: 1 }}>
-                              <Typography variant="caption" sx={{ fontSize: 9, fontWeight: 700, color: theme.palette.error.main }}>OUT OF STOCK</Typography>
+                              <Typography variant="caption" sx={{ fontSize: 9, fontWeight: 700, color: theme.palette.error.main }}>{t('status.out_of_stock')}</Typography>
                             </Box>
                           )}
                         </Stack>
                         <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 0.5 }}>
-                          CODE: {product.sku}
+                          {item.sku}
                         </Typography>
                         <Box sx={{ mt: 1, display: 'inline-flex', alignItems: 'center', px: 1, py: 0.5, bgcolor: alpha(stockTone, 0.05), border: `1px solid ${alpha(stockTone, 0.1)}`, borderRadius: 1 }}>
                           <Typography variant="caption" sx={{ fontWeight: 700, color: stockTone }}>
-                            STOCK: {formatNumber(item.quantityOnHand)} {product.unit}
+                            {formatNumber(item.quantityOnHand)} {product.unit}
                           </Typography>
                         </Box>
                       </Box>
@@ -232,7 +227,7 @@ export const MobileInventory = () => {
                       <MoreVertOutlinedIcon />
                     </IconButton>
                   </Stack>
-                </Box>
+                </MainCard>
               );
             })}
           </Stack>

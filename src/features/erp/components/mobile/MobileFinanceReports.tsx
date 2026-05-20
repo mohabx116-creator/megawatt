@@ -16,6 +16,7 @@ import PaymentsOutlinedIcon from '@mui/icons-material/PaymentsOutlined';
 import ScheduleOutlinedIcon from '@mui/icons-material/ScheduleOutlined';
 import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
 
+import MainCard from 'ui-component/cards/MainCard';
 import { useLanguage } from 'i18n';
 import { mockFinanceSummary, mockInvoices } from '../../mockData';
 
@@ -72,7 +73,7 @@ export const MobileFinanceReports = () => {
         <Box sx={{ mb: 3 }}>
           <TextField
             fullWidth
-            placeholder={t('dashboard.search')}
+            placeholder={t('common.search') || 'Search'}
             variant="outlined"
             size="small"
             slotProps={{
@@ -89,18 +90,18 @@ export const MobileFinanceReports = () => {
           <Stack direction="row" spacing={1} sx={{ mt: 1.5, overflowX: 'auto', '&::-webkit-scrollbar': { display: 'none' } }}>
             <Chip
               icon={<CalendarTodayOutlinedIcon fontSize="small" />}
-              label="Date"
+              label={t('common.date')}
               sx={{ bgcolor: theme.palette.primary.main, color: 'white', fontWeight: 700, '& .MuiChip-icon': { color: 'white' } }}
             />
             <Chip
               icon={<FilterListOutlinedIcon fontSize="small" />}
-              label="Status"
+              label={t('common.status')}
               variant="outlined"
               sx={{ bgcolor: theme.palette.background.paper, fontWeight: 700 }}
             />
             <Chip
               icon={<PaymentsOutlinedIcon fontSize="small" />}
-              label="Payment"
+              label={t('invoice.paymentStatus')}
               variant="outlined"
               sx={{ bgcolor: theme.palette.background.paper, fontWeight: 700 }}
             />
@@ -108,7 +109,7 @@ export const MobileFinanceReports = () => {
         </Box>
 
         {/* Stats Overview */}
-        <Box sx={{ mb: 3, p: 2, bgcolor: theme.palette.background.paper, borderRadius: 3, border: `1px solid ${theme.palette.divider}` }}>
+        <MainCard content={false} sx={{ mb: 3, p: 2 }}>
           <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary', textTransform: 'uppercase', letterSpacing: 1 }}>
             {t('finance.profitabilitySummary')}
           </Typography>
@@ -123,16 +124,16 @@ export const MobileFinanceReports = () => {
           <Box sx={{ width: '100%', height: 8, bgcolor: theme.palette.grey[200], borderRadius: 4, mt: 2, overflow: 'hidden' }}>
             <Box sx={{ width: '84%', height: '100%', bgcolor: theme.palette.primary.main }} />
           </Box>
-        </Box>
+        </MainCard>
 
         {/* Invoice List */}
         <Box sx={{ mb: 2 }}>
           <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
             <Typography variant="h4" sx={{ color: 'text.primary', fontWeight: 700 }}>
-              Recent Invoices
+              {t('finance.recentInvoices')}
             </Typography>
             <Typography variant="caption" sx={{ color: theme.palette.primary.main, fontWeight: 700 }}>
-              View All
+              {t('common.viewAll')}
             </Typography>
           </Stack>
 
@@ -146,16 +147,7 @@ export const MobileFinanceReports = () => {
               const tone = getPaymentTone();
 
               return (
-                <Box
-                  key={invoice.id}
-                  sx={{
-                    bgcolor: theme.palette.background.paper,
-                    border: `1px solid ${theme.palette.divider}`,
-                    borderRadius: 3,
-                    p: 2,
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
-                  }}
-                >
+                <MainCard key={invoice.id} content={false} sx={{ p: 2, boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
                   <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 2 }}>
                     <Box>
                       <Typography variant="caption" sx={{ fontWeight: 700, color: theme.palette.primary.main }}>
@@ -174,19 +166,19 @@ export const MobileFinanceReports = () => {
 
                   <Grid container spacing={1} sx={{ py: 1.5, borderTop: `1px solid ${theme.palette.divider}`, borderBottom: `1px solid ${theme.palette.divider}` }}>
                     <Grid size={{ xs: 4 }}>
-                      <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block' }}>Total</Typography>
+                      <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block' }}>{t('common.total')}</Typography>
                       <Typography variant="subtitle2" sx={{ fontWeight: 700, color: theme.palette.primary.main }}>
                         {formatNumber(invoice.total)}
                       </Typography>
                     </Grid>
                     <Grid size={{ xs: 4 }}>
-                      <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block' }}>Paid</Typography>
+                      <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block' }}>{t('invoice.paidAmount')}</Typography>
                       <Typography variant="subtitle2" sx={{ fontWeight: 700, color: theme.palette.secondary.main }}>
                         {formatNumber(invoice.total - invoice.balanceDue)}
                       </Typography>
                     </Grid>
                     <Grid size={{ xs: 4 }}>
-                      <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block' }}>Rem.</Typography>
+                      <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block' }}>{t('invoice.balanceDue')}</Typography>
                       <Typography variant="subtitle2" sx={{ fontWeight: 700, color: invoice.balanceDue > 0 ? theme.palette.error.main : 'text.disabled' }}>
                         {formatNumber(invoice.balanceDue)}
                       </Typography>
@@ -199,11 +191,11 @@ export const MobileFinanceReports = () => {
                       <Typography variant="caption">{formatDate(invoice.issueDate)}</Typography>
                     </Stack>
                     <Stack direction="row" alignItems="center" spacing={0.5} sx={{ color: theme.palette.primary.main }}>
-                      <Typography variant="caption" sx={{ fontWeight: 700 }}>Details</Typography>
+                      <Typography variant="caption" sx={{ fontWeight: 700 }}>{t('common.viewAll')}</Typography>
                       <ChevronRightOutlinedIcon sx={{ fontSize: 18 }} />
                     </Stack>
                   </Stack>
-                </Box>
+                </MainCard>
               );
             })}
           </Stack>
