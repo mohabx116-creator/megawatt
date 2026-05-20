@@ -10,8 +10,10 @@ import {
   ProductsPage,
   InventoryPage,
   CreateInvoicePage,
+  CreateQuotationPage,
   FinanceReportsPage,
-  PrintPreviewPage
+  PrintPreviewPage,
+  QuotationPreviewPage
 } from 'features/erp';
 
 // sample page routing
@@ -52,12 +54,20 @@ const MainRoutes = {
       element: <CreateInvoicePage />
     },
     {
+      path: '/erp/create-quotation',
+      element: <CreateQuotationPage />
+    },
+    {
       path: '/erp/finance-reports',
       element: <FinanceReportsPage />
     },
     {
       path: '/erp/print-preview',
       element: <PrintPreviewPage />
+    },
+    {
+      path: '/erp/quotation-preview',
+      element: <QuotationPreviewPage />
     }
   ]
 };

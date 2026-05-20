@@ -4,7 +4,8 @@ import {
   IconPackage,
   IconFileInvoice,
   IconReportMoney,
-  IconPrinter
+  IconPrinter,
+  IconFileDescription
 } from '@tabler/icons-react';
 
 const erp = {
@@ -42,6 +43,14 @@ const erp = {
       type: 'item',
       url: '/erp/create-invoice',
       icon: IconFileInvoice,
+      breadcrumbs: false
+    },
+    {
+      id: 'erp-create-quotation',
+      title: 'nav.createQuotation',
+      type: 'item',
+      url: '/erp/create-quotation',
+      icon: IconFileDescription,
       breadcrumbs: false
     },
     {

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import NoteAddOutlinedIcon from '@mui/icons-material/NoteAddOutlined';
 import FinanceOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
+import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import TrendingUpOutlinedIcon from '@mui/icons-material/TrendingUpOutlined';
 import WarehouseOutlinedIcon from '@mui/icons-material/WarehouseOutlined';
@@ -47,6 +48,7 @@ export const MobileDashboard = () => {
 
   const actions = [
     { label: t('nav.createInvoice'), icon: <NoteAddOutlinedIcon />, path: '/erp/create-invoice', primary: true },
+    { label: t('nav.createQuotation'), icon: <DescriptionOutlinedIcon />, path: '/erp/create-quotation' },
     { label: t('nav.products'), icon: <Inventory2OutlinedIcon />, path: '/erp/products' },
     { label: t('nav.inventory'), icon: <WarehouseOutlinedIcon />, path: '/erp/inventory' },
     { label: t('nav.financeReports'), icon: <FinanceOutlinedIcon />, path: '/erp/finance-reports' }
