@@ -140,7 +140,11 @@ export const PrintPreviewPage = () => {
   const storedInvoice = useMemo(() => getStoredInvoice(), [storageVersion]);
   const invoice = useMemo(() => storedInvoice ?? getFallbackInvoice(), [storedInvoice]);
   const totalDiscounts = invoice.totals.lineDiscountTotal + invoice.totals.invoiceDiscount;
-  const formatPaymentTerms = (value: string) => (value === 'cash' ? t('invoice.cash') : t('invoice.days', { days: value }));
+  const formatPaymentTerms = (value: string) => {
+    if (value === 'cash') return t('invoice.cash');
+    if (value === 'visa') return t('invoice.visa');
+    return t('invoice.days', { days: value });
+  };
 
   const clearGeneratedInvoice = () => {
     localStorage.removeItem(generatedInvoiceStorageKey);

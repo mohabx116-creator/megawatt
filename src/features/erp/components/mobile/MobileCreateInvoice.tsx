@@ -29,7 +29,7 @@ import { mockCustomers, mockProducts } from '../../mockData';
 import { translatePartyName, translateProductName, translateUnit } from '../../utils/displayTranslations';
 import { MobileSectionTitle, MobileShell, MobileSurface } from './MobileShell';
 
-type PaymentTerms = 'cash' | '7' | '15' | '30';
+type PaymentTerms = 'cash' | 'visa' | '7' | '15' | '30';
 
 type InvoiceLineForm = {
   id: string;
@@ -65,7 +65,7 @@ const getDueDate = (invoiceDate: string, terms: PaymentTerms) => {
   const date = new Date(invoiceDate);
   if (Number.isNaN(date.getTime())) return invoiceDate;
 
-  date.setDate(date.getDate() + (terms === 'cash' ? 0 : Number(terms)));
+  date.setDate(date.getDate() + (terms === 'cash' || terms === 'visa' ? 0 : Number(terms)));
   return date.toISOString().slice(0, 10);
 };
 
@@ -76,8 +76,8 @@ export const MobileCreateInvoice = () => {
   const [step, setStep] = useState(0);
   const [customerId, setCustomerId] = useState('');
   const [invoiceDate, setInvoiceDate] = useState(today);
-  const [paymentTerms, setPaymentTerms] = useState<PaymentTerms>('15');
-  const [dueDate, setDueDate] = useState(getDueDate(today, '15'));
+  const [paymentTerms, setPaymentTerms] = useState<PaymentTerms>('cash');
+  const [dueDate, setDueDate] = useState(getDueDate(today, 'cash'));
   const [lineItems, setLineItems] = useState<InvoiceLineForm[]>([]);
   const [invoiceDiscount, setInvoiceDiscount] = useState(0);
   const [paidAmount, setPaidAmount] = useState(0);
@@ -295,6 +295,7 @@ export const MobileCreateInvoice = () => {
               <InputLabel>{t('invoice.paymentTerms')}</InputLabel>
               <Select label={t('invoice.paymentTerms')} value={paymentTerms} onChange={(event) => handleTermsChange(event.target.value as PaymentTerms)}>
                 <MenuItem value="cash">{t('invoice.cash')}</MenuItem>
+                <MenuItem value="visa">{t('invoice.visa')}</MenuItem>
                 <MenuItem value="7">{t('invoice.days', { days: 7 })}</MenuItem>
                 <MenuItem value="15">{t('invoice.days', { days: 15 })}</MenuItem>
                 <MenuItem value="30">{t('invoice.days', { days: 30 })}</MenuItem>

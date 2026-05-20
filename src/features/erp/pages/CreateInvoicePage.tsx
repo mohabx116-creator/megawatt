@@ -38,7 +38,7 @@ import { mockCustomers, mockProducts } from '../mockData';
 import { Product } from '../types';
 import { translateCategory, translatePartyName, translateProductName, translateUnit } from '../utils/displayTranslations';
 
-type PaymentTerms = 'cash' | '7' | '15' | '30';
+type PaymentTerms = 'cash' | 'visa' | '7' | '15' | '30';
 
 type InvoiceLineForm = {
   id: string;
@@ -114,7 +114,7 @@ const getDueDate = (invoiceDate: string, terms: PaymentTerms) => {
   const date = new Date(invoiceDate);
   if (Number.isNaN(date.getTime())) return invoiceDate;
 
-  const daysToAdd = terms === 'cash' ? 0 : Number(terms);
+  const daysToAdd = terms === 'cash' || terms === 'visa' ? 0 : Number(terms);
   date.setDate(date.getDate() + daysToAdd);
   return date.toISOString().slice(0, 10);
 };
@@ -151,8 +151,8 @@ export const CreateInvoicePage = () => {
   const currencyAdornment = language === 'ar' ? 'جنيه' : 'EGP';
   const [customerId, setCustomerId] = useState('');
   const [invoiceDate, setInvoiceDate] = useState(today);
-  const [paymentTerms, setPaymentTerms] = useState<PaymentTerms>('15');
-  const [dueDate, setDueDate] = useState(getDueDate(today, '15'));
+  const [paymentTerms, setPaymentTerms] = useState<PaymentTerms>('cash');
+  const [dueDate, setDueDate] = useState(getDueDate(today, 'cash'));
   const [lineItems, setLineItems] = useState<InvoiceLineForm[]>([createEmptyLine()]);
   const [invoiceDiscount, setInvoiceDiscount] = useState(0);
   const [paidAmount, setPaidAmount] = useState(0);
@@ -255,8 +255,8 @@ export const CreateInvoicePage = () => {
   const resetForm = () => {
     setCustomerId('');
     setInvoiceDate(today);
-    setPaymentTerms('15');
-    setDueDate(getDueDate(today, '15'));
+    setPaymentTerms('cash');
+    setDueDate(getDueDate(today, 'cash'));
     setLineItems([createEmptyLine()]);
     setInvoiceDiscount(0);
     setPaidAmount(0);
@@ -391,6 +391,7 @@ export const CreateInvoicePage = () => {
                     <InputLabel id="payment-terms-label">{t('invoice.paymentTerms')}</InputLabel>
                     <Select labelId="payment-terms-label" label={t('invoice.paymentTerms')} value={paymentTerms} onChange={handlePaymentTermsChange}>
                       <MenuItem value="cash">{t('invoice.cash')}</MenuItem>
+                      <MenuItem value="visa">{t('invoice.visa')}</MenuItem>
                       <MenuItem value="7">{t('invoice.days', { days: 7 })}</MenuItem>
                       <MenuItem value="15">{t('invoice.days', { days: 15 })}</MenuItem>
                       <MenuItem value="30">{t('invoice.days', { days: 30 })}</MenuItem>
