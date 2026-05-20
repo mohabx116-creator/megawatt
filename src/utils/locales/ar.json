@@ -199,6 +199,7 @@
   "nav.dashboard": "لوحة التحكم",
   "nav.products": "المنتجات",
   "nav.inventory": "المخزون",
+  "nav.createQuotation": "إنشاء عرض سعر",
   "nav.createInvoice": "إنشاء فاتورة",
   "nav.financeReports": "التقارير المالية",
   "nav.printPreview": "معاينة الطباعة",

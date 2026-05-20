@@ -38,19 +38,19 @@ const erp = {
       breadcrumbs: false
     },
     {
-      id: 'erp-create-invoice',
-      title: 'nav.createInvoice',
-      type: 'item',
-      url: '/erp/create-invoice',
-      icon: IconFileInvoice,
-      breadcrumbs: false
-    },
-    {
       id: 'erp-create-quotation',
       title: 'nav.createQuotation',
       type: 'item',
       url: '/erp/create-quotation',
       icon: IconFileDescription,
+      breadcrumbs: false
+    },
+    {
+      id: 'erp-create-invoice',
+      title: 'nav.createInvoice',
+      type: 'item',
+      url: '/erp/create-invoice',
+      icon: IconFileInvoice,
       breadcrumbs: false
     },
     {
