@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Megawatt | Inventory Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#e7e0eb",
+                        "on-primary": "#ffffff",
+                        "on-background": "#1d1a22",
+                        "tertiary-container": "#804900",
+                        "surface-bright": "#fef7ff",
+                        "on-secondary-fixed-variant": "#00497d",
+                        "on-secondary-fixed": "#001d36",
+                        "error-container": "#ffdad6",
+                        "surface": "#fef7ff",
+                        "on-primary-container": "#d8c2ff",
+                        "tertiary": "#5f3500",
+                        "surface-container-high": "#ede6f1",
+                        "error": "#ba1a1a",
+                        "on-tertiary-container": "#ffbf83",
+                        "on-tertiary": "#ffffff",
+                        "outline-variant": "#ccc3d5",
+                        "primary-fixed-dim": "#d3bbff",
+                        "secondary": "#0061a4",
+                        "on-surface-variant": "#4a4453",
+                        "inverse-primary": "#d3bbff",
+                        "inverse-surface": "#322f37",
+                        "surface-container": "#f3ebf7",
+                        "tertiary-fixed-dim": "#ffb872",
+                        "primary-fixed": "#ebddff",
+                        "primary-container": "#673ab7",
+                        "on-secondary-container": "#00355c",
+                        "tertiary-fixed": "#ffdcbf",
+                        "secondary-fixed": "#d1e4ff",
+                        "secondary-fixed-dim": "#9ecaff",
+                        "inverse-on-surface": "#f6eef9",
+                        "surface-tint": "#6f43c0",
+                        "surface-container-highest": "#e7e0eb",
+                        "surface-dim": "#dfd7e3",
+                        "on-tertiary-fixed": "#2d1600",
+                        "on-primary-fixed": "#250059",
+                        "primary": "#4f1c9e",
+                        "on-surface": "#1d1a22",
+                        "on-tertiary-fixed-variant": "#6a3b00",
+                        "outline": "#7b7484",
+                        "surface-container-low": "#f9f1fc",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "secondary-container": "#33a0fd",
+                        "background": "#fef7ff",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed-variant": "#5727a6",
+                        "surface-container-lowest": "#ffffff",
+                        "erp-base": "#eef2f6",
+                        "erp-border": "#e3e8ef"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-padding": "16px",
+                        "mobile-safe-bottom": "34px",
+                        "lg": "24px",
+                        "card-gap": "12px",
+                        "md": "16px",
+                        "base": "4px",
+                        "xl": "32px",
+                        "xs": "4px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "display": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "numeric-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #eef2f6;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .shadow-soft {
+            box-shadow: 0px 2px 4px rgba(144, 164, 174, 0.2);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-background">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-container-padding h-14 bg-surface dark:bg-surface-dim border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed">menu</span>
+<h1 class="text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed">Megawatt</h1>
+</div>
+<div class="flex items-center gap-sm">
+<span class="text-label-md font-label-md text-on-surface-variant">EN</span>
+<span class="material-symbols-outlined text-on-surface-variant">account_circle</span>
+</div>
+</header>
+<main class="pt-14 pb-32">
+<!-- Summary Cards (Scrollable Row) -->
+<section class="mt-md px-container-padding">
+<div class="flex gap-md overflow-x-auto no-scrollbar pb-2">
+<!-- Total SKUs -->
+<div class="min-w-[140px] flex-shrink-0 bg-surface-container-lowest p-md rounded-xl border border-erp-border shadow-soft">
+<span class="text-label-md font-label-md text-on-surface-variant block mb-base">Total SKUs</span>
+<span class="text-numeric-lg font-numeric-lg text-primary">1,420</span>
+</div>
+<!-- Value -->
+<div class="min-w-[140px] flex-shrink-0 bg-surface-container-lowest p-md rounded-xl border border-erp-border shadow-soft">
+<span class="text-label-md font-label-md text-on-surface-variant block mb-base">Value</span>
+<span class="text-numeric-lg font-numeric-lg text-on-background">$890k</span>
+</div>
+<!-- Low Stock -->
+<div class="min-w-[140px] flex-shrink-0 bg-surface-container-lowest p-md rounded-xl border border-erp-border shadow-soft">
+<div class="flex justify-between items-start">
+<span class="text-label-md font-label-md text-on-surface-variant block mb-base">Low Stock</span>
+<div class="w-2 h-2 rounded-full bg-tertiary-container mt-1"></div>
+</div>
+<span class="text-numeric-lg font-numeric-lg text-tertiary-container">12</span>
+</div>
+<!-- Out of Stock -->
+<div class="min-w-[140px] flex-shrink-0 bg-surface-container-lowest p-md rounded-xl border border-erp-border shadow-soft">
+<div class="flex justify-between items-start">
+<span class="text-label-md font-label-md text-on-surface-variant block mb-base">Out of Stock</span>
+<div class="w-2 h-2 rounded-full bg-error mt-1"></div>
+</div>
+<span class="text-numeric-lg font-numeric-lg text-error">2</span>
+</div>
+</div>
+</section>
+<!-- Search Input -->
+<section class="mt-md px-container-padding">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-outline">search</span>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg py-2.5 pl-10 pr-4 text-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="Search SKU, name or warehouse..." type="text"/>
+<button class="ml-2 bg-surface-container-low p-2.5 rounded-lg border border-outline-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant">tune</span>
+</button>
+</div>
+</section>
+<!-- Inventory List -->
+<section class="mt-lg px-container-padding flex flex-col gap-md">
+<div class="flex justify-between items-center mb-base">
+<h2 class="text-headline-md font-headline-md text-on-surface">Inventory Items</h2>
+<span class="text-label-md font-label-md text-on-surface-variant">Showing 24 results</span>
+</div>
+<!-- Inventory Card: Smart Breaker -->
+<div class="bg-surface-container-lowest rounded-xl border border-erp-border shadow-soft overflow-hidden">
+<div class="p-md">
+<div class="flex justify-between items-start mb-sm">
+<div>
+<h3 class="text-body-lg font-headline-md text-on-background">Smart Breaker</h3>
+<div class="flex items-center gap-sm mt-0.5">
+<span class="text-label-md font-label-md text-on-surface-variant px-1.5 py-0.5 bg-surface-container rounded">SKU: MW-305</span>
+<span class="text-label-md font-label-md text-outline">•</span>
+<span class="text-label-md font-label-md text-on-surface-variant">WH: Zone A-12</span>
+</div>
+</div>
+<span class="text-label-sm font-label-sm px-2 py-1 rounded-full border border-tertiary-container text-tertiary-container bg-tertiary-fixed-dim/20">Low Stock</span>
+</div>
+<!-- Quantities Grid -->
+<div class="grid grid-cols-3 gap-base mt-md border-y border-erp-border/50 py-sm">
+<div>
+<span class="text-label-sm font-label-sm text-on-surface-variant block uppercase tracking-tight">Total</span>
+<span class="text-headline-md font-bold text-on-background">42</span>
+</div>
+<div class="border-x border-erp-border/50 px-sm">
+<span class="text-label-sm font-label-sm text-on-surface-variant block uppercase tracking-tight">Reserved</span>
+<span class="text-headline-md font-bold text-on-background">10</span>
+</div>
+<div class="pl-sm text-right">
+<span class="text-label-sm font-label-sm text-on-surface-variant block uppercase tracking-tight">Available</span>
+<span class="text-headline-md font-bold text-primary">32</span>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="mt-md">
+<div class="flex justify-between items-end mb-1">
+<span class="text-label-md font-label-md text-on-surface-variant">Stock Level / Reorder Point</span>
+<span class="text-label-md font-label-md font-bold text-on-background">42 / 50</span>
+</div>
+<div class="w-full h-1.5 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-tertiary-container rounded-full" style="width: 84%"></div>
+</div>
+</div>
+<div class="mt-md flex justify-between items-center">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px] text-outline">history</span>
+<span class="text-label-md font-label-md text-on-surface-variant">Last Restocked: Oct 12</span>
+</div>
+<button class="text-primary font-label-md text-label-md flex items-center gap-xs font-bold">
+                            View Details
+                            <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Placeholder Card: Industrial Relay -->
+<div class="bg-surface-container-lowest rounded-xl border border-erp-border shadow-soft overflow-hidden opacity-90">
+<div class="p-md">
+<div class="flex justify-between items-start mb-sm">
+<div>
+<h3 class="text-body-lg font-headline-md text-on-background">Industrial Relay v2</h3>
+<div class="flex items-center gap-sm mt-0.5">
+<span class="text-label-md font-label-md text-on-surface-variant px-1.5 py-0.5 bg-surface-container rounded">SKU: RL-802</span>
+<span class="text-label-md font-label-md text-outline">•</span>
+<span class="text-label-md font-label-md text-on-surface-variant">WH: Zone B-04</span>
+</div>
+</div>
+<span class="text-label-sm font-label-sm px-2 py-1 rounded-full border border-secondary text-secondary bg-secondary-fixed/20">Optimal</span>
+</div>
+<div class="grid grid-cols-3 gap-base mt-md border-y border-erp-border/50 py-sm">
+<div><span class="text-label-sm font-label-sm text-on-surface-variant block uppercase tracking-tight">Total</span><span class="text-headline-md font-bold text-on-background">214</span></div>
+<div class="border-x border-erp-border/50 px-sm"><span class="text-label-sm font-label-sm text-on-surface-variant block uppercase tracking-tight">Reserved</span><span class="text-headline-md font-bold text-on-background">15</span></div>
+<div class="pl-sm text-right"><span class="text-label-sm font-label-sm text-on-surface-variant block uppercase tracking-tight">Available</span><span class="text-headline-md font-bold text-primary">199</span></div>
+</div>
+<div class="mt-md">
+<div class="w-full h-1.5 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 100%"></div>
+</div>
+</div>
+<div class="mt-md flex justify-between items-center">
+<div class="flex items-center gap-xs"><span class="material-symbols-outlined text-[16px] text-outline">history</span><span class="text-label-md font-label-md text-on-surface-variant">Last Restocked: Nov 01</span></div>
+<button class="text-primary font-label-md text-label-md flex items-center gap-xs font-bold">View Details<span class="material-symbols-outlined text-[18px]">chevron_right</span></button>
+</div>
+</div>
+</div>
+<!-- Out of Stock Placeholder -->
+<div class="bg-surface-container-lowest rounded-xl border border-erp-border shadow-soft overflow-hidden opacity-90">
+<div class="p-md">
+<div class="flex justify-between items-start mb-sm">
+<div>
+<h3 class="text-body-lg font-headline-md text-on-background">Copper Bus Bar 20mm</h3>
+<div class="flex items-center gap-sm mt-0.5">
+<span class="text-label-md font-label-md text-on-surface-variant px-1.5 py-0.5 bg-surface-container rounded">SKU: CB-112</span>
+<span class="text-label-md font-label-md text-outline">•</span>
+<span class="text-label-md font-label-md text-on-surface-variant">WH: Zone C-02</span>
+</div>
+</div>
+<span class="text-label-sm font-label-sm px-2 py-1 rounded-full border border-error text-error bg-error-container/30">Out of Stock</span>
+</div>
+<div class="grid grid-cols-3 gap-base mt-md border-y border-erp-border/50 py-sm">
+<div><span class="text-label-sm font-label-sm text-on-surface-variant block uppercase tracking-tight">Total</span><span class="text-headline-md font-bold text-error">0</span></div>
+<div class="border-x border-erp-border/50 px-sm"><span class="text-label-sm font-label-sm text-on-surface-variant block uppercase tracking-tight">Reserved</span><span class="text-headline-md font-bold text-on-background">0</span></div>
+<div class="pl-sm text-right"><span class="text-label-sm font-label-sm text-on-surface-variant block uppercase tracking-tight">Available</span><span class="text-headline-md font-bold text-error">0</span></div>
+</div>
+<div class="mt-md">
+<div class="w-full h-1.5 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-error rounded-full" style="width: 0%"></div>
+</div>
+</div>
+<div class="mt-md flex justify-between items-center">
+<div class="flex items-center gap-xs"><span class="material-symbols-outlined text-[16px] text-outline">history</span><span class="text-label-md font-label-md text-on-surface-variant">Last Restocked: Aug 22</span></div>
+<button class="bg-primary text-white font-label-md text-label-md px-4 py-1.5 rounded-lg font-bold">Restock Now</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 pb-mobile-safe-bottom bg-surface dark:bg-surface-dim h-20 border-t border-outline-variant dark:border-outline">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-label-sm font-label-sm mt-1">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed font-bold scale-95 transition-transform duration-100" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="text-label-sm font-label-sm mt-1">Inventory</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="text-label-sm font-label-sm mt-1">Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="text-label-sm font-label-sm mt-1">Invoices</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined">more_horiz</span>
+<span class="text-label-sm font-label-sm mt-1">More</span>
+</a>
+</nav>
+<!-- Floating Action Button (Supressed based on context: Inventory Browse Screen usually has Add, but prompt implies data density focus) -->
+<button class="fixed bottom-24 right-4 w-14 h-14 bg-primary-container text-on-primary-container rounded-full shadow-lg flex items-center justify-center active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[28px]">add</span>
+</button>
+<script>
+        // Micro-interaction for cards
+        document.querySelectorAll('.inventory-card').forEach(card => {
+            card.addEventListener('touchstart', () => {
+                card.classList.add('scale-[0.98]');
+            });
+            card.addEventListener('touchend', () => {
+                card.classList.remove('scale-[0.98]');
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Megawatt Finance Reports</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#e7e0eb",
+                        "on-primary": "#ffffff",
+                        "on-background": "#1d1a22",
+                        "tertiary-container": "#804900",
+                        "surface-bright": "#fef7ff",
+                        "on-secondary-fixed-variant": "#00497d",
+                        "on-secondary-fixed": "#001d36",
+                        "error-container": "#ffdad6",
+                        "surface": "#fef7ff",
+                        "on-primary-container": "#d8c2ff",
+                        "tertiary": "#5f3500",
+                        "surface-container-high": "#ede6f1",
+                        "error": "#ba1a1a",
+                        "on-tertiary-container": "#ffbf83",
+                        "on-tertiary": "#ffffff",
+                        "outline-variant": "#ccc3d5",
+                        "primary-fixed-dim": "#d3bbff",
+                        "secondary": "#0061a4",
+                        "on-surface-variant": "#4a4453",
+                        "inverse-primary": "#d3bbff",
+                        "inverse-surface": "#322f37",
+                        "surface-container": "#f3ebf7",
+                        "tertiary-fixed-dim": "#ffb872",
+                        "primary-fixed": "#ebddff",
+                        "primary-container": "#673ab7",
+                        "on-secondary-container": "#00355c",
+                        "tertiary-fixed": "#ffdcbf",
+                        "secondary-fixed": "#d1e4ff",
+                        "secondary-fixed-dim": "#9ecaff",
+                        "inverse-on-surface": "#f6eef9",
+                        "surface-tint": "#6f43c0",
+                        "surface-container-highest": "#e7e0eb",
+                        "surface-dim": "#dfd7e3",
+                        "on-tertiary-fixed": "#2d1600",
+                        "on-primary-fixed": "#250059",
+                        "primary": "#4f1c9e",
+                        "on-surface": "#1d1a22",
+                        "on-tertiary-fixed-variant": "#6a3b00",
+                        "outline": "#7b7484",
+                        "surface-container-low": "#f9f1fc",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "secondary-container": "#33a0fd",
+                        "background": "#fef7ff",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed-variant": "#5727a6",
+                        "surface-container-lowest": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-padding": "16px",
+                        "mobile-safe-bottom": "34px",
+                        "lg": "24px",
+                        "card-gap": "12px",
+                        "md": "16px",
+                        "base": "4px",
+                        "xl": "32px",
+                        "xs": "4px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "display": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "numeric-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "numeric-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "headline-md": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #eef2f6; /* Style Guidance Base Level 0 */
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .berry-gradient {
+            background: linear-gradient(135deg, #4f1c9e 0%, #33a0fd 100%);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #ccc3d5;
+            border-radius: 10px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-background">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-container-padding h-14 bg-surface dark:bg-surface-dim border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-on-surface-variant">menu</span>
+<h1 class="text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed">Megawatt</h1>
+</div>
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface-variant">search</span>
+<span class="text-label-md font-label-md text-on-surface-variant">EN</span>
+</div>
+</header>
+<main class="pt-14 pb-24 px-container-padding max-w-md mx-auto">
+<!-- Page Title & Date Range -->
+<div class="flex justify-between items-end mt-md mb-lg">
+<div>
+<p class="text-label-md font-label-md text-on-surface-variant">Operational Finance</p>
+<h2 class="text-headline-lg-mobile font-headline-lg-mobile text-on-background">Executive Summary</h2>
+</div>
+<button class="flex items-center gap-xs px-sm py-xs bg-surface-container-highest rounded-lg border border-outline-variant">
+<span class="text-label-md font-label-md">Q3 2023</span>
+<span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+</div>
+<!-- Summary Cards Grid (Bento Style Finance) -->
+<div class="grid grid-cols-2 gap-card-gap mb-lg">
+<!-- Major Metric -->
+<div class="col-span-2 bg-surface p-md rounded-xl border border-outline-variant shadow-sm relative overflow-hidden">
+<div class="absolute top-0 right-0 p-base opacity-10">
+<span class="material-symbols-outlined text-[80px]">payments</span>
+</div>
+<p class="text-label-md font-label-md text-on-surface-variant">Revenue</p>
+<p class="text-numeric-lg font-numeric-lg text-primary">$540,000</p>
+<div class="flex items-center gap-xs mt-xs text-[10px] font-bold text-secondary">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+<span>+12.5% vs Last Quarter</span>
+</div>
+</div>
+<!-- Mini Metrics -->
+<div class="bg-surface p-md rounded-xl border border-outline-variant shadow-sm">
+<p class="text-label-sm font-label-sm text-on-surface-variant">COGS</p>
+<p class="text-headline-md font-headline-md text-on-background">$310,000</p>
+</div>
+<div class="bg-surface p-md rounded-xl border border-outline-variant shadow-sm">
+<p class="text-label-sm font-label-sm text-on-surface-variant">Gross Profit</p>
+<p class="text-headline-md font-headline-md text-on-background">$230,000</p>
+</div>
+<div class="bg-surface p-md rounded-xl border border-outline-variant shadow-sm border-l-4 border-l-error">
+<p class="text-label-sm font-label-sm text-on-surface-variant">Expenses</p>
+<p class="text-headline-md font-headline-md text-on-background">$120,000</p>
+</div>
+<div class="bg-surface p-md rounded-xl border border-outline-variant shadow-sm border-l-4 border-l-secondary-container">
+<p class="text-label-sm font-label-sm text-on-surface-variant">Net Profit</p>
+<p class="text-headline-md font-headline-md text-on-background">$110,000</p>
+</div>
+<div class="bg-surface p-md rounded-xl border border-outline-variant shadow-sm">
+<p class="text-label-sm font-label-sm text-on-surface-variant">Receivables</p>
+<p class="text-headline-md font-headline-md text-on-background">$45,000</p>
+</div>
+<div class="bg-surface p-md rounded-xl border border-outline-variant shadow-sm">
+<p class="text-label-sm font-label-sm text-on-surface-variant">Payables</p>
+<p class="text-headline-md font-headline-md text-on-background">$22,000</p>
+</div>
+</div>
+<!-- Profitability Summary & Collection Rate -->
+<div class="berry-gradient p-md rounded-xl text-on-primary shadow-lg mb-lg">
+<div class="flex justify-between items-start mb-md">
+<div>
+<p class="text-label-sm font-label-sm opacity-80 uppercase tracking-wider">Collection Rate</p>
+<p class="text-numeric-lg font-numeric-lg">94%</p>
+</div>
+<div class="p-sm bg-white/10 rounded-lg">
+<span class="material-symbols-outlined">analytics</span>
+</div>
+</div>
+<div class="space-y-sm">
+<div class="flex justify-between items-center text-label-md font-label-md">
+<span>Profit Margin</span>
+<span>20.3%</span>
+</div>
+<div class="w-full bg-white/20 h-1.5 rounded-full overflow-hidden">
+<div class="bg-white h-full" style="width: 20.3%"></div>
+</div>
+<p class="text-[10px] opacity-70">Target: 25.0%</p>
+</div>
+</div>
+<!-- Recent Payments List -->
+<section class="mb-lg">
+<div class="flex justify-between items-center mb-sm">
+<h3 class="text-headline-md font-headline-md text-on-background">Recent Payments</h3>
+<button class="text-primary text-label-md font-label-md">View All</button>
+</div>
+<div class="space-y-xs">
+<!-- Payment Item 1 -->
+<div class="bg-surface-container-lowest p-sm rounded-lg border border-outline-variant flex items-center justify-between">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-secondary-container/10 flex items-center justify-center text-secondary-container">
+<span class="material-symbols-outlined">account_balance</span>
+</div>
+<div>
+<p class="text-body-md font-medium text-on-background">Alpha Logistics</p>
+<p class="text-label-md font-label-md text-on-surface-variant">Invoice #9021</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-body-md font-bold text-on-background">+$12,400</p>
+<span class="inline-block px-1.5 py-0.5 rounded text-[10px] bg-[#e8f5e9] text-[#2e7d32] border border-[#2e7d32]/20">Cleared</span>
+</div>
+</div>
+<!-- Payment Item 2 -->
+<div class="bg-surface-container-lowest p-sm rounded-lg border border-outline-variant flex items-center justify-between">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-secondary-container/10 flex items-center justify-center text-secondary-container">
+<span class="material-symbols-outlined">solar_power</span>
+</div>
+<div>
+<p class="text-body-md font-medium text-on-background">Solar Grid Co.</p>
+<p class="text-label-md font-label-md text-on-surface-variant">Invoice #8845</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-body-md font-bold text-on-background">+$8,250</p>
+<span class="inline-block px-1.5 py-0.5 rounded text-[10px] bg-[#e8f5e9] text-[#2e7d32] border border-[#2e7d32]/20">Cleared</span>
+</div>
+</div>
+<!-- Payment Item 3 -->
+<div class="bg-surface-container-lowest p-sm rounded-lg border border-outline-variant flex items-center justify-between">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-secondary-container/10 flex items-center justify-center text-secondary-container">
+<span class="material-symbols-outlined">apartment</span>
+</div>
+<div>
+<p class="text-body-md font-medium text-on-background">Summit Real Estate</p>
+<p class="text-label-md font-label-md text-on-surface-variant">Invoice #8911</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-body-md font-bold text-on-background">+$4,100</p>
+<span class="inline-block px-1.5 py-0.5 rounded text-[10px] bg-[#fff3e0] text-[#ef6c00] border border-[#ef6c00]/20">Pending</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Recent Expenses List -->
+<section class="mb-xl">
+<div class="flex justify-between items-center mb-sm">
+<h3 class="text-headline-md font-headline-md text-on-background">Recent Expenses</h3>
+</div>
+<div class="bg-surface border border-outline-variant rounded-xl overflow-hidden shadow-sm">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr>
+<th class="p-sm text-label-sm font-label-sm text-on-surface-variant">Category</th>
+<th class="p-sm text-label-sm font-label-sm text-on-surface-variant text-right">Amount</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr>
+<td class="p-sm">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary text-[18px]">home</span>
+<span class="text-body-md font-body-md">Rent (Headquarters)</span>
+</div>
+</td>
+<td class="p-sm text-right text-body-md font-bold text-error">-$14,500</td>
+</tr>
+<tr>
+<td class="p-sm">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary text-[18px]">bolt</span>
+<span class="text-body-md font-body-md">Utilities</span>
+</div>
+</td>
+<td class="p-sm text-right text-body-md font-bold text-error">-$2,120</td>
+</tr>
+<tr>
+<td class="p-sm">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary text-[18px]">badge</span>
+<span class="text-body-md font-body-md">Salary (Operations)</span>
+</div>
+</td>
+<td class="p-sm text-right text-body-md font-bold text-error">-$56,800</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 pb-mobile-safe-bottom bg-surface dark:bg-surface-dim h-20 border-t border-outline-variant dark:border-outline">
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-label-sm font-label-sm">Dashboard</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="text-label-sm font-label-sm">Inventory</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="text-label-sm font-label-sm">Orders</span>
+</button>
+<!-- ACTIVE TAB: Invoices (Closest to Finance Reports) -->
+<button class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed font-bold scale-95 transition-transform duration-100">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+<span class="text-label-sm font-label-sm">Invoices</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+<span class="text-label-sm font-label-sm">More</span>
+</button>
+</nav>
+<!-- Interactive Layer: Ripple Simulation -->
+<script>
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                let ripple = document.createElement('div');
+                ripple.classList.add('ripple');
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+    </script>
+<style>
+        .ripple {
+            position: absolute;
+            background: rgba(111, 67, 192, 0.2);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    </style>
+</body></html>

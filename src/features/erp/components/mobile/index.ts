@@ -4,3 +4,4 @@ export { MobileInventory } from './MobileInventory';
 export { MobileCreateInvoice } from './MobileCreateInvoice';
 export { MobileFinanceReports } from './MobileFinanceReports';
 export { MobileStatCard } from './MobileStatCard';
+export { MobileSectionTitle, MobileShell, MobileSurface } from './MobileShell';

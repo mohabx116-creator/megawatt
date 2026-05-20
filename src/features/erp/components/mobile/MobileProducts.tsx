@@ -1,169 +1,245 @@
+import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
-import IconButton from '@mui/material/IconButton';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Fab from '@mui/material/Fab';
 import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { useTheme, alpha } from '@mui/material/styles';
+import { alpha, useTheme } from '@mui/material/styles';
 
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined';
-import QrCodeScannerOutlinedIcon from '@mui/icons-material/QrCodeScannerOutlined';
-import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
-import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
-import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
-import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
-
-import MainCard from 'ui-component/cards/MainCard';
 import { useLanguage } from 'i18n';
-import { mockProducts } from '../../mockData';
-import { translateProductName, translateCategory } from '../../utils/displayTranslations';
+
+import { mockInventory, mockProducts } from '../../mockData';
+import { Product } from '../../types';
+import { includesTranslatedValue, translateCategory, translatePartyName, translateProductName, translateUnit } from '../../utils/displayTranslations';
+import { MobileSectionTitle, MobileShell, MobileSurface } from './MobileShell';
 
 export const MobileProducts = () => {
   const theme = useTheme();
-  const { t, language, formatCurrency, formatNumber, setLanguage } = useLanguage();
+  const navigate = useNavigate();
+  const { t, language, formatCurrency, formatNumber, formatStatus } = useLanguage();
+  const [search, setSearch] = useState('');
+  const [category, setCategory] = useState('all');
+  const [dialog, setDialog] = useState<{ title: string; message: string } | null>(null);
+
+  const categories = useMemo(() => Array.from(new Set(mockProducts.map((product) => product.category))), []);
+  const inventoryByProduct = useMemo(() => new Map(mockInventory.map((item) => [item.productId, item])), []);
+
+  const filteredProducts = useMemo(
+    () =>
+      mockProducts.filter((product) => {
+        const matchesCategory = category === 'all' || product.category === category;
+        const matchesSearch = includesTranslatedValue(language, search, [
+          product.name,
+          translateProductName(language, product.name),
+          product.sku,
+          product.category,
+          translateCategory(language, product.category),
+          product.brand,
+          product.supplierName
+        ]);
+
+        return matchesCategory && matchesSearch;
+      }),
+    [category, language, search]
+  );
+
+  const getStockStatus = (product: Product) => {
+    const item = inventoryByProduct.get(product.id);
+    if (!item || item.quantityOnHand === 0) return 'out_of_stock';
+    if (item.quantityOnHand <= item.reorderLevel) return 'low_stock';
+    return product.status === 'active' ? 'in_stock' : product.status;
+  };
+
+  const showDemoAction = (title: string) =>
+    setDialog({
+      title,
+      message: t('mobile.demoActionMessage')
+    });
 
   return (
-    <Box sx={{ pb: 12, bgcolor: theme.palette.background.default, minHeight: '100vh', position: 'relative' }}>
-      {/* Top App Bar */}
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        sx={{
-          px: 2,
-          height: 64,
-          bgcolor: theme.palette.background.paper,
-          borderBottom: `1px solid ${theme.palette.divider}`,
-          position: 'sticky',
-          top: 0,
-          zIndex: 50
-        }}
-      >
-        <Stack direction="row" alignItems="center" spacing={1.5}>
-          <Box
-            sx={{
-              width: 32,
-              height: 32,
-              borderRadius: '50%',
-              bgcolor: theme.palette.primary.main,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
+    <MobileShell>
+      <Stack spacing={2}>
+        <MobileSurface sx={{ position: 'sticky', top: 72, zIndex: 10 }}>
+          <TextField
+            fullWidth
+            size="small"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder={t('products.search')}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchOutlinedIcon fontSize="small" />
+                </InputAdornment>
+              )
             }}
-          >
-            <Typography variant="h6" sx={{ color: 'white', fontWeight: 800 }}>M</Typography>
-          </Box>
-          <Typography variant="h3" sx={{ fontWeight: 700, color: theme.palette.primary.main }}>
-            MegaWatt ERP
-          </Typography>
-        </Stack>
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <IconButton size="small" sx={{ color: theme.palette.primary.main }}>
-            <SearchOutlinedIcon />
-          </IconButton>
-          <Box 
-            onClick={() => setLanguage?.(language === 'en' ? 'ar' : 'en')}
-            sx={{ cursor: 'pointer', bgcolor: theme.palette.secondary.light, color: theme.palette.secondary.dark, px: 1, py: 0.5, borderRadius: 1 }}
-          >
-            <Typography variant="caption" sx={{ fontWeight: 700 }}>{language === 'en' ? 'AR' : 'EN'}</Typography>
-          </Box>
+          />
+          <Stack direction="row" spacing={1} sx={{ mt: 1.5, overflowX: 'auto', pb: 0.25, '&::-webkit-scrollbar': { display: 'none' } }}>
+            <Chip
+              label={t('common.all')}
+              onClick={() => setCategory('all')}
+              color={category === 'all' ? 'primary' : 'default'}
+              variant={category === 'all' ? 'filled' : 'outlined'}
+            />
+            {categories.map((item) => (
+              <Chip
+                key={item}
+                label={translateCategory(language, item)}
+                onClick={() => setCategory(item)}
+                color={category === item ? 'primary' : 'default'}
+                variant={category === item ? 'filled' : 'outlined'}
+              />
+            ))}
+            <Chip icon={<TuneOutlinedIcon />} label={t('common.filter')} variant="outlined" onClick={() => showDemoAction(t('common.filter'))} />
+          </Stack>
+        </MobileSurface>
+
+        <MobileSectionTitle
+          title={`${t('products.title')} (${formatNumber(filteredProducts.length)})`}
+          action={
+            <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700 }}>
+              {t('inventory.totalStockedSkus')}: {formatNumber(mockInventory.length)}
+            </Typography>
+          }
+        />
+
+        <Stack spacing={1.5}>
+          {filteredProducts.map((product) => {
+            const inventory = inventoryByProduct.get(product.id);
+            const status = getStockStatus(product);
+            const statusColor = status === 'out_of_stock' ? theme.palette.error.main : status === 'low_stock' ? theme.palette.warning.dark : theme.palette.success.main;
+
+            return (
+              <MobileSurface key={product.id}>
+                <Stack spacing={1.5}>
+                  <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={1.25}>
+                    <Stack direction="row" spacing={1.25} sx={{ minWidth: 0 }}>
+                      <Box
+                        sx={{
+                          width: 42,
+                          height: 42,
+                          borderRadius: 2,
+                          bgcolor: alpha(theme.palette.primary.main, 0.08),
+                          color: theme.palette.primary.main,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flex: '0 0 auto'
+                        }}
+                      >
+                        <Inventory2OutlinedIcon />
+                      </Box>
+                      <Box sx={{ minWidth: 0 }}>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 900 }}>
+                          {product.sku}
+                        </Typography>
+                        <Typography variant="body1" sx={{ fontWeight: 900 }} noWrap>
+                          {translateProductName(language, product.name)}
+                        </Typography>
+                      </Box>
+                    </Stack>
+                    <Box
+                      sx={{
+                        px: 1,
+                        py: 0.5,
+                        borderRadius: 1.5,
+                        border: `1px solid ${alpha(statusColor, 0.45)}`,
+                        bgcolor: alpha(statusColor, 0.08),
+                        color: statusColor,
+                        flex: '0 0 auto'
+                      }}
+                    >
+                      <Typography variant="caption" sx={{ fontWeight: 900 }}>
+                        {formatStatus(status)}
+                      </Typography>
+                    </Box>
+                  </Stack>
+
+                  <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', rowGap: 1, columnGap: 2 }}>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary">
+                        {t('common.category')}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                        {translateCategory(language, product.category)}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ textAlign: 'end' }}>
+                      <Typography variant="caption" color="text.secondary">
+                        {t('products.salePrice')}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontWeight: 900, color: theme.palette.primary.main }}>
+                        {formatCurrency(product.salePrice)}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary">
+                        {t('common.supplier')}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontWeight: 700 }} noWrap>
+                        {translatePartyName(language, product.supplierName)}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ textAlign: 'end' }}>
+                      <Typography variant="caption" color="text.secondary">
+                        {t('inventory.quantityOnHand')}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontWeight: 900 }}>
+                        {formatNumber(inventory?.quantityOnHand ?? product.stockQuantity)} {translateUnit(language, product.unit)}
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  <Stack direction="row" justifyContent="flex-end" spacing={1} sx={{ pt: 1, borderTop: `1px solid ${theme.palette.divider}` }}>
+                    <Button size="small" variant="outlined" onClick={() => showDemoAction(t('mobile.adjustStock'))}>
+                      {t('mobile.adjustStock')}
+                    </Button>
+                    <Button size="small" variant="contained" startIcon={<EditOutlinedIcon />} onClick={() => showDemoAction(t('mobile.editDetails'))}>
+                      {t('mobile.editDetails')}
+                    </Button>
+                  </Stack>
+                </Stack>
+              </MobileSurface>
+            );
+          })}
+          {filteredProducts.length === 0 && <MobileSurface>{t('products.noMatches')}</MobileSurface>}
         </Stack>
       </Stack>
 
-      <Box sx={{ px: 2, pt: 2 }}>
-        {/* Search & Filter Bar */}
-        <Stack direction="row" spacing={1.5} sx={{ mb: 2 }}>
-          <TextField
-            fullWidth
-            placeholder={t('products.search')}
-            variant="outlined"
-            size="small"
-            slotProps={{
-              input: {
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <QrCodeScannerOutlinedIcon sx={{ color: 'text.secondary' }} />
-                  </InputAdornment>
-                ),
-                sx: { borderRadius: 2, bgcolor: alpha(theme.palette.background.paper, 0.5) }
-              }
-            }}
-          />
-          <IconButton sx={{ bgcolor: theme.palette.background.paper, borderRadius: 2, border: `1px solid ${theme.palette.divider}` }}>
-            <FilterListOutlinedIcon sx={{ color: theme.palette.primary.main }} />
-          </IconButton>
-        </Stack>
+      <Fab
+        color="primary"
+        onClick={() => navigate('/erp/create-invoice')}
+        sx={{ position: 'fixed', right: 18, bottom: 'calc(86px + env(safe-area-inset-bottom))', zIndex: 40 }}
+        aria-label={t('nav.createInvoice')}
+      >
+        <AddOutlinedIcon />
+      </Fab>
 
-        <Stack direction="row" spacing={1} sx={{ mb: 3, overflowX: 'auto', '&::-webkit-scrollbar': { display: 'none' } }}>
-          <Chip label={t('common.all')} sx={{ bgcolor: theme.palette.primary.main, color: 'white', fontWeight: 700 }} />
-          <Chip label={translateCategory(language as any, 'Cables')} variant="outlined" sx={{ bgcolor: theme.palette.background.paper, fontWeight: 700 }} />
-          <Chip label={translateCategory(language as any, 'Circuit Breakers')} variant="outlined" sx={{ bgcolor: theme.palette.background.paper, fontWeight: 700 }} />
-        </Stack>
-
-        {/* Product List */}
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary', display: 'block', mb: 2, textTransform: 'uppercase' }}>
-            {t('products.title')} ({formatNumber(mockProducts.length)})
+      <Dialog open={Boolean(dialog)} onClose={() => setDialog(null)} fullWidth maxWidth="xs">
+        <DialogTitle>{dialog?.title}</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary">
+            {dialog?.message}
           </Typography>
-
-          <Stack spacing={1.5}>
-            {mockProducts.slice(0, 10).map((product) => {
-              const stockStatus = product.status;
-              let tone = theme.palette.primary.main;
-              let icon = <CheckCircleOutlineOutlinedIcon sx={{ fontSize: 16 }} />;
-              
-              if (stockStatus === 'low_stock') {
-                tone = theme.palette.warning.dark;
-                icon = <WarningAmberOutlinedIcon sx={{ fontSize: 16 }} />;
-              } else if (stockStatus === 'discontinued') {
-                tone = theme.palette.error.main;
-              }
-
-              return (
-                <MainCard key={product.id} content={false} sx={{ p: 1.5 }}>
-                  <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-                    <Stack direction="row" spacing={2}>
-                      <Box sx={{ width: 64, height: 64, bgcolor: theme.palette.grey[100], borderRadius: 2, border: `1px solid ${theme.palette.divider}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                         <CategoryOutlinedIcon sx={{ color: theme.palette.grey[400] }} />
-                      </Box>
-                      <Box>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 700, color: theme.palette.primary.main }}>
-                          {translateProductName(language as any, product.name)}
-                        </Typography>
-                        <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 0.5 }}>
-                          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                            {product.sku}
-                          </Typography>
-                          <Typography variant="caption" sx={{ color: 'text.secondary' }}>•</Typography>
-                          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                            {translateCategory(language as any, product.category)}
-                          </Typography>
-                        </Stack>
-                        <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 1 }}>
-                          <Typography variant="subtitle2" sx={{ fontWeight: 800, color: 'text.primary' }}>
-                            {formatCurrency(product.salePrice)}
-                          </Typography>
-                          <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, px: 1, py: 0.25, bgcolor: alpha(tone, 0.1), border: `1px solid ${alpha(tone, 0.2)}`, borderRadius: 1 }}>
-                            {icon}
-                            <Typography variant="caption" sx={{ fontSize: 9, fontWeight: 700, color: tone }}>
-                              {t(`status.${stockStatus}` as any)}
-                            </Typography>
-                          </Box>
-                        </Stack>
-                      </Box>
-                    </Stack>
-                    <IconButton size="small" sx={{ color: 'text.secondary' }}>
-                      <MoreVertOutlinedIcon />
-                    </IconButton>
-                  </Stack>
-                </MainCard>
-              );
-            })}
-          </Stack>
-        </Box>
-      </Box>
-    </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDialog(null)}>{t('common.close')}</Button>
+        </DialogActions>
+      </Dialog>
+    </MobileShell>
   );
 };

@@ -1,238 +1,206 @@
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import { useTheme, alpha } from '@mui/material/styles';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
-import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
-import TrendingUpOutlinedIcon from '@mui/icons-material/TrendingUpOutlined';
-import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
-import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
+import NoteAddOutlinedIcon from '@mui/icons-material/NoteAddOutlined';
+import FinanceOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
-import PaymentsOutlinedIcon from '@mui/icons-material/PaymentsOutlined';
-import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
-import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
+import TrendingUpOutlinedIcon from '@mui/icons-material/TrendingUpOutlined';
+import WarehouseOutlinedIcon from '@mui/icons-material/WarehouseOutlined';
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
-import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
+import Box from '@mui/material/Box';
+import ButtonBase from '@mui/material/ButtonBase';
+import LinearProgress from '@mui/material/LinearProgress';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import { alpha, useTheme } from '@mui/material/styles';
 
-import MainCard from 'ui-component/cards/MainCard';
 import { useLanguage } from 'i18n';
-import { translatePartyName, translateProductName } from '../../utils/displayTranslations';
-import { mockFinanceSummary, mockInvoices, mockInventory } from '../../mockData';
+
+import { mockFinanceSummary, mockInventory, mockInvoices, mockProducts } from '../../mockData';
+import { translatePartyName, translateProductName, translateUnit } from '../../utils/displayTranslations';
+import { MobileSectionTitle, MobileShell, MobileSurface } from './MobileShell';
 
 export const MobileDashboard = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { t, language, formatCurrency, formatNumber } = useLanguage();
+  const { t, language, formatCurrency, formatDate, formatNumber, formatStatus } = useLanguage();
 
+  const inventoryValue = useMemo(
+    () =>
+      mockInventory.reduce((sum, item) => {
+        const product = mockProducts.find((candidate) => candidate.id === item.productId);
+        return sum + item.quantityOnHand * (product?.salePrice ?? 0);
+      }, 0),
+    []
+  );
   const lowStockItems = mockInventory.filter((item) => item.quantityOnHand <= item.reorderLevel);
-  const unpaidInvoices = mockInvoices.filter((inv) => inv.paymentStatus !== 'paid');
+  const receivableInvoices = mockInvoices.filter((invoice) => invoice.balanceDue > 0);
+  const fulfillmentRate = Math.round(((mockInventory.length - lowStockItems.length) / Math.max(mockInventory.length, 1)) * 100);
+  const collectionRate = Math.round(((mockFinanceSummary.revenue - mockFinanceSummary.receivables) / Math.max(mockFinanceSummary.revenue, 1)) * 100);
+
+  const kpis = [
+    { label: t('dashboard.revenue'), value: formatCurrency(mockFinanceSummary.revenue), helper: '+12%', tone: theme.palette.primary.main },
+    { label: t('dashboard.grossProfit'), value: formatCurrency(mockFinanceSummary.grossProfit), helper: t('dashboard.margin', { value: 32 }), tone: theme.palette.success.main },
+    { label: t('dashboard.inventoryValue'), value: formatCurrency(inventoryValue), helper: t('dashboard.stockedSkus', { count: mockInventory.length }), tone: theme.palette.info.main },
+    { label: t('dashboard.stockAlerts'), value: `${formatNumber(lowStockItems.length)} ${t('common.unit')}`, helper: t('dashboard.requiresAttention'), tone: theme.palette.error.main }
+  ];
+
+  const actions = [
+    { label: t('nav.createInvoice'), icon: <NoteAddOutlinedIcon />, path: '/erp/create-invoice', primary: true },
+    { label: t('nav.products'), icon: <Inventory2OutlinedIcon />, path: '/erp/products' },
+    { label: t('nav.inventory'), icon: <WarehouseOutlinedIcon />, path: '/erp/inventory' },
+    { label: t('nav.financeReports'), icon: <FinanceOutlinedIcon />, path: '/erp/finance-reports' }
+  ];
 
   return (
-    <Box sx={{ pb: 10, minHeight: '100vh', bgcolor: theme.palette.background.default }}>
-      {/* Top App Bar */}
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        sx={{
-          px: 2,
-          height: 64,
-          bgcolor: theme.palette.background.paper,
-          borderBottom: `1px solid ${theme.palette.divider}`,
-          position: 'sticky',
-          top: 0,
-          zIndex: 50
-        }}
-      >
-        <Stack direction="row" alignItems="center" spacing={1.5}>
-          <Box
-            sx={{
-              width: 32,
-              height: 32,
-              borderRadius: 1,
-              bgcolor: theme.palette.primary.main,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            <Typography variant="h6" sx={{ color: 'white', fontWeight: 800 }}>M</Typography>
-          </Box>
-          <Typography variant="h3" sx={{ fontWeight: 700, color: theme.palette.primary.main }}>
-            MegaWatt ERP
-          </Typography>
-        </Stack>
-        <Stack direction="row" alignItems="center" spacing={2}>
-          <IconButton size="small">
-            <NotificationsOutlinedIcon />
-          </IconButton>
-          <Box sx={{ width: 32, height: 32, borderRadius: '50%', bgcolor: 'grey.300', overflow: 'hidden' }}>
-            <PersonOutlinedIcon sx={{ mt: 0.5, ml: 0.5, color: 'grey.600' }} />
-          </Box>
-        </Stack>
-      </Stack>
+    <MobileShell>
+      <Stack spacing={2}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 1.5 }}>
+          {kpis.map((kpi) => (
+            <MobileSurface key={kpi.label} sx={{ minHeight: 118 }}>
+              <Stack spacing={0.75}>
+                <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700 }}>
+                  {kpi.label}
+                </Typography>
+                <Typography variant="h4" sx={{ fontWeight: 900, color: kpi.tone, lineHeight: 1.15 }}>
+                  {kpi.value}
+                </Typography>
+                <Stack direction="row" alignItems="center" spacing={0.5} sx={{ color: kpi.tone }}>
+                  <TrendingUpOutlinedIcon sx={{ fontSize: 15 }} />
+                  <Typography variant="caption" sx={{ fontWeight: 800 }}>
+                    {kpi.helper}
+                  </Typography>
+                </Stack>
+              </Stack>
+            </MobileSurface>
+          ))}
+        </Box>
 
-      <Box sx={{ px: 2, pt: 2 }}>
-        {/* KPI Grid */}
-        <Grid container spacing={2}>
-          {/* Revenue */}
-          <Grid size={{ xs: 6 }}>
-            <MainCard content={false} sx={{ p: 2, height: '100%' }}>
-              <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary' }}>
-                {t('dashboard.revenue')}
-              </Typography>
-              <Typography variant="h4" sx={{ mt: 1, mb: 1, fontWeight: 700, color: 'text.primary' }}>
-                {formatCurrency(mockFinanceSummary.revenue)}
-              </Typography>
-              <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, px: 1, py: 0.25, bgcolor: alpha(theme.palette.success.main, 0.1), borderRadius: 4 }}>
-                <TrendingUpOutlinedIcon sx={{ fontSize: 14, color: theme.palette.success.main }} />
-                <Typography variant="caption" sx={{ fontWeight: 600, color: theme.palette.success.main }}>+12%</Typography>
+        <MobileSurface>
+          <MobileSectionTitle title={t('dashboard.operationalPerformance')} />
+          <Stack spacing={1.5}>
+            {[
+              { label: t('mobile.fulfillmentRate'), value: fulfillmentRate, color: theme.palette.primary.main },
+              { label: t('finance.collectionRate'), value: collectionRate, color: theme.palette.info.main }
+            ].map((item) => (
+              <Box key={item.label}>
+                <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.75 }}>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700 }}>
+                    {item.label}
+                  </Typography>
+                  <Typography variant="caption" sx={{ fontWeight: 900 }}>
+                    {item.value}%
+                  </Typography>
+                </Stack>
+                <LinearProgress
+                  variant="determinate"
+                  value={Math.max(0, Math.min(item.value, 100))}
+                  sx={{
+                    height: 6,
+                    borderRadius: 999,
+                    bgcolor: alpha(item.color, 0.1),
+                    '& .MuiLinearProgress-bar': { bgcolor: item.color, borderRadius: 999 }
+                  }}
+                />
               </Box>
-            </MainCard>
-          </Grid>
-          {/* Gross Profit */}
-          <Grid size={{ xs: 6 }}>
-            <MainCard content={false} sx={{ p: 2, height: '100%' }}>
-              <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary' }}>
-                {t('dashboard.grossProfit')}
-              </Typography>
-              <Typography variant="h4" sx={{ mt: 1, mb: 1, fontWeight: 700, color: theme.palette.success.main }}>
-                {formatCurrency(mockFinanceSummary.grossProfit)}
-              </Typography>
-              <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block' }}>
-                {t('dashboard.margin', { value: 25 })}
-              </Typography>
-            </MainCard>
-          </Grid>
-          {/* Unpaid Invoices */}
-          <Grid size={{ xs: 6 }}>
-            <MainCard content={false} sx={{ p: 2, height: '100%' }}>
-              <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary' }}>
-                {t('dashboard.receivables')}
-              </Typography>
-              <Typography variant="h4" sx={{ mt: 1, mb: 1, fontWeight: 700, color: theme.palette.error.main }}>
-                {formatNumber(unpaidInvoices.length)}
-              </Typography>
-              <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, px: 1, py: 0.25, bgcolor: alpha(theme.palette.error.main, 0.1), borderRadius: 4 }}>
-                <Typography variant="caption" sx={{ fontWeight: 600, color: theme.palette.error.main }}>{t('common.highRisk')}</Typography>
-              </Box>
-            </MainCard>
-          </Grid>
-          {/* Low Stock */}
-          <Grid size={{ xs: 6 }}>
-            <MainCard content={false} sx={{ p: 2, height: '100%' }}>
-              <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary' }}>
-                {t('dashboard.stockAlerts')}
-              </Typography>
-              <Typography variant="h4" sx={{ mt: 1, mb: 1, fontWeight: 700, color: theme.palette.warning.dark }}>
-                {formatNumber(lowStockItems.length)}
-              </Typography>
-              <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, px: 1, py: 0.25, bgcolor: alpha(theme.palette.warning.main, 0.2), borderRadius: 4 }}>
-                <Typography variant="caption" sx={{ fontWeight: 600, color: theme.palette.warning.dark }}>{t('common.critical')}</Typography>
-              </Box>
-            </MainCard>
-          </Grid>
-        </Grid>
-
-        {/* Mini Chart Section */}
-        <MainCard content={false} sx={{ mt: 2, p: 2 }}>
-          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-            <Typography variant="h4" sx={{ color: theme.palette.primary.main, fontWeight: 700 }}>
-              {t('dashboard.salesRevenue')}
-            </Typography>
-            <IconButton size="small">
-              <MoreVertOutlinedIcon />
-            </IconButton>
-          </Stack>
-          <Stack direction="row" alignItems="flex-end" spacing={0.5} sx={{ height: 120, px: 1 }}>
-            {[40, 60, 45, 70, 85, 100, 90].map((val, i) => (
-              <Box
-                key={i}
-                sx={{
-                  flex: 1,
-                  height: `${val}%`,
-                  bgcolor: i === 5 ? theme.palette.warning.main : alpha(theme.palette.primary.main, val / 100),
-                  borderTopLeftRadius: 4,
-                  borderTopRightRadius: 4
-                }}
-              />
             ))}
           </Stack>
-        </MainCard>
+        </MobileSurface>
 
-        {/* Quick Actions */}
-        <Box sx={{ mt: 3 }}>
-          <Typography variant="h4" sx={{ color: theme.palette.primary.main, fontWeight: 700, mb: 2 }}>
-            {t('common.quickActions')}
-          </Typography>
-          <Stack direction="row" spacing={2} sx={{ overflowX: 'auto', pb: 1, '&::-webkit-scrollbar': { display: 'none' } }}>
-            {[
-              { icon: <ReceiptLongOutlinedIcon />, label: t('invoice.invoice'), bg: theme.palette.primary.main, color: 'white', route: '/erp/create-invoice' },
-              { icon: <PersonAddOutlinedIcon />, label: t('invoice.customer'), bg: theme.palette.warning.light, color: theme.palette.warning.dark, route: '/erp/dashboard' },
-              { icon: <Inventory2OutlinedIcon />, label: t('invoice.product'), bg: alpha(theme.palette.info.main, 0.2), color: theme.palette.info.dark, route: '/erp/products' },
-              { icon: <PaymentsOutlinedIcon />, label: t('finance.expenses'), bg: theme.palette.background.paper, color: theme.palette.primary.main, border: true, route: '/erp/finance-reports' }
-            ].map((action, i) => (
-              <Stack key={i} alignItems="center" spacing={1} sx={{ flexShrink: 0, cursor: 'pointer' }} onClick={() => navigate(action.route)}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 1.5 }}>
+          {actions.map((action) => (
+            <ButtonBase
+              key={action.path}
+              onClick={() => navigate(action.path)}
+              sx={{
+                p: 2,
+                minHeight: 92,
+                borderRadius: 3,
+                flexDirection: 'column',
+                gap: 1,
+                color: action.primary ? theme.palette.primary.contrastText : theme.palette.primary.main,
+                bgcolor: action.primary ? theme.palette.primary.main : theme.palette.background.paper,
+                border: action.primary ? 'none' : `1px solid ${theme.palette.divider}`,
+                boxShadow: '0 2px 4px rgba(144, 164, 174, 0.16)',
+                '&:active': { transform: 'scale(0.98)' }
+              }}
+            >
+              <Box sx={{ display: 'flex', '& svg': { fontSize: 25 } }}>{action.icon}</Box>
+              <Typography variant="caption" sx={{ fontWeight: 800 }}>
+                {action.label}
+              </Typography>
+            </ButtonBase>
+          ))}
+        </Box>
+
+        <MobileSurface>
+          <MobileSectionTitle title={t('dashboard.criticalStockAlerts')} />
+          <Stack spacing={1.5}>
+            {lowStockItems.slice(0, 3).map((item) => (
+              <Stack key={item.id} direction="row" spacing={1.25} alignItems="center">
                 <Box
                   sx={{
-                    width: 64,
-                    height: 64,
-                    borderRadius: '50%',
-                    bgcolor: action.bg,
-                    color: action.color,
+                    width: 40,
+                    height: 40,
+                    borderRadius: 2,
+                    bgcolor: alpha(theme.palette.error.main, 0.08),
+                    color: theme.palette.error.main,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: action.border ? 1 : 3,
-                    border: action.border ? `1px solid ${theme.palette.divider}` : 'none',
-                    transition: 'transform 0.2s',
-                    '&:active': { transform: 'scale(0.95)' }
+                    flex: '0 0 auto'
                   }}
                 >
-                  {action.icon}
+                  <WarningAmberOutlinedIcon />
                 </Box>
-                <Typography variant="caption" sx={{ fontWeight: 700 }}>{action.label}</Typography>
+                <Box sx={{ minWidth: 0, flex: 1 }}>
+                  <Typography variant="body2" sx={{ fontWeight: 800 }} noWrap>
+                    {translateProductName(language, item.productName)}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {t('dashboard.availableReorder', {
+                      quantity: formatNumber(item.quantityOnHand),
+                      unit: translateUnit(language, item.unit),
+                      reorder: formatNumber(item.reorderLevel)
+                    })}
+                  </Typography>
+                </Box>
               </Stack>
             ))}
           </Stack>
-        </Box>
+        </MobileSurface>
 
-        {/* Recent Activity */}
-        <Box sx={{ mt: 3, mb: 4 }}>
-          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-            <Typography variant="h4" sx={{ color: theme.palette.primary.main, fontWeight: 700 }}>
-              {t('dashboard.recentActivity')}
-            </Typography>
-            <Typography variant="caption" sx={{ color: theme.palette.primary.main, fontWeight: 700, cursor: 'pointer' }}>
-              {t('common.viewAll')}
-            </Typography>
-          </Stack>
+        <MobileSurface>
+          <MobileSectionTitle title={t('dashboard.latestSalesInvoices')} />
           <Stack spacing={1.5}>
-            {[
-              { title: t('dashboard.issuedInvoice', { invoice: '#1024' }), subtitle: '2 mins ago', icon: <DescriptionOutlinedIcon />, color: theme.palette.warning.main },
-              { title: translatePartyName(language as any, 'Schneider Electric Egypt'), subtitle: '45 mins ago', icon: <PersonOutlinedIcon />, color: theme.palette.primary.main },
-              { title: translateProductName(language as any, 'Copper Cable 16mm Single Core Red'), subtitle: '1 hour ago', icon: <WarningAmberOutlinedIcon />, color: theme.palette.error.main }
-            ].map((activity, i) => (
-              <MainCard key={i} content={false} sx={{ p: 2, cursor: 'pointer', '&:active': { bgcolor: alpha(theme.palette.primary.main, 0.05) } }}>
-                <Stack direction="row" alignItems="center" spacing={2}>
-                  <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: alpha(activity.color, 0.1), color: activity.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {activity.icon}
-                  </Box>
-                  <Box sx={{ flex: 1 }}>
-                    <Typography variant="body2" sx={{ fontWeight: 600 }}>{activity.title}</Typography>
-                    <Typography variant="caption" sx={{ color: 'text.secondary' }}>{activity.subtitle}</Typography>
-                  </Box>
-                  <ChevronRightOutlinedIcon sx={{ color: 'text.secondary' }} />
-                </Stack>
-              </MainCard>
+            {mockInvoices.slice(0, 3).map((invoice) => (
+              <Stack key={invoice.id} direction="row" justifyContent="space-between" spacing={1.5}>
+                <Box sx={{ minWidth: 0 }}>
+                  <Typography variant="body2" sx={{ fontWeight: 900 }}>
+                    {invoice.invoiceNumber}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary" noWrap>
+                    {translatePartyName(language, invoice.customerName)} · {formatDate(invoice.issueDate)}
+                  </Typography>
+                </Box>
+                <Box sx={{ textAlign: 'end', flex: '0 0 auto' }}>
+                  <Typography variant="body2" sx={{ fontWeight: 900, color: theme.palette.primary.main }}>
+                    {formatCurrency(invoice.total)}
+                  </Typography>
+                  <Typography variant="caption" color={invoice.balanceDue > 0 ? 'warning.main' : 'success.main'} sx={{ fontWeight: 800 }}>
+                    {formatStatus(invoice.paymentStatus)}
+                  </Typography>
+                </Box>
+              </Stack>
             ))}
+            {receivableInvoices.length > 0 && (
+              <Typography variant="caption" color="text.secondary">
+                {t('dashboard.openInvoices', { count: receivableInvoices.length })}
+              </Typography>
+            )}
           </Stack>
-        </Box>
-      </Box>
-    </Box>
+        </MobileSurface>
+      </Stack>
+    </MobileShell>
   );
 };
