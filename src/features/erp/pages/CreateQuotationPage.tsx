@@ -25,12 +25,15 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import MainCard from 'ui-component/cards/MainCard';
 import { useLanguage } from 'i18n';
 
 import { ErpFullWidthPage } from '../components/ErpFullWidthPage';
 import { ErpPageHeader } from '../components/ErpPageHeader';
+import { MobileCreateQuotation } from '../components/mobile';
 import { mockCustomers, mockProducts } from '../mockData';
 import { Product } from '../types';
 import {
@@ -70,6 +73,8 @@ const createEmptyLine = (): QuotationLineForm => ({
 const compactLineCellSx = { px: 0.75, py: 0.75, fontSize: 12 };
 
 export const CreateQuotationPage = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
   const { t, language, formatCurrency } = useLanguage();
   const currencyAdornment = language === 'ar' ? 'جنيه' : 'EGP';
@@ -87,6 +92,10 @@ export const CreateQuotationPage = () => {
   const selectedCustomer = mockCustomers.find((customer) => customer.id === customerId);
   const calculatedLines = useMemo(() => lineItems.map(calculateSalesDocumentLine), [lineItems]);
   const totals = useMemo(() => calculateQuotationTotals(calculatedLines, documentDiscount), [calculatedLines, documentDiscount]);
+
+  if (isMobile) {
+    return <MobileCreateQuotation />;
+  }
 
   const updateLine = (lineId: string, updates: Partial<QuotationLineForm>) => {
     setGeneratedQuotationNumber('');

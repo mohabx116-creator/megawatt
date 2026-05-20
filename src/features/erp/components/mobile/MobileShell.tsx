@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import AddCardOutlinedIcon from '@mui/icons-material/AddCardOutlined';
 import AnalyticsOutlinedIcon from '@mui/icons-material/AnalyticsOutlined';
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
+import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
@@ -38,6 +39,7 @@ export const MobileShell = ({ title = 'Megawatt', children, showBottomNav = true
   const navItems: NavItem[] = [
     { label: t('nav.dashboard'), path: '/erp/dashboard', icon: <DashboardOutlinedIcon />, match: ['/erp/dashboard'] },
     { label: t('nav.inventory'), path: '/erp/inventory', icon: <Inventory2OutlinedIcon />, match: ['/erp/inventory', '/erp/products'] },
+    { label: t('nav.createQuotation'), path: '/erp/create-quotation', icon: <DescriptionOutlinedIcon />, match: ['/erp/create-quotation'] },
     { label: t('nav.createInvoice'), path: '/erp/create-invoice', icon: <AddCardOutlinedIcon />, match: ['/erp/create-invoice'] },
     { label: t('nav.financeReports'), path: '/erp/finance-reports', icon: <ReceiptLongOutlinedIcon />, match: ['/erp/finance-reports'] }
   ];
