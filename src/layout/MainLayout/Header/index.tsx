@@ -1,10 +1,11 @@
 import { Activity } from 'react';
 
 // material-ui
-import { useTheme } from '@mui/material/styles';
+import { useTheme, useColorScheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
+import Tooltip from '@mui/material/Tooltip';
 
 // project imports
 import LogoSection from '../LogoSection';
@@ -21,12 +22,13 @@ import { MenuOrientation } from 'config';
 import useConfig from 'hooks/useConfig';
 
 // assets
-import { IconMenu2 } from '@tabler/icons-react';
+import { IconMenu2, IconSun, IconMoon } from '@tabler/icons-react';
 
 // ==============================|| MAIN NAVBAR / HEADER ||============================== //
 
 export default function Header() {
   const theme = useTheme();
+  const { mode, setMode } = useColorScheme();
   const downMD = useMediaQuery(theme.breakpoints.down('md'));
 
   const {
@@ -86,6 +88,29 @@ export default function Header() {
       {/* live customization & localization */}
       <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
         <LocalizationSection />
+      </Box>
+
+      {/* mode toggler */}
+      <Box sx={{ ml: 2, display: { xs: 'none', sm: 'block' } }}>
+        <Tooltip title={mode === 'dark' ? 'Light Mode' : 'Dark Mode'}>
+          <Avatar
+            variant="rounded"
+            sx={{
+              ...theme.typography.commonAvatar,
+              ...theme.typography.mediumAvatar,
+              transition: 'all .2s ease-in-out',
+              background: mode === 'dark' ? theme.vars.palette.dark.main : theme.vars.palette.secondary.light,
+              color: mode === 'dark' ? theme.vars.palette.warning.dark : theme.vars.palette.secondary.dark,
+              '&:hover': {
+                background: mode === 'dark' ? theme.vars.palette.warning.dark : theme.vars.palette.secondary.dark,
+                color: mode === 'dark' ? theme.vars.palette.grey[800] : theme.vars.palette.secondary.light
+              }
+            }}
+            onClick={() => setMode(mode === 'dark' ? 'light' : 'dark')}
+          >
+            {mode === 'dark' ? <IconSun stroke={1.5} size="20px" /> : <IconMoon stroke={1.5} size="20px" />}
+          </Avatar>
+        </Tooltip>
       </Box>
 
       {/* notification */}
